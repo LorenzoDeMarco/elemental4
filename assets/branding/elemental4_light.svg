@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:export-ydpi="192"
+   inkscape:export-xdpi="192"
+   inkscape:export-filename="C:\Users\Lorenzo\Desktop\elemental4_light_512px.png"
+   sodipodi:docname="elemental4_light.svg"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 67.73248 67.73248"
+   height="256"
+   width="256">
+  <title
+     id="title1026">Elemental 4</title>
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient864">
+      <stop
+         style="stop-color:#00d9ff;stop-opacity:1;"
+         offset="0"
+         id="stop860" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="1"
+         id="stop862" />
+    </linearGradient>
+    <linearGradient
+       id="BackgroundShadow"
+       inkscape:collect="always">
+      <stop
+         id="stop976"
+         offset="0"
+         style="stop-color:#494949;stop-opacity:1" />
+      <stop
+         id="stop978"
+         offset="1"
+         style="stop-color:#383838;stop-opacity:0" />
+    </linearGradient>
+    <linearGradient
+       id="Background"
+       inkscape:collect="always">
+      <stop
+         id="stop925"
+         offset="0"
+         style="stop-color:#00d9ff;stop-opacity:1;" />
+      <stop
+         id="stop927"
+         offset="1"
+         style="stop-color:#00d9ff;stop-opacity:0;" />
+    </linearGradient>
+    <linearGradient
+       id="El"
+       inkscape:collect="always">
+      <stop
+         id="stop917"
+         offset="0"
+         style="stop-color:#0070ff;stop-opacity:1" />
+      <stop
+         id="stop919"
+         offset="1"
+         style="stop-color:#000000;stop-opacity:0" />
+    </linearGradient>
+    <linearGradient
+       id="Four"
+       inkscape:collect="always">
+      <stop
+         id="stop878"
+         offset="0"
+         style="stop-color:#000081;stop-opacity:1" />
+      <stop
+         id="stop880"
+         offset="1"
+         style="stop-color:#000006;stop-opacity:0" />
+    </linearGradient>
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-2.1039665,1.0959781,-2.1766256,-3.5620988,299.64276,156.36274)"
+       r="10.06332"
+       fy="55.274899"
+       fx="62.730778"
+       cy="55.274899"
+       cx="62.730778"
+       id="radialGradient886"
+       xlink:href="#Four"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientTransform="translate(-1.1014016,-1.0169236)"
+       gradientUnits="userSpaceOnUse"
+       y2="29.236568"
+       x2="48.447945"
+       y1="39.906559"
+       x1="53.804237"
+       id="linearGradient899"
+       xlink:href="#Four"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="27.729063"
+       x2="63.504822"
+       y1="26.720732"
+       x1="3.3464651"
+       id="linearGradient923"
+       xlink:href="#El"
+       inkscape:collect="always" />
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(2.3125467,0.00525648,-0.00575344,2.531204,-44.061331,-103.75798)"
+       r="33.866242"
+       fy="67.732483"
+       fx="33.866241"
+       cy="67.732483"
+       cx="33.866241"
+       id="radialGradient931"
+       xlink:href="#Background"
+       inkscape:collect="always" />
+    <radialGradient
+       r="33.866242"
+       fy="67.732483"
+       fx="33.866241"
+       cy="67.732483"
+       cx="33.866241"
+       gradientTransform="matrix(2.2272294,0.00506255,-0.00554118,2.4378197,-41.186332,-98.680578)"
+       gradientUnits="userSpaceOnUse"
+       id="radialGradient1009"
+       xlink:href="#linearGradient864"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientTransform="matrix(0.96310677,0,0,0.96310677,1.3113782,1.190416)"
+       y2="27.729063"
+       x2="63.504822"
+       y1="26.720732"
+       x1="3.3464651"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient1011"
+       xlink:href="#El"
+       inkscape:collect="always" />
+    <radialGradient
+       r="10.06332"
+       fy="55.274899"
+       fx="62.730778"
+       cy="55.274899"
+       cx="62.730778"
+       gradientTransform="matrix(-2.0263443,1.0555439,-2.0963228,-3.4306814,289.88826,151.79457)"
+       gradientUnits="userSpaceOnUse"
+       id="radialGradient1013"
+       xlink:href="#Four"
+       inkscape:collect="always" />
+    <linearGradient
+       y2="29.236568"
+       x2="48.447945"
+       y1="39.906559"
+       x1="53.804237"
+       gradientTransform="matrix(0.96310675,0,0,0.96310675,0.23952811,0.22115625)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient1015"
+       xlink:href="#Four"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="58.2076"
+       x2="33.866238"
+       y1="69.187668"
+       x1="33.874958"
+       id="linearGradient1019"
+       xlink:href="#BackgroundShadow"
+       inkscape:collect="always" />
+  </defs>
+  <sodipodi:namedview
+     inkscape:window-maximized="1"
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:window-height="1017"
+     inkscape:window-width="1920"
+     inkscape:bbox-paths="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-bbox="true"
+     inkscape:snap-page="false"
+     units="px"
+     showgrid="false"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="layer2"
+     inkscape:document-units="px"
+     inkscape:cy="100.53125"
+     inkscape:cx="68.654008"
+     inkscape:zoom="1"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     borderopacity="0.25490196"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:pagecheckerboard="true"
+     showborder="true"
+     inkscape:showpageshadow="false"
+     borderlayer="false" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Elemental 4</dc:title>
+        <dc:date>2020-09-01</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Lorenzo De Marco</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:description>Elemental 4 Logo</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-nd/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-nd/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     style="display:inline;opacity:0.991"
+     inkscape:label="Background"
+     id="layer3"
+     inkscape:groupmode="layer">
+    <rect
+       sodipodi:insensitive="true"
+       style="display:inline;opacity:1;fill:url(#linearGradient1019);fill-opacity:1;stroke:none;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect891-4"
+       width="65.333847"
+       height="67.600189"
+       x="1.2080346"
+       y="-1.5269852e-06"
+       ry="9.2422132" />
+  </g>
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="El" />
+  <g
+     inkscape:label="4"
+     id="layer2"
+     inkscape:groupmode="layer">
+    <rect
+       ry="8.9186573"
+       y="1.2494327"
+       x="1.376842"
+       height="65.233612"
+       width="64.97879"
+       id="rect891"
+       style="display:inline;fill:url(#radialGradient1009);fill-opacity:1;stroke:#027588;stroke-width:0.382228;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.94901961" />
+    <text
+       transform="scale(0.95276413,1.0495777)"
+       id="ElText"
+       y="45.679798"
+       x="0.074440338"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:59.0491px;line-height:1.25;font-family:Dubai;-inkscape-font-specification:'Dubai, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient1011);stroke-width:0.915564;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;image-rendering:optimizeQuality"
+       xml:space="preserve"><tspan
+         style="fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient1011);stroke-width:0.915564;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
+         y="45.679798"
+         x="0.074440338"
+         id="tspan16"
+         sodipodi:role="line">El</tspan></text>
+    <text
+       transform="scale(0.9608848,1.0407075)"
+       id="ElText-9"
+       y="60.44577"
+       x="45.265671"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:38.537px;line-height:1.25;font-family:Dubai;-inkscape-font-specification:'Dubai, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;mix-blend-mode:normal;fill:url(#radialGradient1013);fill-opacity:1;stroke:url(#linearGradient1015);stroke-width:0.708651;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:normal;image-rendering:optimizeQuality"
+       xml:space="preserve"><tspan
+         style="fill:url(#radialGradient1013);fill-opacity:1;stroke:url(#linearGradient1015);stroke-width:0.708651;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:normal"
+         y="60.44577"
+         x="45.265671"
+         id="tspan16-5"
+         sodipodi:role="line">4</tspan></text>
+  </g>
+</svg>
