@@ -18,8 +18,7 @@ _global_script_class_icons={
 config/name="Elemental 4"
 config/description="Caryhk's Elemental 3 with superpowers!"
 run/main_scene="res://scenes/menus/MainMenu.tscn"
-boot_splash/image="res://assets/branding/elemental4_light_512px.png"
-boot_splash/fullsize=false
+boot_splash/image="res://assets/branding/splash_light.png"
 boot_splash/bg_color=Color( 1, 1, 1, 1 )
 config/icon="res://icon.png"
 
