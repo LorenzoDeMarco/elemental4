@@ -46,5 +46,5 @@ __meta__ = {
 [node name="Spinner" parent="." instance=ExtResource( 2 )]
 position = Vector2( 512, 560 )
 scale = Vector2( 0.73, 0.73 )
-frame = 15
+frame = 24
 [connection signal="resized" from="." to="." method="_on_resized"]

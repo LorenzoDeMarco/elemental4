@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://themes/Default.theme" type="Theme" id=1]
 [ext_resource path="res://materials/ui/MainMenuBg.material" type="Material" id=2]
@@ -13,6 +13,18 @@ use_filter = true
 extra_spacing_top = -7
 extra_spacing_bottom = -7
 font_data = ExtResource( 4 )
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends VBoxContainer
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+func _on_ClassicMode_pressed():
+	get_tree().change_scene(\"res://scenes/game/ClassicGame.tscn\")
+"
 
 [node name="MainMenu" type="Panel"]
 material = ExtResource( 2 )
@@ -44,3 +56,16 @@ custom_fonts/font = SubResource( 1 )
 text = "Elemental 4"
 valign = 1
 clip_text = true
+
+[node name="Buttons" type="VBoxContainer" parent="."]
+margin_left = 16.0
+margin_top = 96.0
+margin_right = 280.0
+margin_bottom = 512.0
+script = SubResource( 2 )
+
+[node name="ClassicMode" type="Button" parent="Buttons"]
+margin_right = 264.0
+margin_bottom = 58.0
+text = "Classic Mode"
+[connection signal="pressed" from="Buttons/ClassicMode" to="Buttons" method="_on_ClassicMode_pressed"]
