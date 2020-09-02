@@ -12,10 +12,16 @@ script/source = "extends Panel
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	_on_resized()
-
+	call_deferred(\"_init_game\")
 
 func _on_resized():
 	$Spinner.set_position(Vector2(rect_size.x / 2, rect_size.y - 50))
+
+func _init_game():
+	yield(get_tree().create_timer(4.0), \"timeout\") # pause thread for 4 seconds
+	if get_tree().change_scene(\"res://scenes/menus/MainMenu.tscn\") != OK:
+		get_tree().quit(1)
+	
 "
 
 [node name="BootLoading" type="Panel"]
@@ -40,5 +46,5 @@ __meta__ = {
 [node name="Spinner" parent="." instance=ExtResource( 2 )]
 position = Vector2( 512, 560 )
 scale = Vector2( 0.73, 0.73 )
-frame = 3
+frame = 15
 [connection signal="resized" from="." to="." method="_on_resized"]
