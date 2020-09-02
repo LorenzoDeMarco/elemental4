@@ -1,0 +1,308 @@
+[gd_resource type="VisualShader" load_steps=25 format=2]
+
+[ext_resource path="res://addons/shaderV/tools/sinTime.gd" type="Script" id=1]
+[ext_resource path="res://addons/shaderV/uv/rotate.gd" type="Script" id=2]
+[ext_resource path="res://addons/shaderV/uv/animated/tilingNoffsetAnimated.gd" type="Script" id=3]
+[ext_resource path="res://addons/shaderV/rgba/gradient4corners.gd" type="Script" id=4]
+[ext_resource path="res://addons/shaderV/rgba/blendAwithB.gd" type="Script" id=5]
+[ext_resource path="res://addons/shaderV/rgba/blur/blur9sample.gd" type="Script" id=6]
+
+[sub_resource type="VisualShaderNodeInput" id=1]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeCustom" id=2]
+default_input_values = [ 1, Vector3( 1, 1, 1 ), 2, 1.0, 3, Vector3( 1, 1, 1 ), 4, 1.0, 5, Vector3( 1, 1, 1 ), 6, 1.0, 7, Vector3( 1, 1, 1 ), 8, 1.0 ]
+script = ExtResource( 4 )
+
+[sub_resource type="VisualShaderNodeScalarInterp" id=3]
+
+[sub_resource type="VisualShaderNodeCustom" id=4]
+default_input_values = [ 0, 1.0, 1, 1.0 ]
+script = ExtResource( 1 )
+
+[sub_resource type="VisualShaderNodeCustom" id=5]
+default_input_values = [ 1, Vector3( 0, 0, 0 ), 2, 0.0 ]
+script = ExtResource( 3 )
+
+[sub_resource type="VisualShaderNodeInput" id=6]
+input_name = "time"
+
+[sub_resource type="VisualShaderNodeCustom" id=7]
+default_input_values = [ 1, 0.0, 2, Vector3( 0.5, 0.5, 0 ) ]
+script = ExtResource( 2 )
+
+[sub_resource type="VisualShaderNodeColorConstant" id=8]
+constant = Color( 0, 0.52549, 0.607843, 1 )
+
+[sub_resource type="VisualShaderNodeCustom" id=9]
+default_input_values = [ 1, 1.0, 3, 1.0, 4, 1.0 ]
+script = ExtResource( 5 )
+
+[sub_resource type="VisualShaderNodeTextureUniform" id=10]
+uniform_name = "DetailTexture"
+color_default = 1
+
+[sub_resource type="VisualShaderNodeScalarUniform" id=15]
+uniform_name = "Angle"
+
+[sub_resource type="VisualShaderNodeVec3Uniform" id=16]
+uniform_name = "Movement"
+
+[sub_resource type="VisualShaderNodeCustom" id=17]
+default_input_values = [ 2, -1.0, 3, 0.2 ]
+script = ExtResource( 6 )
+
+[sub_resource type="VisualShaderNodeScalarUniform" id=18]
+uniform_name = "BlurRadius"
+
+[sub_resource type="VisualShaderNodeScalarFunc" id=11]
+function = 12
+
+[sub_resource type="VisualShaderNodeVectorScalarMix" id=12]
+
+[sub_resource type="VisualShaderNodeColorConstant" id=13]
+constant = Color( 0, 0.00921631, 0.589844, 1 )
+
+[sub_resource type="VisualShaderNodeCustom" id=14]
+default_input_values = [ 1, Vector3( 1, 1, 1 ), 2, 1.0, 3, Vector3( 1, 1, 1 ), 4, 1.0, 5, Vector3( 1, 1, 1 ), 6, 1.0, 7, Vector3( 1, 1, 1 ), 8, 1.0 ]
+script = ExtResource( 4 )
+
+[resource]
+code = "shader_type canvas_item;
+render_mode blend_disabled;
+
+uniform float Angle;
+uniform vec3 Movement;
+uniform sampler2D DetailTexture : hint_black;
+uniform float BlurRadius;
+
+
+// Gradient4Corners
+
+vec4 gradient4cornersFunc(vec2 _uv_c0rner, vec4 _top_left_c0rner, vec4 _top_right_c0rner, vec4 _bottom_left_c0rner, vec4 _bottom_right_c0rner){
+	vec4 _c0l0r_t0p_c0rner = mix(_top_left_c0rner, _top_right_c0rner, _uv_c0rner.x);
+	vec4 _c0l0r_b0tt0m_c0rner = mix(_bottom_left_c0rner, _bottom_right_c0rner, _uv_c0rner.x);
+	return mix(_c0l0r_t0p_c0rner, _c0l0r_b0tt0m_c0rner, _uv_c0rner.y);
+}
+
+// RotateUV
+
+vec3 r0tateUVFunc(vec3 _uv_r0tate, vec2 _pivot_r0tate, float _r0tation_r0tate){
+	//_r0tation_r0tate = radians(_r0tationDeg_r0tate);
+	vec2 _r0tAngle = vec2(cos(_r0tation_r0tate), sin(_r0tation_r0tate));
+	_uv_r0tate.xy -= _pivot_r0tate;
+	_uv_r0tate.xy = vec2((_uv_r0tate.x*_r0tAngle.x-_uv_r0tate.y*_r0tAngle.y),(_uv_r0tate.x*_r0tAngle.y+_uv_r0tate.y*_r0tAngle.x));
+	_uv_r0tate.xy += _pivot_r0tate;
+	return _uv_r0tate;
+}
+
+// TilingAndOffsetUVAnimated
+
+vec2 tilingNoffsetAnimatedFunc(vec2 _uv_tN0A, float _t1me_tN0A, vec2 _offset_tN0A){
+	return vec2(mod((_uv_tN0A.x + _offset_tN0A.x * _t1me_tN0A), 1.0), mod((_uv_tN0A.y + _offset_tN0A.y * _t1me_tN0A), 1.0));
+}
+
+// BlurBasic
+
+vec4 blur9sampleFunc(sampler2D _samp_b1ur, vec2 _uv_b1ur, float _lod_b1ur, float _rad_b1ur){
+	vec4 _c01r_b1ur = vec4(0.0);
+	if (_lod_b1ur < 0.0){
+		_c01r_b1ur = texture(_samp_b1ur, _uv_b1ur);
+		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(0, - _rad_b1ur) * 0.01);
+		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(0, _rad_b1ur) * 0.01);
+		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(- _rad_b1ur, 0) * 0.01);
+		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(_rad_b1ur, 0) * 0.01);
+		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(- _rad_b1ur, - _rad_b1ur) * 0.01);
+		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(- _rad_b1ur, _rad_b1ur) * 0.01);
+		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(_rad_b1ur, _rad_b1ur) * 0.01);
+		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(_rad_b1ur, -_rad_b1ur) * 0.01);
+	}else{
+		_c01r_b1ur = textureLod(_samp_b1ur, _uv_b1ur, _lod_b1ur);
+		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(0, - _rad_b1ur) * 0.01, _lod_b1ur);
+		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(0, _rad_b1ur) * 0.01, _lod_b1ur);
+		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(- _rad_b1ur, 0) * 0.01, _lod_b1ur);
+		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(_rad_b1ur, 0) * 0.01, _lod_b1ur);
+		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(- _rad_b1ur, - _rad_b1ur) * 0.01, _lod_b1ur);
+		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(- _rad_b1ur, _rad_b1ur) * 0.01, _lod_b1ur);
+		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(_rad_b1ur, _rad_b1ur) * 0.01, _lod_b1ur);
+		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(_rad_b1ur, -_rad_b1ur) * 0.01, _lod_b1ur);
+	}
+	_c01r_b1ur /= 9.0;
+	return _c01r_b1ur;
+}
+
+// BlendAwithB
+
+vec4 blendAwithBFunc(vec4 _c0l0r_blendA_rgba, vec4 _c0l0r_blendB_rgba, float _fade_blend_c0l0r){
+	return mix(_c0l0r_blendA_rgba, _c0l0r_blendB_rgba, _c0l0r_blendB_rgba.a * _fade_blend_c0l0r);
+}
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// Input:10
+	vec3 n_out10p0 = vec3(UV, 0.0);
+
+// Color:2
+	vec3 n_out2p0 = vec3(0.000000, 0.525490, 0.607843);
+	float n_out2p1 = 1.000000;
+
+// Color:7
+	vec3 n_out7p0 = vec3(0.000000, 0.009216, 0.589844);
+	float n_out7p1 = 1.000000;
+
+// Gradient4Corners:9
+	float n_in9p2 = 1.00000;
+	float n_in9p4 = 1.00000;
+	float n_in9p6 = 1.00000;
+	float n_in9p8 = 1.00000;
+	vec3 n_out9p0;
+	float n_out9p1;
+	{
+		vec4 n_out9p0n_out9p1 = gradient4cornersFunc(n_out10p0.xy, vec4(n_out2p0, n_in9p2), vec4(n_out7p0, n_in9p4), vec4(n_out7p0, n_in9p6), vec4(n_out2p0, n_in9p8));
+		n_out9p0 = n_out9p0n_out9p1.rgb;
+		n_out9p1 = n_out9p0n_out9p1.a;
+	}
+
+// Gradient4Corners:11
+	float n_in11p2 = 1.00000;
+	float n_in11p4 = 1.00000;
+	float n_in11p6 = 1.00000;
+	float n_in11p8 = 1.00000;
+	vec3 n_out11p0;
+	float n_out11p1;
+	{
+		vec4 n_out11p0n_out11p1 = gradient4cornersFunc(n_out10p0.xy, vec4(n_out7p0, n_in11p2), vec4(n_out2p0, n_in11p4), vec4(n_out2p0, n_in11p6), vec4(n_out7p0, n_in11p8));
+		n_out11p0 = n_out11p0n_out11p1.rgb;
+		n_out11p1 = n_out11p0n_out11p1.a;
+	}
+
+// SinTIME:13
+	float n_in13p0 = 1.00000;
+	float n_in13p1 = 1.00000;
+	float n_out13p0;
+	{
+		n_out13p0 = n_in13p1 * sin(n_in13p0 * TIME);
+	}
+
+// ScalarFunc:5
+	float n_out5p0 = abs(n_out13p0);
+
+// VectorScalarMix:6
+	vec3 n_out6p0 = mix(n_out9p0, n_out11p0, n_out5p0);
+
+// ScalarMix:12
+	float n_out12p0 = mix(n_out9p1, n_out11p1, n_out5p0);
+
+// ScalarUniform:22
+	float n_out22p0 = Angle;
+
+// RotateUV:19
+	vec3 n_in19p2 = vec3(0.50000, 0.50000, 0.00000);
+	vec3 n_out19p0;
+	{
+		n_out19p0 = r0tateUVFunc(n_out10p0, n_in19p2.xy, n_out22p0);
+	}
+
+// VectorUniform:23
+	vec3 n_out23p0 = Movement;
+
+// Input:18
+	float n_out18p0 = TIME;
+
+// TilingAndOffsetUVAnimated:17
+	vec3 n_out17p0;
+	{
+		n_out17p0.xy = n_out17p0.xy + tilingNoffsetAnimatedFunc(n_out19p0.xy, n_out18p0, n_out23p0.xy);
+	}
+
+// TextureUniform:21
+	vec3 n_out21p0;
+	float n_out21p1;
+	{
+		vec4 n_tex_read = texture(DetailTexture, n_out17p0.xy);
+		n_out21p0 = n_tex_read.rgb;
+		n_out21p1 = n_tex_read.a;
+	}
+
+// ScalarUniform:25
+	float n_out25p0 = BlurRadius;
+
+// BlurBasic:24
+	float n_in24p2 = -1.00000;
+	vec3 n_out24p0;
+	float n_out24p1;
+	{
+		vec4 n_out24p0n_out24p1 = blur9sampleFunc(DetailTexture, n_out17p0.xy, n_in24p2, n_out25p0);
+		n_out24p0 = n_out24p0n_out24p1.rgb;
+		n_out24p1 = n_out24p0n_out24p1.a;
+	}
+
+// BlendAwithB:20
+	float n_in20p4 = 1.00000;
+	vec3 n_out20p0;
+	float n_out20p1;
+	{
+		vec4 n_out20p0n_out20p1 = blendAwithBFunc(vec4(n_out6p0, n_out12p0), vec4(n_out24p0, n_out24p1), n_in20p4);
+		n_out20p0 = n_out20p0n_out20p1.rgb;
+		n_out20p1 = n_out20p0n_out20p1.a;
+	}
+
+// Output:0
+	COLOR.rgb = n_out20p0;
+	COLOR.a = n_out20p1;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( -275.533, 278 )
+mode = 1
+modes/blend = 5
+flags/light_only = false
+nodes/vertex/0/position = Vector2( 580, 140 )
+nodes/fragment/0/position = Vector2( 1360, 60 )
+nodes/fragment/2/node = SubResource( 8 )
+nodes/fragment/2/position = Vector2( -680, -400 )
+nodes/fragment/5/node = SubResource( 11 )
+nodes/fragment/5/position = Vector2( 320, 140 )
+nodes/fragment/6/node = SubResource( 12 )
+nodes/fragment/6/position = Vector2( 620, -80 )
+nodes/fragment/7/node = SubResource( 13 )
+nodes/fragment/7/position = Vector2( -680, -300 )
+nodes/fragment/9/node = SubResource( 14 )
+nodes/fragment/9/position = Vector2( -240, -400 )
+nodes/fragment/10/node = SubResource( 1 )
+nodes/fragment/10/position = Vector2( -580, 100 )
+nodes/fragment/11/node = SubResource( 2 )
+nodes/fragment/11/position = Vector2( -220, -120 )
+nodes/fragment/12/node = SubResource( 3 )
+nodes/fragment/12/position = Vector2( 620, 60 )
+nodes/fragment/13/node = SubResource( 4 )
+nodes/fragment/13/position = Vector2( 60, 60 )
+nodes/fragment/17/node = SubResource( 5 )
+nodes/fragment/17/position = Vector2( 320, 420 )
+nodes/fragment/18/node = SubResource( 6 )
+nodes/fragment/18/position = Vector2( 60, 280 )
+nodes/fragment/19/node = SubResource( 7 )
+nodes/fragment/19/position = Vector2( 320, 240 )
+nodes/fragment/20/node = SubResource( 9 )
+nodes/fragment/20/position = Vector2( 1100, 60 )
+nodes/fragment/21/node = SubResource( 10 )
+nodes/fragment/21/position = Vector2( 640, 340 )
+nodes/fragment/22/node = SubResource( 15 )
+nodes/fragment/22/position = Vector2( 60, 360 )
+nodes/fragment/23/node = SubResource( 16 )
+nodes/fragment/23/position = Vector2( 60, 440 )
+nodes/fragment/24/node = SubResource( 17 )
+nodes/fragment/24/position = Vector2( 860, 240 )
+nodes/fragment/25/node = SubResource( 18 )
+nodes/fragment/25/position = Vector2( 60, 520 )
+nodes/fragment/connections = PoolIntArray( 2, 0, 9, 1, 9, 0, 6, 0, 2, 0, 9, 7, 7, 0, 9, 3, 7, 0, 9, 5, 11, 0, 6, 1, 9, 1, 12, 0, 11, 1, 12, 1, 2, 0, 11, 3, 2, 0, 11, 5, 7, 0, 11, 1, 7, 0, 11, 7, 13, 0, 5, 0, 5, 0, 6, 2, 5, 0, 12, 2, 19, 0, 17, 0, 6, 0, 20, 0, 12, 0, 20, 1, 10, 0, 19, 0, 10, 0, 9, 0, 10, 0, 11, 0, 18, 0, 17, 2, 17, 0, 21, 0, 22, 0, 19, 1, 23, 0, 17, 1, 17, 0, 24, 1, 21, 2, 24, 0, 24, 1, 20, 3, 24, 0, 20, 2, 20, 0, 0, 0, 20, 1, 0, 1, 25, 0, 24, 3 )
