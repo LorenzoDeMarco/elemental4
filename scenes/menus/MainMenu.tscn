@@ -1,8 +1,18 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://themes/Default.theme" type="Theme" id=1]
 [ext_resource path="res://materials/ui/MainMenuBg.material" type="Material" id=2]
 [ext_resource path="res://icon.png" type="Texture" id=3]
+[ext_resource path="res://fonts/saira/SairaExtraCondensed-Regular.ttf" type="DynamicFontData" id=4]
+
+[sub_resource type="DynamicFont" id=1]
+size = 48
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+extra_spacing_top = -7
+extra_spacing_bottom = -7
+font_data = ExtResource( 4 )
 
 [node name="MainMenu" type="Panel"]
 material = ExtResource( 2 )
@@ -24,3 +34,13 @@ stretch_mode = 5
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="TitleLabel" type="Label" parent="."]
+margin_left = 96.0
+margin_top = 10.0
+margin_right = 392.0
+margin_bottom = 88.0
+custom_fonts/font = SubResource( 1 )
+text = "Elemental 4"
+valign = 1
+clip_text = true
