@@ -10,8 +10,8 @@ flags = 4
 load_path = "res://.import/elem_square.png-d784ec3259573ad434c3c446a25e0f2b.stex"
 
 [node name="Element" type="Control"]
-margin_right = 50.0
-margin_bottom = 50.0
+margin_right = 64.0
+margin_bottom = 64.0
 rect_min_size = Vector2( 50, 50 )
 script = ExtResource( 2 )
 __meta__ = {
@@ -33,8 +33,8 @@ rect_clip_content = true
 mouse_filter = 1
 custom_fonts/font = ExtResource( 3 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
-custom_constants/line_spacing = -12
-text = "Water"
+custom_constants/line_spacing = -5
+text = "Energy drink"
 align = 1
 autowrap = true
 clip_text = true
