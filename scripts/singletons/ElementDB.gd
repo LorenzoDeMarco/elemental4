@@ -6,16 +6,25 @@ var _db : Dictionary = {
 	ElementModel.ID_NONE: { 'id': ElementModel.ID_NONE, 'name': '', 'color': Color.transparent.to_html(false) }
 }
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	populate_db()
-
 func element_model_by_id(id: int) -> ElementModel:
 	populate_db()
 	if _db.keys().has(id):
-		return ElementModel.new(ElementModel.ID_NONE, "").from_dto(_db[id])
+		return Utility.element_model_from_dto(_db[id])
 	else:
 		return null
+
+func element_model_by_index(index: int) -> ElementModel:
+	populate_db()
+	if index < _db.size():
+		return Utility.element_model_from_dto(_db.values()[index])
+	else:
+		return null
+
+func get_db_size():
+	return _db.size()
+
+func get_db_first_key() -> int:
+	return _db.keys()[0] if _db.size() > 0 else -INF
 
 func populate_db():
 	if _db.size() <= 1:
@@ -47,7 +56,7 @@ func store_db():
 	var neg = _db[-1]
 	_db.erase(-1)
 	for k in _db.keys():
-		_db[k] = ElementModel.new(ElementModel.ID_NONE, "").from_dto(_db[k]).to_dto()
+		_db[k] = Utility.element_model_from_dto(_db[k]).to_dto()
 	print_debug(String(_db.size()) + " elements ready for saving.")
 	var data = to_json(_db.values())
 	var dbfile = File.new()

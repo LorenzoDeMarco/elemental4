@@ -1,0 +1,115 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://fonts/presets/Heading2.tres" type="DynamicFont" id=1]
+[ext_resource path="res://themes/Default.theme" type="Theme" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends PopupDialog
+
+var loader: FuncRef
+var current_page: int = 0
+var page_size: int = 50
+
+func _ready():
+	$PrevBtn.connect(\"pressed\", self, \"go_prev_page\")
+	$NextBtn.connect(\"pressed\", self, \"go_next_page\")
+	load_page(current_page)
+	_upd_buttons()
+
+func load_page(index: int) -> bool:
+	var data: Dictionary = loader.call_func(index, page_size)
+	if data['items'] != null:
+		$ItemList.clear()
+		$NextBtn.set_disabled(not data['more'])
+		for item in data['items']:
+			$ItemList.add_item(
+				item['text'] if 'text' in item else \"\", 
+				item['icon'] if 'icon' in item else null, 
+				item['selectable'] if 'selectable' in item else true)
+		return true
+	return false
+
+func go_prev_page():
+	if load_page(current_page - 1):
+		current_page -= 1
+	_upd_buttons()
+
+func go_next_page():
+	if load_page(current_page + 1):
+		current_page += 1
+	_upd_buttons()
+
+func _upd_buttons():
+	$PrevBtn.set_disabled(current_page == 0)
+"
+
+[node name="InventorySelectorPopupù" type="PopupDialog"]
+visible = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -256.0
+margin_top = -268.0
+margin_right = 256.0
+margin_bottom = 268.0
+theme = ExtResource( 2 )
+popup_exclusive = true
+script = SubResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Heading" type="Label" parent="."]
+anchor_right = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = 48.0
+custom_fonts/font = ExtResource( 1 )
+text = "Choose from inventory"
+align = 1
+valign = 1
+clip_text = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="ItemList" type="ItemList" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 112.0
+margin_right = -8.0
+margin_bottom = -38.0
+select_mode = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="PrevBtn" type="Button" parent="."]
+margin_left = 8.0
+margin_top = 80.0
+margin_right = 56.0
+margin_bottom = 106.0
+disabled = true
+text = "←"
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="NextBtn" type="Button" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -56.0
+margin_top = 80.0
+margin_right = -8.0
+margin_bottom = 106.0
+text = "→"
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}

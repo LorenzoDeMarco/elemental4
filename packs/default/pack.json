@@ -1,0 +1,15 @@
+{
+	"uniqueID": "default",
+	"target": "e4",
+	"schemaRev": 1
+	"name": "Default pack",
+	"description": "Porting of the original Elemental 3 elements and formulas.",
+	"author": "Ledom Software, Lorenzo De Marco",
+	"url": "https://ledomsoft.com",
+	"localizedInfo": {
+		"it": {
+			"name": "Pacchetto di base",
+			"description": "Elementi e formule originali di Elemental 3."
+		}
+	}
+}
