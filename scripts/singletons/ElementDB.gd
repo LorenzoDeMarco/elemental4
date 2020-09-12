@@ -1,6 +1,7 @@
 extends Node
 
 const FILEPATH_DB = "user://elems.json"
+const FILEPATH_PACKDB_DEFAULT = "res://packs/default/elems.json"
 
 var _db : Dictionary = {
 	ElementModel.ID_NONE: { 'id': ElementModel.ID_NONE, 'name': '', 'color': Color.transparent.to_html(false) }
@@ -31,9 +32,15 @@ func populate_db():
 		load_local_db()
 
 func load_local_db():
+	if not GlobalSettings.is_mobile:
+		_load_file(FILEPATH_DB)
+	else:
+		_load_file(FILEPATH_PACKDB_DEFAULT)
+
+func _load_file(path: String):
 	var dbfile = File.new()
-	if dbfile.file_exists(FILEPATH_DB):
-		if dbfile.open(FILEPATH_DB, File.READ) == OK:
+	if dbfile.file_exists(path):
+		if dbfile.open(path, File.READ) == OK:
 			var data = parse_json(dbfile.get_as_text())
 			dbfile.close()
 			if typeof(data) == TYPE_ARRAY:

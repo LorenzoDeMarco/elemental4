@@ -39,6 +39,7 @@ func update_element_display():
 		return
 	# Name
 	$ElemName.text = _model.name
+	$ElemName.get_font("font").set_size(0.21875 * rect_size.y)
 	# Colors
 	$ElemSquare.modulate = _model.color
 	$ElemName.add_color_override("font_color", Color.from_hsv(0, 0, 0 if 1 - _model.color.v < 0.2 else 1, 1))

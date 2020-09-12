@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/classic_pop.ogg-da1a126be32355551e214a5a23be4e95.oggstr"
+
+[deps]
+
+source_file="res://sounds/game/classic_pop.ogg"
+dest_files=[ "res://.import/classic_pop.ogg-da1a126be32355551e214a5a23be4e95.oggstr" ]
+
+[params]
+
+loop=false
+loop_offset=0

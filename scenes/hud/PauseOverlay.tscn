@@ -1,0 +1,114 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://fonts/presets/Heading1.tres" type="DynamicFont" id=1]
+[ext_resource path="res://prefabs/ui/Button.tscn" type="PackedScene" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+func _on_resume_pressed():
+	get_tree().set_pause(false)
+	queue_free()
+
+func _on_quit_pressed():
+	get_tree().quit()
+
+func _on_mainMenu_pressed():
+	get_tree().set_pause(false)
+	if GlobalSettings.is_mobile:
+		get_tree().change_scene(\"res://scenes/menus/MainMenu_Mobile.tscn\")
+	else:
+		get_tree().change_scene(\"res://scenes/menus/MainMenu.tscn\")
+"
+
+[node name="PauseOverlay" type="Control"]
+pause_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Darken" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.345098, 0.345098, 0.345098, 0.368627 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -128.0
+margin_top = -88.0
+margin_right = 128.0
+margin_bottom = 88.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="Label" parent="Panel"]
+anchor_right = 1.0
+margin_top = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+custom_fonts/font = ExtResource( 1 )
+text = "PAUSE"
+align = 1
+valign = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -8.0
+custom_constants/separation = 8
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Resume" parent="Panel/VBoxContainer" instance=ExtResource( 2 )]
+margin_right = 240.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 0, 32 )
+text = "Resume"
+
+[node name="Options" parent="Panel/VBoxContainer" instance=ExtResource( 2 )]
+margin_top = 40.0
+margin_right = 240.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 0, 32 )
+disabled = true
+text = "Options"
+
+[node name="MainMenu" parent="Panel/VBoxContainer" instance=ExtResource( 2 )]
+margin_top = 80.0
+margin_right = 240.0
+margin_bottom = 112.0
+rect_min_size = Vector2( 0, 32 )
+text = "Main menu"
+
+[node name="Quit" parent="Panel/VBoxContainer" instance=ExtResource( 2 )]
+margin_top = 120.0
+margin_right = 240.0
+margin_bottom = 152.0
+rect_min_size = Vector2( 0, 32 )
+text = "Quit"
+[connection signal="pressed" from="Panel/VBoxContainer/Resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/MainMenu" to="." method="_on_mainMenu_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/Quit" to="." method="_on_quit_pressed"]

@@ -1,20 +1,24 @@
 extends Panel
 
-const INVENTORY_ORIGIN = Vector2(16, 96)
+export var element_size : Vector2 = Vector2(64, 64)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Initial elements (air, water, fire, earth)
-	var origin = INVENTORY_ORIGIN
 	var base : int = 0
-	var count : int = 2
-	var num : int = 0
-	for i in range(4):
-		for c in range(count):
-			if num % 5 == 0:
-				origin += Vector2(68, 0)
-			var elem_node = preload("res://prefabs/ui/Element.tscn").instance()
-			elem_node.set_element_id(base + i)
-			elem_node.set_position(origin + Vector2(0, 68 * int(num % 5)))
-			$ElementsCollector.add_element(elem_node)
-			num += 1
+	for i in range(5):
+		var elem_node = preload("res://prefabs/ui/Element.tscn").instance()
+		elem_node.rect_size = element_size
+		elem_node.set_element_id(base + i if i != 4 else base)
+		$ElementsCollector.add_element(elem_node)
+		$ElementsCollector.drop_element_on(elem_node, get_node("QADropzone/QASlot" + str(i + 1)))
+
+
+func _on_nosfxbtn_toggled(button_pressed: bool) -> void:
+	GlobalSettings.set_gamesfx_enabled(not button_pressed)
+	GlobalSettings.set_uisfx_enabled(not button_pressed)
+
+
+func _on_pause_pressed() -> void:
+	add_child(preload("res://scenes/hud/PauseOverlay.tscn").instance())
+	get_tree().set_pause(true)

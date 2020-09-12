@@ -1,11 +1,10 @@
-[gd_resource type="VisualShader" load_steps=27 format=2]
+[gd_resource type="VisualShader" load_steps=25 format=2]
 
 [ext_resource path="res://addons/shaderV/tools/sinTime.gd" type="Script" id=1]
 [ext_resource path="res://addons/shaderV/uv/rotate.gd" type="Script" id=2]
 [ext_resource path="res://addons/shaderV/uv/animated/tilingNoffsetAnimated.gd" type="Script" id=3]
 [ext_resource path="res://addons/shaderV/rgba/gradient4corners.gd" type="Script" id=4]
 [ext_resource path="res://addons/shaderV/rgba/blendAwithB.gd" type="Script" id=5]
-[ext_resource path="res://addons/shaderV/rgba/blur/blur9sample.gd" type="Script" id=6]
 
 [sub_resource type="VisualShaderNodeInput" id=1]
 input_name = "uv"
@@ -40,6 +39,7 @@ script = ExtResource( 5 )
 
 [sub_resource type="VisualShaderNodeTextureUniform" id=10]
 uniform_name = "DetailTexture"
+texture_type = 1
 color_default = 1
 
 [sub_resource type="VisualShaderNodeScalarUniform" id=11]
@@ -48,29 +48,25 @@ uniform_name = "Angle"
 [sub_resource type="VisualShaderNodeVec3Uniform" id=12]
 uniform_name = "Movement"
 
-[sub_resource type="VisualShaderNodeCustom" id=13]
-default_input_values = [ 2, -1.0, 3, 0.5 ]
-script = ExtResource( 6 )
-
-[sub_resource type="VisualShaderNodeScalarUniform" id=14]
+[sub_resource type="VisualShaderNodeScalarUniform" id=13]
 uniform_name = "BlurRadius"
 
-[sub_resource type="VisualShaderNodeColorOp" id=15]
+[sub_resource type="VisualShaderNodeColorOp" id=14]
 default_input_values = [ 0, Vector3( 0, 0, 0 ), 1, Vector3( 1, 1, 1 ) ]
 operator = 2
 
-[sub_resource type="VisualShaderNodeVec3Uniform" id=16]
+[sub_resource type="VisualShaderNodeVec3Uniform" id=15]
 uniform_name = "Brightness"
 
-[sub_resource type="VisualShaderNodeScalarFunc" id=17]
+[sub_resource type="VisualShaderNodeScalarFunc" id=16]
 function = 12
 
-[sub_resource type="VisualShaderNodeVectorScalarMix" id=18]
+[sub_resource type="VisualShaderNodeVectorScalarMix" id=17]
 
-[sub_resource type="VisualShaderNodeColorConstant" id=19]
+[sub_resource type="VisualShaderNodeColorConstant" id=18]
 constant = Color( 0, 0.00921631, 0.589844, 1 )
 
-[sub_resource type="VisualShaderNodeCustom" id=20]
+[sub_resource type="VisualShaderNodeCustom" id=19]
 default_input_values = [ 1, Vector3( 1, 1, 1 ), 2, 1.0, 3, Vector3( 1, 1, 1 ), 4, 1.0, 5, Vector3( 1, 1, 1 ), 6, 1.0, 7, Vector3( 1, 1, 1 ), 8, 1.0 ]
 script = ExtResource( 4 )
 
@@ -80,8 +76,7 @@ render_mode blend_disabled;
 
 uniform float Angle;
 uniform vec3 Movement;
-uniform sampler2D DetailTexture : hint_black;
-uniform float BlurRadius;
+uniform sampler2D DetailTexture : hint_black_albedo;
 uniform vec3 Brightness;
 
 
@@ -108,35 +103,6 @@ vec3 r0tateUVFunc(vec3 _uv_r0tate, vec2 _pivot_r0tate, float _r0tation_r0tate){
 
 vec2 tilingNoffsetAnimatedFunc(vec2 _uv_tN0A, float _t1me_tN0A, vec2 _offset_tN0A){
 	return vec2(mod((_uv_tN0A.x + _offset_tN0A.x * _t1me_tN0A), 1.0), mod((_uv_tN0A.y + _offset_tN0A.y * _t1me_tN0A), 1.0));
-}
-
-// BlurBasic
-
-vec4 blur9sampleFunc(sampler2D _samp_b1ur, vec2 _uv_b1ur, float _lod_b1ur, float _rad_b1ur){
-	vec4 _c01r_b1ur = vec4(0.0);
-	if (_lod_b1ur < 0.0){
-		_c01r_b1ur = texture(_samp_b1ur, _uv_b1ur);
-		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(0, - _rad_b1ur) * 0.01);
-		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(0, _rad_b1ur) * 0.01);
-		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(- _rad_b1ur, 0) * 0.01);
-		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(_rad_b1ur, 0) * 0.01);
-		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(- _rad_b1ur, - _rad_b1ur) * 0.01);
-		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(- _rad_b1ur, _rad_b1ur) * 0.01);
-		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(_rad_b1ur, _rad_b1ur) * 0.01);
-		_c01r_b1ur += texture(_samp_b1ur, _uv_b1ur + vec2(_rad_b1ur, -_rad_b1ur) * 0.01);
-	}else{
-		_c01r_b1ur = textureLod(_samp_b1ur, _uv_b1ur, _lod_b1ur);
-		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(0, - _rad_b1ur) * 0.01, _lod_b1ur);
-		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(0, _rad_b1ur) * 0.01, _lod_b1ur);
-		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(- _rad_b1ur, 0) * 0.01, _lod_b1ur);
-		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(_rad_b1ur, 0) * 0.01, _lod_b1ur);
-		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(- _rad_b1ur, - _rad_b1ur) * 0.01, _lod_b1ur);
-		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(- _rad_b1ur, _rad_b1ur) * 0.01, _lod_b1ur);
-		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(_rad_b1ur, _rad_b1ur) * 0.01, _lod_b1ur);
-		_c01r_b1ur += textureLod(_samp_b1ur, _uv_b1ur + vec2(_rad_b1ur, -_rad_b1ur) * 0.01, _lod_b1ur);
-	}
-	_c01r_b1ur /= 9.0;
-	return _c01r_b1ur;
 }
 
 // BlendAwithB
@@ -237,25 +203,12 @@ void fragment() {
 		n_out21p1 = n_tex_read.a;
 	}
 
-// ScalarUniform:25
-	float n_out25p0 = BlurRadius;
-
-// BlurBasic:24
-	float n_in24p2 = -1.00000;
-	vec3 n_out24p0;
-	float n_out24p1;
-	{
-		vec4 n_out24p0n_out24p1 = blur9sampleFunc(DetailTexture, n_out17p0.xy, n_in24p2, n_out25p0);
-		n_out24p0 = n_out24p0n_out24p1.rgb;
-		n_out24p1 = n_out24p0n_out24p1.a;
-	}
-
 // BlendAwithB:20
 	float n_in20p4 = 1.00000;
 	vec3 n_out20p0;
 	float n_out20p1;
 	{
-		vec4 n_out20p0n_out20p1 = blendAwithBFunc(vec4(n_out6p0, n_out12p0), vec4(n_out24p0, n_out24p1), n_in20p4);
+		vec4 n_out20p0n_out20p1 = blendAwithBFunc(vec4(n_out6p0, n_out12p0), vec4(n_out21p0, n_out21p1), n_in20p4);
 		n_out20p0 = n_out20p0n_out20p1.rgb;
 		n_out20p1 = n_out20p0n_out20p1.a;
 	}
@@ -277,8 +230,7 @@ void light() {
 
 }
 "
-custom_defines = ""
-graph_offset = Vector2( 619, -61 )
+graph_offset = Vector2( 120, 59 )
 mode = 1
 modes/blend = 5
 flags/light_only = false
@@ -286,13 +238,13 @@ nodes/vertex/0/position = Vector2( 580, 140 )
 nodes/fragment/0/position = Vector2( 1700, 60 )
 nodes/fragment/2/node = SubResource( 8 )
 nodes/fragment/2/position = Vector2( -680, -400 )
-nodes/fragment/5/node = SubResource( 17 )
+nodes/fragment/5/node = SubResource( 16 )
 nodes/fragment/5/position = Vector2( 320, 140 )
-nodes/fragment/6/node = SubResource( 18 )
+nodes/fragment/6/node = SubResource( 17 )
 nodes/fragment/6/position = Vector2( 620, -80 )
-nodes/fragment/7/node = SubResource( 19 )
+nodes/fragment/7/node = SubResource( 18 )
 nodes/fragment/7/position = Vector2( -680, -300 )
-nodes/fragment/9/node = SubResource( 20 )
+nodes/fragment/9/node = SubResource( 19 )
 nodes/fragment/9/position = Vector2( -240, -400 )
 nodes/fragment/10/node = SubResource( 1 )
 nodes/fragment/10/position = Vector2( -580, 100 )
@@ -311,17 +263,15 @@ nodes/fragment/19/position = Vector2( 320, 240 )
 nodes/fragment/20/node = SubResource( 9 )
 nodes/fragment/20/position = Vector2( 1100, 60 )
 nodes/fragment/21/node = SubResource( 10 )
-nodes/fragment/21/position = Vector2( 640, 340 )
+nodes/fragment/21/position = Vector2( 640, 240 )
 nodes/fragment/22/node = SubResource( 11 )
 nodes/fragment/22/position = Vector2( 60, 360 )
 nodes/fragment/23/node = SubResource( 12 )
 nodes/fragment/23/position = Vector2( 60, 440 )
-nodes/fragment/24/node = SubResource( 13 )
-nodes/fragment/24/position = Vector2( 860, 240 )
-nodes/fragment/25/node = SubResource( 14 )
+nodes/fragment/25/node = SubResource( 13 )
 nodes/fragment/25/position = Vector2( 60, 520 )
-nodes/fragment/26/node = SubResource( 15 )
+nodes/fragment/26/node = SubResource( 14 )
 nodes/fragment/26/position = Vector2( 1440, 60 )
-nodes/fragment/27/node = SubResource( 16 )
+nodes/fragment/27/node = SubResource( 15 )
 nodes/fragment/27/position = Vector2( 1120, -40 )
-nodes/fragment/connections = PoolIntArray( 2, 0, 9, 1, 9, 0, 6, 0, 2, 0, 9, 7, 7, 0, 9, 3, 7, 0, 9, 5, 11, 0, 6, 1, 9, 1, 12, 0, 11, 1, 12, 1, 2, 0, 11, 3, 2, 0, 11, 5, 7, 0, 11, 1, 7, 0, 11, 7, 13, 0, 5, 0, 5, 0, 6, 2, 5, 0, 12, 2, 19, 0, 17, 0, 6, 0, 20, 0, 12, 0, 20, 1, 10, 0, 19, 0, 10, 0, 9, 0, 10, 0, 11, 0, 18, 0, 17, 2, 17, 0, 21, 0, 22, 0, 19, 1, 23, 0, 17, 1, 17, 0, 24, 1, 21, 2, 24, 0, 24, 1, 20, 3, 24, 0, 20, 2, 20, 1, 0, 1, 25, 0, 24, 3, 20, 0, 26, 0, 26, 0, 0, 0, 27, 0, 26, 1 )
+nodes/fragment/connections = PoolIntArray( 2, 0, 9, 1, 9, 0, 6, 0, 2, 0, 9, 7, 7, 0, 9, 3, 7, 0, 9, 5, 11, 0, 6, 1, 9, 1, 12, 0, 11, 1, 12, 1, 2, 0, 11, 3, 2, 0, 11, 5, 7, 0, 11, 1, 7, 0, 11, 7, 13, 0, 5, 0, 5, 0, 6, 2, 5, 0, 12, 2, 19, 0, 17, 0, 6, 0, 20, 0, 12, 0, 20, 1, 10, 0, 19, 0, 10, 0, 9, 0, 10, 0, 11, 0, 18, 0, 17, 2, 17, 0, 21, 0, 22, 0, 19, 1, 23, 0, 17, 1, 20, 1, 0, 1, 20, 0, 26, 0, 26, 0, 0, 0, 27, 0, 26, 1, 21, 0, 20, 2, 21, 1, 20, 3 )

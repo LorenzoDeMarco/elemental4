@@ -1,8 +1,22 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://assets/ui/dropzone.png" type="Texture" id=1]
 
+[sub_resource type="GDScript" id=1]
+script/source = "extends Popup
+
+export var opaque : bool setget set_opaque
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+func set_opaque(value: bool):
+	$NinePatchRect.modulate = Color(\"#040404\") if value else Color(\"#8e8e8e\")
+"
+
 [node name="Dialog" type="Popup"]
+visible = true
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -12,6 +26,7 @@ margin_top = -200.0
 margin_right = 256.0
 margin_bottom = 200.0
 popup_exclusive = true
+script = SubResource( 1 )
 
 [node name="NinePatchRect" type="NinePatchRect" parent="."]
 modulate = Color( 0.556863, 0.556863, 0.556863, 1 )

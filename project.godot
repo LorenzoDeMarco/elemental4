@@ -710,10 +710,17 @@ run/main_scene="res://scenes/BootLoading.tscn"
 boot_splash/image="res://assets/branding/splash_light.png"
 boot_splash/bg_color=Color( 1, 1, 1, 1 )
 config/icon="res://icon.png"
+config/windows_native_icon="res://icon.ico"
+
+[audio]
+
+default_bus_layout="res://sounds/E4AudioBusLayout.tres"
+output_latency=10
 
 [autoload]
 
 Utility="*res://scripts/singletons/Utility.gd"
+GlobalSettings="*res://scripts/singletons/GlobalSettings.gd"
 ElementDB="*res://scripts/singletons/ElementDB.gd"
 FormulaDB="*res://scripts/singletons/FormulaDB.gd"
 DBOrchestrator="*res://scripts/singletons/DBOrchestrator.gd"
@@ -722,6 +729,8 @@ DBOrchestrator="*res://scripts/singletons/DBOrchestrator.gd"
 
 mouse_cursor/custom_image="res://assets/ui/cursor.png"
 mouse_cursor/tooltip_position_offset=Vector2( 50, 50 )
+window/stretch/mode="2d"
+window/stretch/aspect="expand"
 
 [gui]
 
@@ -729,6 +738,10 @@ theme/custom="res://themes/Default.theme"
 
 [rendering]
 
+quality/driver/driver_name="GLES2"
+quality/intended_usage/framebuffer_allocation=0
+quality/intended_usage/framebuffer_allocation.mobile=0
+vram_compression/import_s3tc=false
 vram_compression/import_etc=true
 vram_compression/import_etc2=false
 environment/default_environment="res://default_env.tres"

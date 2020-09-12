@@ -1,6 +1,7 @@
 extends Node
 
 const FILEPATH_DB = "user://formulas.json"
+const FILEPATH_PACKDB_DEFAULT = "res://packs/default/formulas.json"
 
 var _db : Dictionary = {}
 
@@ -42,14 +43,20 @@ func populate_db():
 		load_local_db()
 
 func load_local_db():
+	if not GlobalSettings.is_mobile:
+		_load_file(FILEPATH_DB)
+	else:
+		_load_file(FILEPATH_PACKDB_DEFAULT)
+
+func _load_file(path: String):
 	var dbfile = File.new()
-	if dbfile.file_exists(FILEPATH_DB):
-		if dbfile.open(FILEPATH_DB, File.READ) == OK:
+	if dbfile.file_exists(path):
+		if dbfile.open(path, File.READ) == OK:
 			var data = parse_json(dbfile.get_as_text())
 			dbfile.close()
 			if typeof(data) == TYPE_ARRAY:
-				for formula in data:
-					_db[formula['id'] as int] = _sanitize(formula)
+				for elem in data:
+					_db[elem['id'] as int] = _sanitize(elem)
 				print_debug(String(_db.size()) + " formulas loaded.")
 				return
 	_db = {}

@@ -17,6 +17,8 @@ func get_controls_intersecting(target: Control, parent: Node, max_depth: int = 0
 	var own_rect = Rect2(target.rect_global_position, target.rect_size)
 	var found = []
 	var clip_max : int = 0
+	if max_depth == -1 and parent is Control and own_rect.clip(parent.get_global_rect()).get_area() > 0:
+		return [parent]
 	for node in parent.get_children():
 		if node == target: continue
 		if node is Control:

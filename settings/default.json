@@ -1,3 +1,5 @@
 {
-	
+	"audio.uisfx": true,
+	"audio.gamesfx": true,
+	"audio.music": true
 }
