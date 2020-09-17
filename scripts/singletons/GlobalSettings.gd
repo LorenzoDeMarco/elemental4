@@ -6,12 +6,23 @@ var _audio_uisfx_enabled : bool = true
 var _audio_gamesfx_enabled : bool = true
 var _audio_music_enabled : bool = true
 
+var _scene_tween : Tween = null
+
+const VERSION = "0.2.0-alpha"
+const IS_ALPHA : bool = true
+
 const SKEY_AUDIO_UISFX = 'audio.uisfx'
 const SKEY_AUDIO_GAMESFX = 'audio.gamesfx'
 const SKEY_AUDIO_MUSIC = 'audio.music'
 
 const PATH_SETTINGS = 'user://settings.json'
 const PATH_SETTINGS_DEFAULT = 'res://settings/default.json'
+
+const AUDIO_GAME_CLASSIC_POP = preload('res://sounds/game/classic_pop.ogg')
+const AUDIO_UI_BUTTON_DOWN = preload('res://sounds/ui/button_down.ogg')
+const AUDIO_UI_BUTTON_HOVER = preload('res://sounds/ui/button_hover.ogg')
+const AUDIO_UI_GENERIC = preload('res://sounds/ui/generic.ogg')
+const AUDIO_UI_TOGGLE = preload('res://sounds/ui/toggle.ogg')
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -24,11 +35,38 @@ func _ready():
 	_spawn_audio_player("Music")
 	is_mobile = OS.has_feature("mobile")
 
+func register_scene_tween(t: Tween):
+	_scene_tween = t
+
+func get_scene_tween() -> Tween:
+	return _scene_tween
+
 func _spawn_audio_player(bus: String):
 	var ap = AudioStreamPlayer.new()
 	ap.name = bus + "Player"
 	ap.bus = bus
 	add_child(ap)
+
+func play_game_sfx(audio_res):
+	var sfxp = get_game_sfx_player()
+	if sfxp == null: return
+	if sfxp.playing: sfxp.stop()
+	sfxp.stream = audio_res
+	sfxp.play()
+
+func play_ui_sfx(audio_res):
+	var sfxp = get_ui_sfx_player()
+	if sfxp == null: return
+	if sfxp.playing: sfxp.stop()
+	sfxp.stream = audio_res
+	sfxp.play()
+
+func play_music(audio_res):
+	var sfxp = get_music_player()
+	if sfxp == null: return
+	if sfxp.playing: sfxp.stop()
+	sfxp.stream = audio_res
+	sfxp.play()
 
 func save_settings() -> bool:
 	var td : Dictionary = {}

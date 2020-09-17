@@ -11,6 +11,7 @@ func _init():
 	connect("lift", self, "_on_lift")
 
 func _on_drop(element, position):
+	element.set_parent_container(self)
 	_items.append(element)
 	if grid_snap:
 		var pos = rect_global_position \
@@ -20,6 +21,7 @@ func _on_drop(element, position):
 			element.rect_global_position = pos
 
 func _on_lift(element, position):
+	element.set_parent_container(null)
 	_items.erase(element)
 
 func get_items() -> Array:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=2]
+[gd_scene load_steps=45 format=2]
 
 [ext_resource path="res://prefabs/ui/ElementSlot.tscn" type="PackedScene" id=1]
 [ext_resource path="res://prefabs/ui/ElementsRoot.tscn" type="PackedScene" id=2]
@@ -12,6 +12,8 @@
 [ext_resource path="res://addons/shaderV/rgba/noise/simplex2d.gd" type="Script" id=10]
 [ext_resource path="res://scripts/game/SellingLogic.gd" type="Script" id=11]
 [ext_resource path="res://prefabs/ui/Button.tscn" type="PackedScene" id=12]
+[ext_resource path="res://scripts/game/MixerLogic.gd" type="Script" id=13]
+[ext_resource path="res://prefabs/ui/ElemShortInfoPanel.tscn" type="PackedScene" id=14]
 
 [sub_resource type="VisualShaderNodeColorUniform" id=1]
 uniform_name = "NoiseColor"
@@ -452,75 +454,7 @@ shader_param/FireColor1 = Color( 0.870588, 0.572549, 0, 1 )
 shader_param/FireColor2 = Color( 0.929412, 0.305882, 0, 1 )
 shader_param/FireCoeff = 0.05
 
-[sub_resource type="GDScript" id=30]
-script/source = "extends Node
-
-export var mixer_slots : Array
-export var elements_root : NodePath
-export var target_slot : NodePath
-
-export var consume_inputs : bool
-export var auto_duplicate : bool
-
-var _has_result: bool = false
-var _result : NodePath
-
-func _ready():
-	for np in mixer_slots:
-		var sn = get_node(np)
-		sn.connect(\"element_in\", self, \"_on_inventory_update\", [null])
-		sn.connect(\"element_out\", self, \"_on_inventory_update\", [null])
-
-func _on_inventory_update(_element, _position):
-	if mixer_slots == null or mixer_slots.size() == 0: return
-	# Clear any previous result
-	if _has_result:
-		get_node(_result).queue_free()
-		_has_result = false
-	# Get formula with dropped elements
-	var inputs = []
-	var in_items = []
-	for slot in mixer_slots:
-		var i = get_node(slot).get_item()
-		if i != null: in_items.append(i)
-	if in_items.size() < 2: return
-	for element_node in in_items:
-		inputs.append(element_node.get_element_id())
-	var formula_mdl : FormulaModel = FormulaDB.formula_by_inputs(inputs)
-	if formula_mdl != null:
-		if not _has_result:
-			# Play popping sound
-			var sfxp = GlobalSettings.get_game_sfx_player()
-			if sfxp != null:
-				sfxp.stop()
-				sfxp.stream = preload(\"res://sounds/game/classic_pop.ogg\")
-				sfxp.play()
-		_has_result = true
-		# Make element from formula
-		var elem_node : Element = preload(\"res://prefabs/ui/Element.tscn\").instance()
-		elem_node.rect_size = get_parent().element_size
-		elem_node.set_element_id(formula_mdl.output_id)
-		# Destroy inputs when result is lifted
-		elem_node.connect(\"begin_drag\", self, \"_on_result_lifted\", [in_items], CONNECT_ONESHOT)
-		# Snap to output slot
-		get_node(elements_root).add_child(elem_node)
-		elem_node.set_global_position(get_node(target_slot).rect_global_position)
-		# Save for later
-		_result = elem_node.get_path()
-	else:
-		_has_result = false
-
-func _on_result_lifted(_position, inputs: Array):
-	if consume_inputs:
-		# Destroy inputs
-		for input in inputs:
-			input.queue_free()
-	_has_result = false
-	if auto_duplicate:
-		_on_inventory_update(null, null)
-"
-
-[sub_resource type="DynamicFont" id=31]
+[sub_resource type="DynamicFont" id=30]
 size = 24
 font_data = ExtResource( 6 )
 
@@ -536,14 +470,13 @@ __meta__ = {
 element_size = Vector2( 100, 100 )
 
 [node name="MixerLogic" type="Node" parent="."]
-script = SubResource( 30 )
-mixer_slots = [ NodePath("../SlotsCollector/MixInputSlot1"), NodePath("../SlotsCollector/MixInputSlot2"), NodePath("../SlotsCollector/MixInputSlot3"), NodePath("../SlotsCollector/MixInputSlot4") ]
-elements_root = NodePath("../ElementsCollector")
+script = ExtResource( 13 )
+mixer_slots = [ NodePath("../MixerDropzone/MixInputSlot1"), NodePath("../MixerDropzone/MixInputSlot2"), NodePath("../MixerDropzone/MixInputSlot3"), NodePath("../MixerDropzone/MixInputSlot4") ]
 target_slot = NodePath("../MixerDropzone/MixResultSlot")
 
 [node name="SellingLogic" type="Node" parent="."]
 script = ExtResource( 11 )
-slot = NodePath("../SlotsCollector/SellSlot")
+slot = NodePath("../SellingDropzone/SellSlot")
 
 [node name="Title" type="Label" parent="."]
 margin_left = 7.0
@@ -557,38 +490,89 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="SellingDropzone" parent="." instance=ExtResource( 3 )]
-anchor_left = 1.0
-anchor_top = 1.0
-margin_left = -328.0
-margin_top = -160.0
-margin_right = -184.0
-margin_bottom = -8.0
-rect_min_size = Vector2( 144, 152 )
+[node name="QADropzone" parent="." instance=ExtResource( 3 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 7.0
+margin_top = 88.0
+margin_right = 592.0
+margin_bottom = 240.0
+rect_min_size = Vector2( 585, 152 )
 
-[node name="SellingLabel" type="Label" parent="SellingDropzone"]
+[node name="QALabel" type="Label" parent="QADropzone"]
 anchor_right = 1.0
 margin_bottom = 36.0
-custom_fonts/font = SubResource( 31 )
+custom_fonts/font = SubResource( 30 )
 custom_colors/font_color = Color( 0, 0, 0, 0.196078 )
-text = "Sell"
+text = "Quick access"
 clip_text = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="QASlot1" parent="QADropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 17.0
+margin_top = 40.0
+margin_right = 117.0
+margin_bottom = 140.0
+allow_stack = true
+is_input = true
+
+[node name="QASlot2" parent="QADropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 129.0
+margin_top = 40.0
+margin_right = 229.0
+margin_bottom = 140.0
+allow_stack = true
+is_input = true
+
+[node name="QASlot3" parent="QADropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 241.0
+margin_top = 40.0
+margin_right = 341.0
+margin_bottom = 140.0
+allow_stack = true
+is_input = true
+
+[node name="QASlot4" parent="QADropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 353.0
+margin_top = 40.0
+margin_right = 453.0
+margin_bottom = 140.0
+allow_stack = true
+is_input = true
+
+[node name="QASlot5" parent="QADropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 465.0
+margin_top = 40.0
+margin_right = 565.0
+margin_bottom = 140.0
+allow_stack = true
+is_input = true
+
 [node name="InverterDropzone" parent="." instance=ExtResource( 3 )]
+anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 600.0
 margin_top = 88.0
-margin_right = -87.0
+margin_right = 944.0
 margin_bottom = 240.0
 rect_min_size = Vector2( 336, 152 )
 
 [node name="InverterLabel" type="Label" parent="InverterDropzone"]
 anchor_right = 1.0
 margin_bottom = 36.0
-custom_fonts/font = SubResource( 31 )
+custom_fonts/font = SubResource( 30 )
 custom_colors/font_color = Color( 0, 0, 0, 0.196078 )
 text = "Invert"
 clip_text = true
@@ -612,34 +596,74 @@ __meta__ = {
 }
 
 [node name="InvertResultSlot" parent="InverterDropzone" instance=ExtResource( 1 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
 margin_left = 212.0
 margin_top = 40.0
 margin_right = 312.0
 margin_bottom = 140.0
 
-[node name="MixerDropzone" parent="." instance=ExtResource( 3 )]
+[node name="InvertInputSlot" parent="InverterDropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 16.0
+margin_top = 40.0
+margin_right = 116.0
+margin_bottom = 140.0
+is_input = true
+
+[node name="SellingDropzone" parent="." instance=ExtResource( 3 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 1640.0
+margin_top = 88.0
+margin_right = 1784.0
+margin_bottom = 240.0
+rect_min_size = Vector2( 144, 152 )
+
+[node name="SellingLabel" type="Label" parent="SellingDropzone"]
+anchor_right = 1.0
+margin_bottom = 36.0
+custom_fonts/font = SubResource( 30 )
+custom_colors/font_color = Color( 0, 0, 0, 0.196078 )
+text = "Sell"
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SellSlot" parent="SellingDropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+anchor_left = 1.0
 anchor_top = 1.0
-margin_left = 8.0
-margin_top = -160.0
-margin_right = -336.0
-margin_bottom = -8.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -124.0
+margin_top = -116.0
+margin_right = -24.0
+margin_bottom = -16.0
+is_input = true
+
+[node name="MixerDropzone" parent="." instance=ExtResource( 3 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 952.0
+margin_top = 88.0
+margin_right = 1632.0
+margin_bottom = 240.0
 rect_min_size = Vector2( 680, 152 )
 
 [node name="MixResultSlot" parent="MixerDropzone" instance=ExtResource( 1 )]
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_bottom = 0.5
-margin_left = -120.0
-margin_top = -40.0
-margin_right = -20.0
-margin_bottom = 60.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 560.0
+margin_top = -116.0
+margin_right = 660.0
+margin_bottom = -16.0
 
 [node name="MixerLabel" type="Label" parent="MixerDropzone"]
 anchor_right = 1.0
 margin_bottom = 36.0
-custom_fonts/font = SubResource( 31 )
+custom_fonts/font = SubResource( 30 )
 custom_colors/font_color = Color( 0, 0, 0, 0.196078 )
 text = "Mix"
 clip_text = true
@@ -649,14 +673,12 @@ __meta__ = {
 }
 
 [node name="Arrow" type="NinePatchRect" parent="MixerDropzone"]
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-margin_left = -216.0
-margin_top = -4.0
-margin_right = -128.0
-margin_bottom = 20.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 464.0
+margin_top = -80.0
+margin_right = 552.0
+margin_bottom = -56.0
 texture = ExtResource( 4 )
 patch_margin_right = 10
 __meta__ = {
@@ -664,79 +686,64 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="SlotsCollector" type="Control" parent="."]
-anchor_right = 1.0
+[node name="MixInputSlot1" parent="MixerDropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+anchor_top = 1.0
 anchor_bottom = 1.0
-__meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
-}
+margin_left = 16.0
+margin_top = -116.0
+margin_right = 116.0
+margin_bottom = -16.0
+is_input = true
 
-[node name="MixInputSlot1" parent="SlotsCollector" instance=ExtResource( 1 )]
+[node name="MixInputSlot2" parent="MixerDropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
 anchor_top = 1.0
-anchor_right = 0.0
-margin_left = 24.0
-margin_top = -124.0
-margin_right = 124.0
-margin_bottom = -24.0
+anchor_bottom = 1.0
+margin_left = 128.0
+margin_top = -116.0
+margin_right = 228.0
+margin_bottom = -16.0
 is_input = true
 
-[node name="MixInputSlot2" parent="SlotsCollector" instance=ExtResource( 1 )]
+[node name="MixInputSlot3" parent="MixerDropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
 anchor_top = 1.0
-anchor_right = 0.0
-margin_left = 136.0
-margin_top = -124.0
-margin_right = 236.0
-margin_bottom = -24.0
+anchor_bottom = 1.0
+margin_left = 240.0
+margin_top = -116.0
+margin_right = 340.0
+margin_bottom = -16.0
 is_input = true
 
-[node name="MixInputSlot3" parent="SlotsCollector" instance=ExtResource( 1 )]
+[node name="MixInputSlot4" parent="MixerDropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
 anchor_top = 1.0
-anchor_right = 0.0
-margin_left = 248.0
-margin_top = -124.0
-margin_right = 348.0
-margin_bottom = -24.0
+anchor_bottom = 1.0
+margin_left = 352.0
+margin_top = -116.0
+margin_right = 452.0
+margin_bottom = -16.0
 is_input = true
 
-[node name="MixInputSlot4" parent="SlotsCollector" instance=ExtResource( 1 )]
-anchor_top = 1.0
-anchor_right = 0.0
-margin_left = 360.0
-margin_top = -124.0
-margin_right = 460.0
-margin_bottom = -24.0
-is_input = true
-
-[node name="SellSlot" parent="SlotsCollector" instance=ExtResource( 1 )]
-anchor_left = 1.0
-anchor_top = 1.0
-margin_left = -308.0
-margin_top = -124.0
-margin_right = -208.0
-margin_bottom = -24.0
-is_input = true
-
-[node name="InvertInputSlot" parent="SlotsCollector" instance=ExtResource( 1 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 616.0
-margin_top = 128.0
-margin_right = 716.0
-margin_bottom = 228.0
-is_input = true
-
-[node name="InventoryDropzone" parent="SlotsCollector" instance=ExtResource( 3 )]
+[node name="InventoryDropzone" parent="." groups=[
+"element_collectors",
+] instance=ExtResource( 3 )]
 margin_left = 7.0
 margin_top = 248.0
 margin_right = -88.0
 margin_bottom = -168.0
 accept_drop = true
+grid_size = Vector2( 1.1, 1.1 )
 
-[node name="InventoryLabel" type="Label" parent="SlotsCollector/InventoryDropzone"]
+[node name="InventoryLabel" type="Label" parent="InventoryDropzone"]
 anchor_right = 1.0
 margin_bottom = 36.0
-custom_fonts/font = SubResource( 31 )
+custom_fonts/font = SubResource( 30 )
 custom_colors/font_color = Color( 0, 0, 0, 0.196078 )
 text = "Inventory"
 clip_text = true
@@ -744,92 +751,40 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="QADropzone" parent="SlotsCollector" instance=ExtResource( 3 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 7.0
-margin_top = 88.0
-margin_right = 592.0
-margin_bottom = 240.0
-rect_min_size = Vector2( 585, 152 )
-
-[node name="QALabel" type="Label" parent="SlotsCollector/QADropzone"]
-anchor_right = 1.0
-margin_bottom = 36.0
-custom_fonts/font = SubResource( 31 )
-custom_colors/font_color = Color( 0, 0, 0, 0.196078 )
-text = "Quick access"
-clip_text = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="QASlot1" parent="SlotsCollector/QADropzone" instance=ExtResource( 1 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 17.0
-margin_top = 40.0
-margin_right = 117.0
-margin_bottom = 140.0
-allow_stack = true
-is_input = true
-
-[node name="QASlot2" parent="SlotsCollector/QADropzone" instance=ExtResource( 1 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 129.0
-margin_top = 40.0
-margin_right = 229.0
-margin_bottom = 140.0
-allow_stack = true
-is_input = true
-
-[node name="QASlot3" parent="SlotsCollector/QADropzone" instance=ExtResource( 1 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 241.0
-margin_top = 40.0
-margin_right = 341.0
-margin_bottom = 140.0
-allow_stack = true
-is_input = true
-
-[node name="QASlot4" parent="SlotsCollector/QADropzone" instance=ExtResource( 1 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 353.0
-margin_top = 40.0
-margin_right = 453.0
-margin_bottom = 140.0
-allow_stack = true
-is_input = true
-
-[node name="QASlot5" parent="SlotsCollector/QADropzone" instance=ExtResource( 1 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 465.0
-margin_top = 40.0
-margin_right = 565.0
-margin_bottom = 140.0
-allow_stack = true
-is_input = true
-
-[node name="ElementsCollector" parent="." instance=ExtResource( 2 )]
-mouse_filter = 2
-
 [node name="NoSFXBtn" parent="." instance=ExtResource( 12 )]
-margin_left = 848.0
-margin_top = 440.0
-margin_right = 920.0
-margin_bottom = 512.0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -160.0
+margin_top = -160.0
+margin_right = -88.0
+margin_bottom = -88.0
 toggle_mode = true
 text = "No SFX"
 
-[node name="NoSFXBtn2" parent="." instance=ExtResource( 12 )]
-margin_left = 848.0
-margin_top = 520.0
-margin_right = 920.0
-margin_bottom = 592.0
+[node name="PauseBtn" parent="." instance=ExtResource( 12 )]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -160.0
+margin_top = -80.0
+margin_right = -88.0
+margin_bottom = -8.0
 text = "Pause"
+
+[node name="InfoPanel" parent="." instance=ExtResource( 14 )]
+anchor_top = 1.0
+margin_left = 8.0
+margin_top = -160.0
+margin_right = -168.0
+margin_bottom = -8.0
+
+[node name="ElementsCollector" parent="." instance=ExtResource( 2 )]
+mouse_filter = 2
+stacking_collectors_group = "element_collectors"
+
+[node name="Tween" type="Tween" parent="."]
 [connection signal="toggled" from="NoSFXBtn" to="." method="_on_nosfxbtn_toggled"]
-[connection signal="pressed" from="NoSFXBtn2" to="." method="_on_pause_pressed"]
+[connection signal="pressed" from="PauseBtn" to="." method="_on_pause_pressed"]

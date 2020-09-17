@@ -16,7 +16,7 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="GDScript" id=3]
+[sub_resource type="GDScript" id=2]
 script/source = "extends Panel
 
 export var title: String setget set_title, get_title
@@ -57,7 +57,7 @@ func _upd_elem_visibility():
 
 "
 
-[sub_resource type="DynamicFont" id=2]
+[sub_resource type="DynamicFont" id=3]
 use_filter = true
 extra_spacing_top = -5
 extra_spacing_bottom = -7
@@ -68,7 +68,7 @@ margin_right = 280.0
 margin_bottom = 50.0
 rect_min_size = Vector2( 280, 50 )
 custom_styles/panel = SubResource( 1 )
-script = SubResource( 3 )
+script = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -92,7 +92,7 @@ anchor_bottom = 1.0
 margin_left = 50.0
 margin_top = -25.0
 margin_bottom = -2.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 3 )
 text = "1 minute ago"
 clip_text = true
 __meta__ = {
@@ -115,3 +115,4 @@ anchor_bottom = 1.0
 margin_right = 50.0
 margin_bottom = 0.0
 can_be_dragged = false
+animate = false

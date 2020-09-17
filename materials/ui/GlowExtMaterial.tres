@@ -1,0 +1,133 @@
+[gd_resource type="ShaderMaterial" load_steps=9 format=2]
+
+[ext_resource path="res://addons/shaderV/rgba/glow/outerGlowEmpty.gd" type="Script" id=1]
+[ext_resource path="res://assets/ui/elem_square.png" type="Texture" id=2]
+
+[sub_resource type="VisualShaderNodeCustom" id=1]
+default_input_values = [ 2, -1.0, 3, 1.0, 4, 1.0, 5, Vector3( 1, 1, 1 ), 6, 1.0 ]
+script = ExtResource( 1 )
+
+[sub_resource type="VisualShaderNodeInput" id=2]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeScalarUniform" id=3]
+uniform_name = "Size"
+
+[sub_resource type="VisualShaderNodeTextureUniform" id=4]
+uniform_name = "Texture"
+texture_type = 1
+color_default = 1
+
+[sub_resource type="VisualShaderNodeColorOp" id=5]
+operator = 2
+
+[sub_resource type="VisualShader" id=6]
+code = "shader_type canvas_item;
+uniform sampler2D Texture : hint_black_albedo;
+uniform float Size;
+
+
+// OuterGlowEmpty
+
+vec4 outerGl0wEmptyFunc(sampler2D _samp_1ngl0wEmpt, vec2 _uv_1ngl0wEmpt, float _l0d_1ngl0wEmpt, float _rad_1ngl0wEmpt, float _1ntns_1ngl0wEmpt, vec4 _c0l_1ngl0wEmpt){
+	_rad_1ngl0wEmpt = abs(_rad_1ngl0wEmpt);
+	
+	vec4 _c01r_1ngl0w = vec4(0.0);
+	float _a1pha_1ngl0w_1nv = 0.0;
+	float _a1pha_1ngl0w_b1 = 0.0;
+	int _am0nt_1ngl0w = 3;
+	
+	if (_l0d_1ngl0wEmpt < 0.0)
+		_c01r_1ngl0w = texture(_samp_1ngl0wEmpt, _uv_1ngl0wEmpt);
+	else
+		_c01r_1ngl0w = textureLod(_samp_1ngl0wEmpt, _uv_1ngl0wEmpt, _l0d_1ngl0wEmpt);
+	
+	_am0nt_1ngl0w = int(min(_rad_1ngl0wEmpt + 7.0, 14.0));
+	for(int x = - _am0nt_1ngl0w; x <= _am0nt_1ngl0w; x++) {
+		for(int y = - _am0nt_1ngl0w; y <= _am0nt_1ngl0w; y++) {
+			vec2 _c00rd_b1r_cst = _uv_1ngl0wEmpt + vec2(float(x), float(y)) * _rad_1ngl0wEmpt * 0.01;
+			_a1pha_1ngl0w_b1 += textureLod(_samp_1ngl0wEmpt, _c00rd_b1r_cst, 0.0).a;
+		}
+	}
+	int _nmb_ne1ghb0urs_b1r_cst = (_am0nt_1ngl0w * 2 + 1) * (_am0nt_1ngl0w * 2 + 1);
+	_a1pha_1ngl0w_b1 /= float(_nmb_ne1ghb0urs_b1r_cst);
+	
+	_a1pha_1ngl0w_1nv = _a1pha_1ngl0w_b1; // inversion
+	_a1pha_1ngl0w_1nv *= (1.0 - _c01r_1ngl0w.a); // masking
+	
+	if (_a1pha_1ngl0w_1nv > 0.0)
+		_a1pha_1ngl0w_1nv *= (_1ntns_1ngl0wEmpt + 1.0);
+	
+	return vec4(_c0l_1ngl0wEmpt.rgb, _a1pha_1ngl0w_1nv * _c0l_1ngl0wEmpt.a);
+}
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// Input:4
+	vec3 n_out4p0 = vec3(UV, 0.0);
+
+// TextureUniform:7
+	vec3 n_out7p0;
+	float n_out7p1;
+	{
+		vec4 n_tex_read = texture(Texture, n_out4p0.xy);
+		n_out7p0 = n_tex_read.rgb;
+		n_out7p1 = n_tex_read.a;
+	}
+
+// ScalarUniform:6
+	float n_out6p0 = Size;
+
+// OuterGlowEmpty:2
+	float n_in2p2 = -1.00000;
+	float n_in2p4 = 1.00000;
+	vec3 n_in2p5 = vec3(1.00000, 1.00000, 1.00000);
+	float n_in2p6 = 1.00000;
+	vec3 n_out2p0;
+	float n_out2p1;
+	{
+		vec4 n_out2p0n_out2p1 = outerGl0wEmptyFunc(Texture, n_out4p0.xy, n_in2p2, n_out6p0, n_in2p4, vec4(n_in2p5, n_in2p6));
+		n_out2p0 = n_out2p0n_out2p1.rgb;
+		n_out2p1 = n_out2p0n_out2p1.a;
+	}
+
+// ColorOp:8
+	vec3 n_out8p0 = min(n_out7p0, n_out2p0);
+
+// Output:0
+	COLOR.rgb = n_out8p0;
+	COLOR.a = n_out7p1;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( 26, -18 )
+mode = 1
+flags/light_only = false
+nodes/fragment/0/position = Vector2( 1080, 60 )
+nodes/fragment/2/node = SubResource( 1 )
+nodes/fragment/2/position = Vector2( 580, 20 )
+nodes/fragment/4/node = SubResource( 2 )
+nodes/fragment/4/position = Vector2( 0, 140 )
+nodes/fragment/6/node = SubResource( 3 )
+nodes/fragment/6/position = Vector2( 180, 240 )
+nodes/fragment/7/node = SubResource( 4 )
+nodes/fragment/7/position = Vector2( 180, 40 )
+nodes/fragment/8/node = SubResource( 5 )
+nodes/fragment/8/position = Vector2( 860, 20 )
+nodes/fragment/connections = PoolIntArray( 4, 0, 2, 1, 6, 0, 2, 3, 7, 2, 2, 0, 4, 0, 7, 0, 7, 1, 0, 1, 8, 0, 0, 0, 7, 0, 8, 0, 2, 0, 8, 1 )
+nodes/light/0/position = Vector2( 640, 140 )
+
+[resource]
+shader = SubResource( 6 )
+shader_param/Size = 1.0
+shader_param/Texture = ExtResource( 2 )

@@ -1,0 +1,288 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://themes/Default.theme" type="Theme" id=1]
+[ext_resource path="res://fonts/presets/Heading1.tres" type="DynamicFont" id=2]
+[ext_resource path="res://prefabs/ui/Button.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scripts/ui/scenes/LoginOverlay.gd" type="Script" id=4]
+
+[sub_resource type="StyleBoxEmpty" id=1]
+
+[sub_resource type="StyleBoxEmpty" id=2]
+
+[sub_resource type="StyleBoxEmpty" id=3]
+
+[node name="LoginOverlay" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 1 )
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="BgColor" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0.505882, 1, 0.470588 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -160.0
+margin_top = -196.0
+margin_right = 160.0
+margin_bottom = 196.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="Label" parent="Panel"]
+anchor_right = 1.0
+margin_top = -72.0
+margin_bottom = -1.0
+custom_fonts/font = ExtResource( 2 )
+text = "Let the fun begin!"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Subtitle" type="Label" parent="Panel"]
+anchor_right = 1.0
+margin_bottom = 48.0
+text = "Log in to your account and start playing!"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TabContainer" type="TabContainer" parent="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 48.0
+custom_styles/panel = SubResource( 1 )
+tabs_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LoginTab" type="Panel" parent="Panel/TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_styles/panel = SubResource( 2 )
+
+[node name="UsernameLbl" type="Label" parent="Panel/TabContainer/LoginTab"]
+anchor_right = 1.0
+margin_left = 16.0
+margin_top = 8.0
+margin_right = -16.0
+margin_bottom = 40.0
+text = "Username:"
+valign = 1
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="UsernameTxt" type="LineEdit" parent="Panel/TabContainer/LoginTab"]
+anchor_right = 1.0
+margin_left = 24.0
+margin_top = 48.0
+margin_right = -24.0
+margin_bottom = 78.0
+max_length = 30
+context_menu_enabled = false
+placeholder_text = "e.g. FooBar35"
+caret_blink = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PasswordLbl" type="Label" parent="Panel/TabContainer/LoginTab"]
+anchor_right = 1.0
+margin_left = 16.0
+margin_top = 80.0
+margin_right = -16.0
+margin_bottom = 112.0
+text = "Password:"
+valign = 1
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PassTxt" type="LineEdit" parent="Panel/TabContainer/LoginTab"]
+anchor_right = 1.0
+margin_left = 24.0
+margin_top = 120.0
+margin_right = -24.0
+margin_bottom = 150.0
+max_length = 100
+secret = true
+context_menu_enabled = false
+caret_blink = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RememberMe" type="CheckBox" parent="Panel/TabContainer/LoginTab"]
+margin_left = 16.0
+margin_top = 160.0
+margin_right = 304.0
+margin_bottom = 190.0
+text = "Remember me"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ForgotUsername" type="LinkButton" parent="Panel/TabContainer/LoginTab"]
+margin_left = 16.0
+margin_top = 200.0
+margin_right = 288.0
+margin_bottom = 222.0
+text = "I forgot my username"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ForgotPassword" type="LinkButton" parent="Panel/TabContainer/LoginTab"]
+margin_left = 16.0
+margin_top = 232.0
+margin_right = 288.0
+margin_bottom = 254.0
+text = "I forgot my password"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Register" type="LinkButton" parent="Panel/TabContainer/LoginTab"]
+margin_left = 16.0
+margin_top = 264.0
+margin_right = 288.0
+margin_bottom = 286.0
+text = "Register"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Continue" parent="Panel/TabContainer/LoginTab" instance=ExtResource( 3 )]
+margin_left = 16.0
+margin_top = 304.0
+margin_right = 304.0
+margin_bottom = 334.0
+text = "Continue"
+
+[node name="RegisterTab" type="Panel" parent="Panel/TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_styles/panel = SubResource( 3 )
+
+[node name="UsernameLbl" type="Label" parent="Panel/TabContainer/RegisterTab"]
+anchor_right = 1.0
+margin_left = 16.0
+margin_top = 8.0
+margin_right = -16.0
+margin_bottom = 40.0
+text = "Username:"
+valign = 1
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="UsernameTxt" type="LineEdit" parent="Panel/TabContainer/RegisterTab"]
+anchor_right = 1.0
+margin_left = 24.0
+margin_top = 48.0
+margin_right = -24.0
+margin_bottom = 78.0
+max_length = 30
+context_menu_enabled = false
+placeholder_text = "e.g. FooBar35"
+caret_blink = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PasswordLbl" type="Label" parent="Panel/TabContainer/RegisterTab"]
+anchor_right = 1.0
+margin_left = 16.0
+margin_top = 80.0
+margin_right = -16.0
+margin_bottom = 112.0
+text = "Password:"
+valign = 1
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PassTxt" type="LineEdit" parent="Panel/TabContainer/RegisterTab"]
+anchor_right = 1.0
+margin_left = 24.0
+margin_top = 120.0
+margin_right = -24.0
+margin_bottom = 150.0
+max_length = 100
+secret = true
+context_menu_enabled = false
+caret_blink = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EmailLbl" type="Label" parent="Panel/TabContainer/RegisterTab"]
+anchor_right = 1.0
+margin_left = 16.0
+margin_top = 152.0
+margin_right = -16.0
+margin_bottom = 184.0
+text = "Email:"
+valign = 1
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EmailTxt" type="LineEdit" parent="Panel/TabContainer/RegisterTab"]
+anchor_right = 1.0
+margin_left = 24.0
+margin_top = 190.0
+margin_right = -24.0
+margin_bottom = 220.0
+max_length = 100
+context_menu_enabled = false
+caret_blink = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Register" type="LinkButton" parent="Panel/TabContainer/RegisterTab"]
+margin_left = 16.0
+margin_top = 264.0
+margin_right = 304.0
+margin_bottom = 286.0
+text = "I already have an account"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Continue2" parent="Panel/TabContainer/RegisterTab" instance=ExtResource( 3 )]
+margin_left = 16.0
+margin_top = 304.0
+margin_right = 304.0
+margin_bottom = 334.0
+text = "Register"
+[connection signal="pressed" from="Panel/TabContainer/LoginTab/Register" to="." method="_switch_tab_register"]
+[connection signal="pressed" from="Panel/TabContainer/LoginTab/Continue" to="." method="_on_login_pressed"]
+[connection signal="pressed" from="Panel/TabContainer/RegisterTab/Register" to="." method="_switch_tab_login"]

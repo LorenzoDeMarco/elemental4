@@ -5,27 +5,15 @@ script/source = "extends Button
 
 func _on_button_down():
 	if disabled or toggle_mode: return
-	var sfxp = GlobalSettings.get_ui_sfx_player()
-	if sfxp == null: return
-	sfxp.stop()
-	sfxp.stream = preload(\"res://sounds/ui/button_down.ogg\")
-	sfxp.play()
+	GlobalSettings.play_ui_sfx(GlobalSettings.AUDIO_UI_BUTTON_DOWN)
 
 func _on_button_hover():
 	if disabled: return
-	var sfxp = GlobalSettings.get_ui_sfx_player()
-	if sfxp == null: return
-	sfxp.stop()
-	sfxp.stream = preload(\"res://sounds/ui/button_hover.ogg\")
-	sfxp.play()
+	GlobalSettings.play_ui_sfx(GlobalSettings.AUDIO_UI_BUTTON_HOVER)
 
 func _on_button_toggled(_button_pressed):
 	if disabled or not toggle_mode: return
-	var sfxp = GlobalSettings.get_ui_sfx_player()
-	if sfxp == null: return
-	sfxp.stop()
-	sfxp.stream = preload(\"res://sounds/ui/toggle.ogg\")
-	sfxp.play()
+	GlobalSettings.play_ui_sfx(GlobalSettings.AUDIO_UI_TOGGLE)
 "
 
 [node name="Button" type="Button"]
@@ -35,7 +23,7 @@ script = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="button_down" from="." to="." method="_on_button_down"]
-[connection signal="focus_entered" from="." to="." method="_on_button_hover"]
-[connection signal="mouse_entered" from="." to="." method="_on_button_hover"]
-[connection signal="toggled" from="." to="." method="_on_button_toggled"]
+[connection signal="button_down" from="." to="." method="_on_button_down" flags=3]
+[connection signal="focus_entered" from="." to="." method="_on_button_hover" flags=3]
+[connection signal="mouse_entered" from="." to="." method="_on_button_hover" flags=3]
+[connection signal="toggled" from="." to="." method="_on_button_toggled" flags=3]

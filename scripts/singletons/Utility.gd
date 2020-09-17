@@ -47,7 +47,7 @@ func formula_model_from_dto(dto: Dictionary) -> FormulaModel:
 	var inputs: Array = dto['inputs']
 	inputs.sort()
 	var output: int = dto['output']
-	var birth: int = int(dto['birthTime']) if dto['birthTime'] is String else dto['birthTime']
+	var birth: int = int(dto['birth']) if dto['birth'] is String else dto['birth']
 	var votes: int = dto['votes']
 	var consensus: int = dto['consensus']
 	var new_element: bool = dto['isNewElement']

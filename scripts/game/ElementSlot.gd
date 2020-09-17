@@ -28,6 +28,7 @@ func _ready():
 
 func _on_drop(element, position):
 	if accepts_drop():
+		element.set_parent_container(self)
 		if allow_stack:
 			element.rect_global_position = element.rect_global_position.move_toward(Vector2.UP, _contents.size() * 2)
 			_contents.append(element)
@@ -38,6 +39,7 @@ func _on_drop(element, position):
 
 func _on_lift(element, position):
 	if _contents.has(element):
+		element.set_parent_container(null)
 		var idx = _contents.find(element) + 1
 		_contents.erase(element)
 		if allow_stack:

@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Node",
+"class": "BaseDB",
+"language": "GDScript",
+"path": "res://scripts/singletons/BaseDB.gd"
+}, {
 "base": "Control",
 "class": "Draggable",
 "language": "GDScript",
@@ -585,6 +590,7 @@ _global_script_classes=[ {
 "path": "res://addons/shaderV/tools/vec2Compose.gd"
 } ]
 _global_script_class_icons={
+"BaseDB": "",
 "Draggable": "",
 "Dropzone": "",
 "Element": "",
@@ -715,26 +721,32 @@ config/windows_native_icon="res://icon.ico"
 [audio]
 
 default_bus_layout="res://sounds/E4AudioBusLayout.tres"
-output_latency=10
 
 [autoload]
 
 Utility="*res://scripts/singletons/Utility.gd"
+HTTPUtil="*res://scripts/singletons/HTTPUtil.gd"
 GlobalSettings="*res://scripts/singletons/GlobalSettings.gd"
 ElementDB="*res://scripts/singletons/ElementDB.gd"
 FormulaDB="*res://scripts/singletons/FormulaDB.gd"
 DBOrchestrator="*res://scripts/singletons/DBOrchestrator.gd"
+Player="*res://scripts/singletons/Player.gd"
 
 [display]
 
+window/size/width=1920
+window/size/height=1080
 mouse_cursor/custom_image="res://assets/ui/cursor.png"
 mouse_cursor/tooltip_position_offset=Vector2( 50, 50 )
-window/stretch/mode="2d"
-window/stretch/aspect="expand"
+window/stretch/aspect="keep_width"
 
 [gui]
 
 theme/custom="res://themes/Default.theme"
+
+[locale]
+
+locale_filter=[ 1, [ "en", "it" ] ]
 
 [rendering]
 

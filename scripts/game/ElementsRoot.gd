@@ -12,6 +12,7 @@ func add_element(element: Element):
 	element.connect("end_drag", self, "element_end_drag", [element])
 
 func drop_element_on(element: Element, target: Control, position: Vector2 = Vector2.INF) -> bool:
+	if target == null: return false
 	if target.has_method("accepts_drop") and (not target.accepts_drop()):
 		return false
 	var snm: bool = target.has_method("should_snap")

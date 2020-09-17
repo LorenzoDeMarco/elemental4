@@ -1,9 +1,13 @@
-extends Node
+extends BaseDB
 
 const FILEPATH_DB = "user://formulas.json"
 const FILEPATH_PACKDB_DEFAULT = "res://packs/default/formulas.json"
 
-var _db : Dictionary = {}
+func _init():
+	filepath_db = FILEPATH_DB
+	filepath_packdb_default = FILEPATH_PACKDB_DEFAULT
+	remote_head_url = "http://localhost:3100/api/universe/formulas/count"
+	remote_sync_url = "http://localhost:3100/api/universe/formulas"
 
 func formula_model_by_id(id: int) -> FormulaModel:
 	populate_db()
@@ -38,42 +42,9 @@ func formula_by_inputs_strict_order(input_ids: Array):
 			return Utility.formula_model_from_dto(val)
 	return null
 
-func populate_db():
-	if _db.size() <= 1:
-		load_local_db()
-
-func load_local_db():
-	if not GlobalSettings.is_mobile:
-		_load_file(FILEPATH_DB)
-	else:
-		_load_file(FILEPATH_PACKDB_DEFAULT)
-
-func _load_file(path: String):
-	var dbfile = File.new()
-	if dbfile.file_exists(path):
-		if dbfile.open(path, File.READ) == OK:
-			var data = parse_json(dbfile.get_as_text())
-			dbfile.close()
-			if typeof(data) == TYPE_ARRAY:
-				for elem in data:
-					_db[elem['id'] as int] = _sanitize(elem)
-				print_debug(String(_db.size()) + " formulas loaded.")
-				return
-	_db = {}
-
-func _sanitize(dto: Dictionary) -> Dictionary:
+func _sanitize(dto) -> Dictionary:
 	dto.erase('publicBirthTime')
 	return dto
 
-func store_db():
-	for k in _db.keys():
-		_db[k] = Utility.formula_model_from_dto(_db[k]).to_dto()
-	print_debug(String(_db.size()) + " formulas ready for saving.")
-	var data = to_json(_db.values())
-	var dbfile = File.new()
-	if dbfile.open(FILEPATH_DB, File.WRITE) == OK:
-		dbfile.store_string(data)
-		dbfile.close()
-		print_debug(String(_db.size()) + " formulas saved.")
-	else:
-		print_debug("Failed to save formulas to file.")
+func _prepare_for_save(db_elem):
+	return Utility.formula_model_from_dto(db_elem).to_dto()

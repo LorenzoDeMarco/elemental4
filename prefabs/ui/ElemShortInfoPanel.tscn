@@ -1,0 +1,89 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://fonts/saira/SairaExtraCondensed-Regular.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://fonts/saira/SairaExtraCondensed-Light.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://assets/ui/dropzone.png" type="Texture" id=3]
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Control
+
+var element_model: ElementModel setget set_element_model
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	set_element_model(null)
+
+func set_element_model(model: ElementModel):
+	if model == null:
+		$Panel/Name.text = \"\"
+		$Panel/Mark.text = \"\"
+	else:
+		$Panel/Name.text = model.name
+		$Panel/Mark.text = model.mark
+		var t = GlobalSettings.get_scene_tween()
+		t.interpolate_property($Panel/Mark, \"percent_visible\", 0, 1, 1.5, Tween.TRANS_LINEAR)
+		if not t.is_active(): t.start()
+"
+
+[sub_resource type="StyleBoxTexture" id=1]
+texture = ExtResource( 3 )
+region_rect = Rect2( 0, 0, 128, 128 )
+margin_left = 10.0
+margin_right = 10.0
+margin_top = 10.0
+margin_bottom = 10.0
+
+[sub_resource type="DynamicFont" id=3]
+size = 28
+outline_color = Color( 0, 0, 0, 1 )
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=4]
+size = 20
+use_mipmaps = true
+use_filter = true
+extra_spacing_top = -6
+extra_spacing_bottom = -7
+font_data = ExtResource( 1 )
+
+[node name="ElemShortInfoPanel" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_styles/panel = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Name" type="Label" parent="Panel"]
+anchor_right = 1.0
+margin_bottom = 56.0
+custom_fonts/font = SubResource( 3 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Element name here"
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Mark" type="Label" parent="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 48.0
+custom_fonts/font = SubResource( 4 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Element mark goes here"
+autowrap = true
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
