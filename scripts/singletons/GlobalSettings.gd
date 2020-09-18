@@ -1,12 +1,15 @@
 extends Node
 
 var is_mobile: bool = false
+var internet_access: bool = false
 
 var _audio_uisfx_enabled : bool = true
 var _audio_gamesfx_enabled : bool = true
 var _audio_music_enabled : bool = true
 
 var _scene_tween : Tween = null
+
+signal internet_status_changed(status)
 
 const VERSION = "0.2.0-alpha"
 const IS_ALPHA : bool = true
@@ -34,6 +37,13 @@ func _ready():
 	_spawn_audio_player("GameSFX")
 	_spawn_audio_player("Music")
 	is_mobile = OS.has_feature("mobile")
+	check_internet(true)
+
+func check_internet(force_emit: bool = false):
+	var status = Utility.internet_test()
+	if force_emit or (status != internet_access):
+		emit_signal("internet_status_changed", status)
+	internet_access = status
 
 func register_scene_tween(t: Tween):
 	_scene_tween = t

@@ -32,7 +32,10 @@ func get_db_max_key() -> int:
 func populate_db():
 	if _db.size() <= 1:
 		load_local_db()
-		load_remote_db()
+		if Utility.internet_test():
+			load_remote_db()
+		emit_signal("db_sync_done")
+			
 
 func load_remote_db():
 	HTTPUtil.request(funcref(self, "_remote_data_head"), HTTPClient.METHOD_GET, remote_head_url, \
