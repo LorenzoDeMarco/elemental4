@@ -6,8 +6,8 @@ const FILEPATH_PACKDB_DEFAULT = "res://packs/default/formulas.json"
 func _init():
 	filepath_db = FILEPATH_DB
 	filepath_packdb_default = FILEPATH_PACKDB_DEFAULT
-	remote_head_url = "http://localhost:3100/api/universe/formulas/count"
-	remote_sync_url = "http://localhost:3100/api/universe/formulas"
+	remote_head_url = GlobalSettings.PRIMARY_SERVER_URL + "/api/universe/formulas/count"
+	remote_sync_url = GlobalSettings.PRIMARY_SERVER_URL + "/api/universe/formulas"
 
 func formula_model_by_id(id: int) -> FormulaModel:
 	populate_db()

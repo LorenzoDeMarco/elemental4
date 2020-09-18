@@ -31,6 +31,7 @@ func _on_inventory_update(_element, _position):
 	for element_node in in_items:
 		inputs.append(element_node.get_element_id())
 	var formula_mdl : FormulaModel = FormulaDB.formula_by_inputs(inputs)
+	get_node(target_slot).get_child(0).visible = (formula_mdl == null)
 	if formula_mdl != null:
 		if not _has_result:
 			# Play popping sound
@@ -63,3 +64,19 @@ func _on_result_lifted(_position, inputs: Array):
 	_has_result = false
 	if auto_duplicate:
 		_on_inventory_update(null, null)
+
+
+func _on_suggest_pressed():
+	# Get inputs
+	var inputs = []
+	var in_items = []
+	for slot in mixer_slots:
+		var i = get_node(slot).get_item()
+		if i != null: in_items.append(i)
+	if in_items.size() < 2: return
+	for element_node in in_items:
+		inputs.append(element_node.get_element_id())
+	# Show "suggest formula" overlay
+	var sgui = preload("res://scenes/hud/SuggestFormulaOverlay.tscn").instance()
+	sgui.formula_input_ids = inputs
+	get_tree().get_root().add_child(sgui)

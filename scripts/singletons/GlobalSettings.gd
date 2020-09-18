@@ -11,6 +11,8 @@ var _scene_tween : Tween = null
 
 signal internet_status_changed(status)
 
+const PRIMARY_SERVER_URL = "http://localhost:3100"
+
 const VERSION = "0.2.0-alpha"
 const IS_ALPHA : bool = true
 

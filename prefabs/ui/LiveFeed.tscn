@@ -2,39 +2,62 @@
 
 [ext_resource path="res://fonts/presets/Heading2.tres" type="DynamicFont" id=1]
 
-[sub_resource type="GDScript" id=12]
+[sub_resource type="GDScript" id=1]
 script/source = "extends Control
+
+export var max_records: int = 15
+
+enum FeedEventType {
+	UserRegistered = 0
+}
 
 # Live Feed controller
 
 func _ready():
-	var tot_elems: int = ElementDB.get_db_size()
-	var fake_time : float = 0
-	for i in range(12):
-		fake_time += i + (randf() * i) + randi() % 6
-		var user: String = [\"FBar\", \"_xX_jdoe_Xx_\", \"tumw15\", \"4lph4game\", \"ledomSoft\"][randi() % 5]
-		
-		var fe = preload(\"res://prefabs/ui/LiveFeedRecord.tscn\").instance()
-		
-		var is_elem: bool = randi() % 2 == 0
-		if is_elem:
-			var ix: int = randi() % tot_elems
-			var mdl: ElementModel = ElementDB.element_model_by_index(ix)
-			fe.element_id = mdl.id
-			fe.title = user + \" discovered '\" + mdl.name + \"'!\"
-		else:
-			var game: String = [\"Showdown!\", \"Time Bomb\", \"Master Collector\"][randi() % 3]
-			fe.title = user + \" won a \" + game + \" match!\"
-		fe.subtitle = str(int(fake_time)) + \" minutes ago\"
-		if fe.title.length() > 36:
-			fe.title = fe.title.substr(0, 33) + \"...\"
-		$ScrollContainer/VBoxContainer.add_child(fe)
+	GlobalSettings.connect(\"internet_status_changed\", self, \"_on_inet_state_changed\", [], CONNECT_DEFERRED)
+
+func _add_event_record(e: Dictionary):
+	var fe = preload(\"res://prefabs/ui/LiveFeedRecord.tscn\").instance()
+	fe.subtitle = Utility.date_dict_to_readable( \\
+		Utility.date_dict_from_ISO(e['timestamp'])
+	)
+	match int(e['event_type']):
+		FeedEventType.UserRegistered:
+			fe.title = e['event_data']['username'] + \" joined for the first time!\"
+			fe.icon = preload(\"res://assets/ui/icons/user.png\")
+		_: # Unsupported
+			fe.title = \"**ERROR**\"
+			fe.subtitle = \"\"
+	if fe.title.length() > 36:
+		fe.title = fe.title.substr(0, 33) + \"…\"
+	$ScrollContainer/VBoxContainer.add_child(fe)
+	var cc = $ScrollContainer/VBoxContainer.get_child_count()
+	while cc > max_records:
+		$ScrollContainer/VBoxContainer.get_child(cc - 1) \\
+			.queue_free()
+		cc -= 1
+
+func _on_data(resp: HTTPUtil.Response):
+	if resp.response_code == HTTPClient.RESPONSE_OK:
+		var jpr = JSON.parse(resp.body.get_string_from_utf8())
+		if jpr.error != OK: return
+		if typeof(jpr.result) == TYPE_ARRAY:
+			for event in jpr.result:
+				_add_event_record(event)
+
+func _on_inet_state_changed(state: bool):
+	if state: _refresh_data()
+
+func _refresh_data():
+	HTTPUtil.request(funcref(self, \"_on_data\"), HTTPClient.METHOD_GET, 
+		GlobalSettings.PRIMARY_SERVER_URL + \"/api/events/latest\",
+		[\"Content-Type: application/json\"], \"\\\"%s\\\"\" % Utility.date_dict_to_ISO(OS.get_datetime(true)))
 "
 
 [node name="LiveFeed" type="Control"]
 anchor_bottom = 1.0
 margin_right = 344.0
-script = SubResource( 12 )
+script = SubResource( 1 )
 __meta__ = {
 "_edit_lock_": true,
 "_edit_use_anchors_": false

@@ -66,3 +66,55 @@ func internet_test() -> bool:
 		OS.delay_msec(500)
 	hc.close()
 	return hc.get_status() == HTTPClient.STATUS_CONNECTED
+
+func date_dict_to_ISO(dict: Dictionary, timezone_offset_minutes: int = 0) -> String:
+	return \
+		String(dict.year) + "-" + \
+		String(dict.month) + "-" + \
+		String(dict.day) + "T" + \
+		String(dict.hour) + ":" + \
+		String(dict.minute) + ":" + \
+		String(dict.second) + ".000" + (
+			"Z" if timezone_offset_minutes == 0
+			else (
+				("+" if timezone_offset_minutes > 0 else "-") + \
+				String(int(floor(timezone_offset_minutes / 60))) + ":" + \
+				String(timezone_offset_minutes % 60)
+			)
+		)
+
+func date_dict_from_ISO(iso: String) -> Dictionary:
+	var tmp: Dictionary = {}
+	var ln = iso.length()
+	if ln >= 4:
+		tmp['year'] = int(iso.substr(0, 4))
+	if ln >= 7:
+		if iso[4] != '-': return {}
+		tmp['month'] = int(iso.substr(5, 2))
+	if ln >= 10:
+		if iso[7] != '-': return {}
+		tmp['day'] = int(iso.substr(8, 2))
+	tmp['hour'] = 0
+	tmp['minute'] = 0
+	tmp['second'] = 0
+	tmp['weekday'] = 0
+	if 'T' in iso:
+		if ln < 16: return {}
+		tmp['hour'] = int(iso.substr(11, 2))
+		if iso[13] != ':': return {}
+		tmp['minute'] = int(iso.substr(14, 2))
+		tmp['utc'] = iso.find_last("Z") != -1
+		if ln > 16 and iso[16] == ':':
+			tmp['second'] = int(iso.substr(17, 2))
+	return tmp
+
+func date_dict_to_readable(dict: Dictionary, 
+	format: String = "{day}/{month}/{year} {hour}:{minute}:{second}") -> String:
+	var tmp : Dictionary = {}
+	tmp['year'] = ("%04d" % dict.year) if 'year' in dict else '1970'
+	tmp['month'] = ("%02d" % dict.month) if 'month' in dict else '01'
+	tmp['day'] = ("%d" % dict.day) if 'day' in dict else '1'
+	tmp['hour'] = ("%02d" % dict.hour) if 'hour' in dict else '00'
+	tmp['minute'] = ("%02d" % dict.minute) if 'minute' in dict else '00'
+	tmp['second'] = ("%02d" % dict.second) if 'second' in dict else '00'
+	return format.format(tmp)

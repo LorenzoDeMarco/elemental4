@@ -1,10 +1,10 @@
 extends Node
 class_name BaseDB
 
-var filepath_db = "user://elems.json"
-var filepath_packdb_default = "res://packs/default/elems.json"
-var remote_head_url = "http://localhost:3100/api/universe/elements/count"
-var remote_sync_url = "http://localhost:3100/api/universe/elements"
+var filepath_db : String = ""
+var filepath_packdb_default : String = ""
+var remote_head_url : String = ""
+var remote_sync_url : String = ""
 
 signal db_sync_progress(added_count)
 signal db_sync_done()
