@@ -473,6 +473,7 @@ __meta__ = {
 script = ExtResource( 13 )
 mixer_slots = [ NodePath("../MixerDropzone/MixInputSlot1"), NodePath("../MixerDropzone/MixInputSlot2"), NodePath("../MixerDropzone/MixInputSlot3"), NodePath("../MixerDropzone/MixInputSlot4") ]
 target_slot = NodePath("../MixerDropzone/MixResultSlot")
+suggest_new_btn = NodePath("../MixerDropzone/MixResultSlot/SuggestNewBtn")
 auto_duplicate = true
 
 [node name="SellingLogic" type="Node" parent="."]
@@ -717,6 +718,7 @@ margin_right = 456.0
 margin_bottom = 88.0
 
 [node name="SuggestNewBtn" type="TextureButton" parent="MixerDropzone/MixResultSlot"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 8.0

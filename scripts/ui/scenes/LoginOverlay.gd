@@ -32,5 +32,5 @@ func _on_login_pressed() -> void:
 		errc += 1
 	if errc > 0: return
 	Player.connect("signin_state_changed", self, "_on_signin_state_changed", [], CONNECT_DEFERRED | CONNECT_ONESHOT)
-	if Player.online_signin(usern, passw.sha256_text()) != OK:
+	if Player.online_signin(usern, passw.sha256_text(), $Panel/TabContainer/LoginTab/RememberMe.pressed) != OK:
 		_on_signin_state_changed(false)

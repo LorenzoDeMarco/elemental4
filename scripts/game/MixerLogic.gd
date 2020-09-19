@@ -2,6 +2,7 @@ extends Node
 
 export var mixer_slots : Array
 export var target_slot : NodePath
+export var suggest_new_btn : NodePath
 
 export var consume_inputs : bool
 export var auto_duplicate : bool
@@ -16,6 +17,7 @@ func _ready():
 		sn.connect("element_out", self, "_on_inventory_update", [null])
 
 func _on_inventory_update(_element, _position):
+	get_node(suggest_new_btn).visible = false
 	if mixer_slots == null or mixer_slots.size() == 0: return
 	# Clear any previous result
 	if _has_result:
@@ -31,7 +33,6 @@ func _on_inventory_update(_element, _position):
 	for element_node in in_items:
 		inputs.append(element_node.get_element_id())
 	var formula_mdl : FormulaModel = FormulaDB.formula_by_inputs(inputs)
-	get_node(target_slot).get_child(0).visible = (formula_mdl == null)
 	if formula_mdl != null:
 		if not _has_result:
 			# Play popping sound
@@ -53,7 +54,10 @@ func _on_inventory_update(_element, _position):
 		elem_node.set_parent_container(ts)
 		# Save for later
 		_result = elem_node.get_path()
+		# Trigger achievement
+		Player.mixed_element(ElementDB.element_model_by_id(formula_mdl.output_id))
 	else:
+		get_node(suggest_new_btn).visible = true
 		_has_result = false
 
 func _on_result_lifted(_position, inputs: Array):

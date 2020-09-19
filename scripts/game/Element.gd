@@ -17,6 +17,8 @@ export var element_id : int setget set_element_id, get_element_id
 export var element_color : Color setget ,get_element_color
 var element_model : ElementModel setget ,get_element_model
 
+var model_override : ElementModel = null
+
 signal show_info(model)
 signal hide_info()
 
@@ -97,7 +99,7 @@ func _ready():
 
 func update_element_display():
 	# Fetch model
-	_model = ElementDB.element_model_by_id(_element_id)
+	_model = ElementDB.element_model_by_id(_element_id) if model_override == null else model_override
 	if _model == null:
 		return
 	# Name

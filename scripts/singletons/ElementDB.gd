@@ -3,6 +3,11 @@ extends BaseDB
 const FILEPATH_DB = "user://elems.json"
 const FILEPATH_PACKDB_DEFAULT = "res://packs/default/elems.json"
 
+var _pack_name : String = "default"
+
+func get_pack_name() -> String:
+	return _pack_name
+
 func _init():
 	filepath_db = FILEPATH_DB
 	filepath_packdb_default = FILEPATH_PACKDB_DEFAULT

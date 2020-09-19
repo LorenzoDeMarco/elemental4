@@ -8,10 +8,12 @@ var _audio_gamesfx_enabled : bool = true
 var _audio_music_enabled : bool = true
 
 var _scene_tween : Tween = null
+var _notif_adder : FuncRef = null
 
 signal internet_status_changed(status)
 
-const PRIMARY_SERVER_URL = "http://localhost:3100"
+const OVERRIDE_DESKTOPALWAYS = true
+const PRIMARY_SERVER_URL = "https://ledomsoft.com:3101"
 
 const VERSION = "0.2.0-alpha"
 const IS_ALPHA : bool = true
@@ -44,14 +46,22 @@ func _ready():
 func check_internet(force_emit: bool = false):
 	var status = Utility.internet_test()
 	if force_emit or (status != internet_access):
+		internet_access = status
 		emit_signal("internet_status_changed", status)
 	internet_access = status
 
 func register_scene_tween(t: Tween):
 	_scene_tween = t
 
+func register_notification_adder(fn: FuncRef):
+	_notif_adder = fn
+
 func get_scene_tween() -> Tween:
 	return _scene_tween
+
+func add_notification(title: String, subtitle: String = "", icon: Texture = null):
+	if _notif_adder != null:
+		_notif_adder.call_func(title, subtitle, icon)
 
 func _spawn_audio_player(bus: String):
 	var ap = AudioStreamPlayer.new()

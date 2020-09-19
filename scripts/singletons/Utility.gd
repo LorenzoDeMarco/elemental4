@@ -64,7 +64,6 @@ func internet_test() -> bool:
 	while hc.get_status() == HTTPClient.STATUS_CONNECTING or hc.get_status() == HTTPClient.STATUS_RESOLVING:
 		hc.poll()
 		OS.delay_msec(500)
-	hc.close()
 	return hc.get_status() == HTTPClient.STATUS_CONNECTED
 
 func date_dict_to_ISO(dict: Dictionary, timezone_offset_minutes: int = 0) -> String:
@@ -106,6 +105,8 @@ func date_dict_from_ISO(iso: String) -> Dictionary:
 		tmp['utc'] = iso.find_last("Z") != -1
 		if ln > 16 and iso[16] == ':':
 			tmp['second'] = int(iso.substr(17, 2))
+	if iso.ends_with("+00:00"):
+		tmp['utc'] = true
 	return tmp
 
 func date_dict_to_readable(dict: Dictionary, 

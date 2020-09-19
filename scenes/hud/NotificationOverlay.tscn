@@ -1,0 +1,51 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://themes/Default.theme" type="Theme" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+func _ready():
+	GlobalSettings.register_notification_adder(funcref(self, \"add_notification\"))
+	Player.connect(\"achievement_done\", self, \"_on_event\", [\"achievement\"], CONNECT_DEFERRED)
+
+func add_notification(title: String, subtitle: String = \"\", icon: Texture = null):
+	raise()
+	var ni = preload(\"res://prefabs/ui/NotificationItem.tscn\").instance()
+	ni.title = title
+	ni.subtitle = subtitle
+	if icon != null: ni.icon = icon
+	$VBoxContainer.add_child(ni)
+
+func _on_event(id, data, type):
+	match type:
+		\"achievement\":
+			var icon = preload(\"res://assets/ui/icons/achievement.png\") 
+			match id:
+				\"universe:mix_new_element\":
+					add_notification(\"You discovered a new element!\", data.name, icon)
+				\"universe:first_mix_of_pack\":
+					add_notification(\"First element of the pack!\", data[0].name + \" in pack: \" + data[1], icon)
+"
+
+[node name="NotificationOverlay" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme = ExtResource( 2 )
+script = SubResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -448.0
+mouse_filter = 2
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}

@@ -1,13 +1,13 @@
-extends Object
+extends Reference
 class_name ElementModel
 
 const ID_NONE : int = -1
 
-var _id : int
+var _id : int = -1
 var _name : String
 var _mark : String
-var _birth : int
-var _original_equation_id : int
+var _birth : int = -1
+var _original_equation_id : int = -1
 var _color : Color
 
 export var id : int setget ,get_id
@@ -35,10 +35,13 @@ func _init(id: int, name: String, color: Color = Color.white, mark: String = "")
 
 func to_dto() -> Dictionary:
 	var dto : Dictionary = {}
-	dto['id'] = _id
+	if _id > -1:
+		dto['id'] = _id
 	dto['name'] = _name
 	dto['color'] = "#" + _color.to_html(false)
 	dto['mark'] = _mark
-	dto['birthTime'] = _birth
-	dto['originalEquation'] = _original_equation_id
+	if _birth > -1:
+		dto['birthTime'] = _birth
+	if _original_equation_id > -1:
+		dto['originalEquation'] = _original_equation_id
 	return dto

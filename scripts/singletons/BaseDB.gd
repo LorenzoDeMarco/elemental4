@@ -34,8 +34,8 @@ func populate_db():
 		load_local_db()
 		if Utility.internet_test():
 			load_remote_db()
-		emit_signal("db_sync_done")
-			
+		else:
+			emit_signal("db_sync_done")
 
 func load_remote_db():
 	HTTPUtil.request(funcref(self, "_remote_data_head"), HTTPClient.METHOD_GET, remote_head_url, \
@@ -48,7 +48,6 @@ func _remote_data_head(resp: HTTPUtil.Response):
 	if resp.response_code == HTTPClient.RESPONSE_OK:
 		var size: int = int(resp.body.get_string_from_utf8())
 		if size == 0:
-			emit_signal("db_sync_size", 0)
 			emit_signal("db_sync_done")
 			return
 		emit_signal("db_sync_size", size)
