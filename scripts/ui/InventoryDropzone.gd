@@ -10,7 +10,7 @@ func _init():
 	connect("drop", self, "_on_drop")
 	connect("lift", self, "_on_lift")
 
-func _on_drop(element, position):
+func _on_drop(element : Element, position):
 	element.set_parent_container(self)
 	_items.append(element)
 	if grid_snap:
@@ -19,6 +19,9 @@ func _on_drop(element, position):
 			+ (element.rect_global_position - rect_global_position).snapped(grid_size)
 		if get_global_rect().encloses(Rect2(pos, element.rect_size)):
 			element.rect_global_position = pos
+		else:
+			_items.erase(element)
+			element.restore_source_position()
 
 func _on_lift(element, position):
 	element.set_parent_container(null)

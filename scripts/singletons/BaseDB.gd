@@ -30,7 +30,7 @@ func get_db_max_key() -> int:
 	return _db.keys().max() if _db.size() > 0 else -1
 
 func populate_db():
-	if _db.size() <= 1:
+	if _db == null or _db.size() <= 1:
 		load_local_db()
 		if Utility.internet_test():
 			load_remote_db()

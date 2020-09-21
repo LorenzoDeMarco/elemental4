@@ -26,16 +26,18 @@ func _ready():
 	connect("drop", self, "_on_drop")
 	connect("lift", self, "_on_lift")
 
-func _on_drop(element, position):
+func _on_drop(element: Element, position):
 	if accepts_drop():
 		element.set_parent_container(self)
 		if allow_stack:
-			element.rect_global_position = element.rect_global_position.move_toward(Vector2.UP, _contents.size() * 2)
 			_contents.append(element)
 			emit_signal("element_in", element)
 		elif _contents.size() == 0:
 			_contents = [element]
 			emit_signal("element_in", element)
+		else:
+			element.set_parent_container(null)
+			element.restore_source_position()
 
 func _on_lift(element, position):
 	if _contents.has(element):
@@ -43,7 +45,7 @@ func _on_lift(element, position):
 		var idx = _contents.find(element) + 1
 		_contents.erase(element)
 		if allow_stack:
-			while idx < _contents.size():
+			while idx < _contents.size() and _contents.size() > 1:
 				_contents[idx].rect_global_position = _contents[idx].rect_global_position.move_toward(Vector2.DOWN, idx * 2)
 				idx += 1
 		emit_signal("element_out", element)
@@ -53,3 +55,6 @@ func get_item():
 
 func get_items():
 	return _contents
+
+func _on_resized() -> void:
+	rect_pivot_offset = Vector2(rect_size.x / 2, rect_size.y / 2)

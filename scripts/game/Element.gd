@@ -111,3 +111,6 @@ func update_element_display():
 
 func _on_gui_input(event):
 	handle_gui_input(event)
+
+func _on_resized() -> void:
+	rect_pivot_offset = Vector2(rect_size.x / 2, rect_size.y / 2)

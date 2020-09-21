@@ -19,3 +19,6 @@ func _update_texture():
 
 func _init():
 	_update_texture()
+
+func _on_resized() -> void:
+	rect_pivot_offset = Vector2(rect_size.x / 2, rect_size.y / 2)

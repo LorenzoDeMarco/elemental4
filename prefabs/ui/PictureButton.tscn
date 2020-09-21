@@ -1,45 +1,83 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://fonts/presets/SairaExtraCondRegular.tres" type="DynamicFont" id=1]
-[ext_resource path="res://icon_android.png" type="Texture" id=2]
+[ext_resource path="res://materials/ui/PictureButtonImgEffect.tres" type="Material" id=2]
 
-[sub_resource type="GDScript" id=3]
+[sub_resource type="GDScript" id=1]
 script/source = "tool
-extends BaseButton
+extends Button
 
-export var icon : Texture setget set_button_icon, get_button_icon
-export var text : String setget set_text, get_text
+export var button_picture : Texture setget set_button_picture, get_button_picture
+export var button_text : String setget set_button_text, get_button_text
+export var picture_offset : Vector2 = Vector2(0, 0) setget set_picture_offset, get_picture_offset
+export var picture_scale : Vector2 = Vector2(1, 1) setget set_picture_scale, get_picture_scale
+export var picture_scale_pivot : Vector2 = Vector2(0.5, 0.5) setget set_picture_scale_pivot, get_picture_scale_pivot
+export var picture_rotation : float = 0 setget set_picture_rotation, get_picture_rotation
+export var picture_rotation_pivot : Vector2 = Vector2(0.5, 0.5) setget set_picture_rotation_pivot, get_picture_rotation_pivot
 
-func set_button_icon(picture: Texture):
+func set_button_picture(picture: Texture):
 	$Picture.texture = picture
 
-func get_button_icon() -> Texture:
+func get_button_picture() -> Texture:
 	return $Picture.texture
 
-func set_text(text: String):
+func set_button_text(text: String):
 	$Text.text = text
 
-func get_text() -> String:
+func get_button_text() -> String:
 	return $Text.text
+
+func set_picture_offset(offset: Vector2):
+	$Picture.material.set_shader_param(\"Offset\", Vector3(offset.x, offset.y, 0))
+
+func get_picture_offset() -> Vector2:
+	var tmp = ($Picture.material.get_shader_param(\"Offset\") as Vector3)
+	return Vector2(tmp.x, tmp.y)
+
+func set_picture_scale(scale: Vector2):
+	$Picture.material.set_shader_param(\"Scale\", Vector3(scale.x, scale.y, 0))
+
+func get_picture_scale() -> Vector2:
+	var tmp = ($Picture.material.get_shader_param(\"Scale\") as Vector3)
+	return Vector2(tmp.x, tmp.y)
+
+func set_picture_scale_pivot(scale_pivot: Vector2):
+	$Picture.material.set_shader_param(\"ScalePivot\", Vector3(scale_pivot.x, scale_pivot.y, 0))
+
+func get_picture_scale_pivot() -> Vector2:
+	var tmp = ($Picture.material.get_shader_param(\"ScalePivot\") as Vector3)
+	return Vector2(tmp.x, tmp.y)
+
+func set_picture_rotation(rotation: float):
+	$Picture.material.set_shader_param(\"Rotation\", rotation)
+
+func get_picture_rotation() -> float:
+	return $Picture.material.get_shader_param(\"Rotation\")
+
+func set_picture_rotation_pivot(rotation_pivot: Vector2):
+	$Picture.material.set_shader_param(\"RotationPivot\", Vector3(rotation_pivot.x, rotation_pivot.y, 0))
+
+func get_picture_rotation_pivot() -> Vector2:
+	var tmp = ($Picture.material.get_shader_param(\"RotationPivot\") as Vector3)
+	return Vector2(tmp.x, tmp.y)
 "
 
-[sub_resource type="StyleBoxEmpty" id=2]
-
 [node name="PictureButton" type="Button"]
-margin_right = 320.0
-margin_bottom = 192.0
-script = SubResource( 3 )
+margin_right = 300.0
+margin_bottom = 240.0
+align = 0
+expand_icon = true
+script = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Picture" type="TextureRect" parent="."]
+material = ExtResource( 2 )
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_bottom = -64.0
-texture = ExtResource( 2 )
 expand = true
-stretch_mode = 6
+stretch_mode = 7
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -48,12 +86,10 @@ __meta__ = {
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = -56.0
-custom_styles/normal = SubResource( 2 )
+margin_top = -64.0
 custom_fonts/font = ExtResource( 1 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 custom_constants/line_spacing = 0
-text = "Text of the picturebutton"
 align = 1
 valign = 1
 autowrap = true

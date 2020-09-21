@@ -15,6 +15,8 @@ signal internet_status_changed(status)
 const OVERRIDE_DESKTOPALWAYS = true
 const PRIMARY_SERVER_URL = "https://ledomsoft.com:3101"
 
+const WINDOW_MIN_SIZE = Vector2(890, 680)
+
 const VERSION = "0.2.0-alpha"
 const IS_ALPHA : bool = true
 
@@ -34,6 +36,7 @@ const AUDIO_UI_TOGGLE = preload('res://sounds/ui/toggle.ogg')
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pause_mode = Node.PAUSE_MODE_PROCESS
+	OS.min_window_size = WINDOW_MIN_SIZE
 	if not load_settings():
 		if not load_default_settings():
 			get_tree().quit(2)

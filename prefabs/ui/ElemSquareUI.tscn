@@ -6,6 +6,7 @@
 [node name="ElemSquare" type="NinePatchRect"]
 margin_right = 100.0
 margin_bottom = 100.0
+rect_pivot_offset = Vector2( 50, 50 )
 mouse_filter = 0
 texture = ExtResource( 1 )
 patch_margin_left = 6
@@ -16,3 +17,4 @@ script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+[connection signal="resized" from="." to="." method="_on_resized"]

@@ -1,6 +1,4 @@
-[gd_scene load_steps=3 format=2]
-
-[ext_resource path="res://fonts/presets/Heading2.tres" type="DynamicFont" id=1]
+[gd_scene load_steps=2 format=2]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Control
@@ -15,6 +13,7 @@ enum FeedEventType {
 
 func _ready():
 	GlobalSettings.connect(\"internet_status_changed\", self, \"_on_inet_state_changed\", [], CONNECT_DEFERRED)
+	_refresh_data()
 
 func _add_event_record(e: Dictionary):
 	var fe = preload(\"res://prefabs/ui/LiveFeedRecord.tscn\").instance()
@@ -30,10 +29,10 @@ func _add_event_record(e: Dictionary):
 			fe.subtitle = \"\"
 	if fe.title.length() > 36:
 		fe.title = fe.title.substr(0, 33) + \"…\"
-	$ScrollContainer/VBoxContainer.add_child(fe)
-	var cc = $ScrollContainer/VBoxContainer.get_child_count()
+	$VBoxContainer.add_child(fe)
+	var cc = $VBoxContainer.get_child_count()
 	while cc > max_records:
-		$ScrollContainer/VBoxContainer.get_child(cc - 1) \\
+		$VBoxContainer.get_child(cc - 1) \\
 			.queue_free()
 		cc -= 1
 
@@ -49,43 +48,23 @@ func _on_inet_state_changed(state: bool):
 	if state: _refresh_data()
 
 func _refresh_data():
+	var dt_frame = OS.get_datetime_from_unix_time(OS.get_unix_time() - 60 * 5) # Last 5 minutes
+	print(dt_frame)
 	HTTPUtil.request(funcref(self, \"_on_data\"), HTTPClient.METHOD_GET, 
 		GlobalSettings.PRIMARY_SERVER_URL + \"/api/events/latest\",
-		[\"Content-Type: application/json\"], \"\\\"%s\\\"\" % Utility.date_dict_to_ISO(OS.get_datetime(true)))
+		[\"Content-Type: application/json\"], \"\\\"%s\\\"\" % Utility.date_dict_to_ISO(dt_frame))
 "
 
-[node name="LiveFeed" type="Control"]
+[node name="LiveFeed" type="ScrollContainer"]
 anchor_bottom = 1.0
 margin_right = 344.0
+rect_min_size = Vector2( 488, 0 )
+rect_clip_content = false
+scroll_horizontal_enabled = false
 script = SubResource( 1 )
 __meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
+"_edit_lock_": true
 }
 
-[node name="LiveFeedLbl" type="Label" parent="."]
-margin_left = 16.0
-margin_top = 7.0
-margin_right = 256.0
-margin_bottom = 46.0
-custom_fonts/font = ExtResource( 1 )
-text = "Live feed"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 16.0
-margin_top = 55.0
-margin_right = -16.0
-margin_bottom = -16.0
-scroll_horizontal_enabled = false
-__meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
-}
-
-[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 alignment = 1

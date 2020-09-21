@@ -16,6 +16,13 @@ func formula_model_by_id(id: int) -> FormulaModel:
 	else:
 		return null
 
+func formula_model_by_index(idx: int) -> FormulaModel:
+	populate_db()
+	if idx >= 0 and idx < _db.size():
+		return Utility.formula_model_from_dto(_db.values()[idx])
+	else:
+		return null
+
 func _cmp_arrays(a: Array, b: Array) -> bool:
 	if a.size() != b.size(): return false
 	var a_sr = a.duplicate()
