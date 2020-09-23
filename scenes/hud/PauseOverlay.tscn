@@ -19,7 +19,7 @@ func _on_quit_pressed():
 
 func _on_mainMenu_pressed():
 	get_tree().set_pause(false)
-	if GlobalSettings.is_mobile:
+	if Globals.is_mobile:
 		get_tree().change_scene(\"res://scenes/menus/MainMenu_Mobile.tscn\")
 	else:
 		get_tree().change_scene(\"res://scenes/menus/MainMenu.tscn\")

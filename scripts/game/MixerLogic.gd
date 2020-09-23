@@ -36,7 +36,7 @@ func _on_inventory_update(_element, _position):
 	if formula_mdl != null:
 		if not _has_result:
 			# Play popping sound
-			var sfxp = GlobalSettings.get_game_sfx_player()
+			var sfxp = Globals.get_game_sfx_player()
 			if sfxp != null:
 				sfxp.stop()
 				sfxp.stream = preload("res://sounds/game/classic_pop.ogg")

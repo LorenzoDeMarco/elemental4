@@ -721,16 +721,25 @@ config/windows_native_icon="res://icon.ico"
 [audio]
 
 default_bus_layout="res://sounds/E4AudioBusLayout.tres"
+driver=""
 
 [autoload]
 
 Utility="*res://scripts/singletons/Utility.gd"
 HTTPUtil="*res://scripts/singletons/HTTPUtil.gd"
-GlobalSettings="*res://scripts/singletons/GlobalSettings.gd"
+Globals="*res://scripts/singletons/Globals.gd"
 ElementDB="*res://scripts/singletons/ElementDB.gd"
 FormulaDB="*res://scripts/singletons/FormulaDB.gd"
-DBOrchestrator="*res://scripts/singletons/DBOrchestrator.gd"
 Player="*res://scripts/singletons/Player.gd"
+
+[debug]
+
+settings/profiler/max_functions=32767
+gdscript/completion/autocomplete_setters_and_getters=true
+gdscript/warnings/shadowed_variable=false
+gdscript/warnings/unused_argument=false
+gdscript/warnings/unused_signal=false
+gdscript/warnings/return_value_discarded=false
 
 [display]
 
@@ -747,6 +756,14 @@ theme/custom="res://themes/Default.theme"
 [locale]
 
 locale_filter=[ 1, [ "en", "it" ] ]
+
+[logging]
+
+file_logging/enable_file_logging=true
+
+[memory]
+
+limits/message_queue/max_size_kb=2048
 
 [rendering]
 

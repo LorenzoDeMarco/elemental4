@@ -64,23 +64,23 @@ func _on_cancel_pressed():
 
 func _on_suggest_response(response: HTTPUtil.Response):
 	if response.response_code != HTTPClient.RESPONSE_OK:
-		GlobalSettings.add_notification(\"Whoops!\", \"An error has occurred. Please retry later.\")
+		Globals.add_notification(\"Whoops!\", \"An error has occurred. Please retry later.\")
 	else:
-		GlobalSettings.add_notification(\"Voilà!\", \"Your suggestion has been saved.\")
+		Globals.add_notification(\"Success!\", \"Your suggestion has been saved.\")
 		queue_free()
 
 func _suggest(internet: bool):
 	if internet:
 		HTTPUtil.request(funcref(self, \"_on_suggest_response\"), \\
-			HTTPClient.METHOD_POST, GlobalSettings.PRIMARY_SERVER_URL + \"/api/universe/formulas\", \\
+			HTTPClient.METHOD_POST, Globals.PRIMARY_SERVER_URL + \"/api/universe/formulas\", \\
 			[\"Content-Type: application/json\"], \\
 			JSON.print(bake_request_object()))
 	else:
-		GlobalSettings.add_notification(\"To suggest formulas, you must connect to the Internet.\", \"Please retry later.\")
+		Globals.add_notification(\"To suggest formulas, you must connect to the Internet.\", \"Please retry later.\")
 
 func _on_confirm_pressed():
-	GlobalSettings.connect(\"internet_status_changed\", self, \"_suggest\", [], CONNECT_ONESHOT)
-	GlobalSettings.check_internet(true)
+	Globals.connect(\"internet_status_changed\", self, \"_suggest\", [], CONNECT_ONESHOT)
+	Globals.check_internet(true)
 "
 
 [sub_resource type="StyleBoxEmpty" id=2]

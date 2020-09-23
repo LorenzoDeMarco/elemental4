@@ -1,8 +1,5 @@
 {
-	"player": {
-		"name": "Player"
-	},
-	"transactions": [
-		{ "id": 0, "timestamp": 0, "coinsDelta": 100, "levelDelta": 0, "newElements": [ 1, 2, 3, 4 ], "data": {} }
-	]
+	"username": "anonymous",
+	"discovered_elements": {},
+	"achievements": []
 }

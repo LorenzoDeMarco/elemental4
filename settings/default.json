@@ -1,5 +1,6 @@
 {
 	"audio.uisfx": true,
 	"audio.gamesfx": true,
-	"audio.music": true
+	"audio.music": true,
+	"net.primaryserver": "https://ledomsoft.com:3101"
 }

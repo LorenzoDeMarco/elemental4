@@ -73,7 +73,7 @@ func _remote_data(resp: HTTPUtil.Response):
 
 func load_local_db() -> int:
 	var maxid: int = -1
-	if not GlobalSettings.is_mobile:
+	if not Globals.is_mobile:
 		maxid = _load_file(filepath_db)
 		if maxid > -1: return maxid
 	var result = _load_file(filepath_packdb_default)

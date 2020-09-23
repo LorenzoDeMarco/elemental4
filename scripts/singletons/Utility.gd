@@ -1,5 +1,13 @@
 extends Node
 
+var _mail_regex : RegEx = RegEx.new()
+var _mail_regex_err : int = ERR_BUG
+
+const MAIL_REGEX = "^(([^<>()\\[\\]\\.,;:\\s@\\\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$"
+
+func _ready():
+	_mail_regex_err = _mail_regex.compile(MAIL_REGEX)
+
 func get_controls_inside(target: Control, parent: Node, max_depth: int = 0) -> Array:
 	# Get own rectangle
 	var own_rect = Rect2(target.rect_global_position, target.rect_size)
@@ -82,7 +90,7 @@ func date_dict_to_ISO(dict: Dictionary, timezone_offset_minutes: int = 0) -> Str
 			"Z" if timezone_offset_minutes == 0
 			else (
 				("+" if timezone_offset_minutes > 0 else "-") + \
-				String(int(floor(timezone_offset_minutes / 60))) + ":" + \
+				String(int(floor(timezone_offset_minutes / 60.0))) + ":" + \
 				String(timezone_offset_minutes % 60)
 			)
 		)
@@ -124,3 +132,6 @@ func date_dict_to_readable(dict: Dictionary,
 	tmp['minute'] = ("%02d" % dict.minute) if 'minute' in dict else '00'
 	tmp['second'] = ("%02d" % dict.second) if 'second' in dict else '00'
 	return format.format(tmp)
+
+func regex_test_mail(value: String) -> RegExMatch:
+	return _mail_regex.search(value) if _mail_regex_err == OK else null

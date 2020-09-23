@@ -12,7 +12,7 @@ enum FeedEventType {
 # Live Feed controller
 
 func _ready():
-	GlobalSettings.connect(\"internet_status_changed\", self, \"_on_inet_state_changed\", [], CONNECT_DEFERRED)
+	Globals.connect(\"internet_status_changed\", self, \"_on_inet_state_changed\", [], CONNECT_DEFERRED)
 	_refresh_data()
 
 func _add_event_record(e: Dictionary):
@@ -48,10 +48,10 @@ func _on_inet_state_changed(state: bool):
 	if state: _refresh_data()
 
 func _refresh_data():
-	var dt_frame = OS.get_datetime_from_unix_time(OS.get_unix_time() - 60 * 5) # Last 5 minutes
+	var dt_frame = OS.get_datetime_from_unix_time(OS.get_unix_time() - 600) # Last 10 minutes
 	print(dt_frame)
 	HTTPUtil.request(funcref(self, \"_on_data\"), HTTPClient.METHOD_GET, 
-		GlobalSettings.PRIMARY_SERVER_URL + \"/api/events/latest\",
+		Globals.PRIMARY_SERVER_URL + \"/api/events/latest\",
 		[\"Content-Type: application/json\"], \"\\\"%s\\\"\" % Utility.date_dict_to_ISO(dt_frame))
 "
 

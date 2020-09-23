@@ -9,7 +9,7 @@ var _container_pos: Vector2 = Vector2.ZERO
 
 var _old_cpos: Vector2 = Vector2(-INF, -INF)
 
-onready var _tween = GlobalSettings.get_scene_tween()
+onready var _tween = Globals.get_scene_tween()
 
 export var animate: bool = true
 

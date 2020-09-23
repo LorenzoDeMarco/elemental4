@@ -20,8 +20,8 @@ func set_element_model(model: ElementModel):
 	else:
 		$Panel/Name.text = model.name
 		$Panel/Mark.text = model.mark
-		var t = GlobalSettings.get_scene_tween()
-		t.interpolate_property($Panel/Mark, \"percent_visible\", 0, 1, 1.5, Tween.TRANS_LINEAR)
+		var t = Globals.get_scene_tween()
+		t.interpolate_property($Panel/Mark, \"percent_visible\", 0, 1, 0.015 * $Panel/Mark.text.length(), Tween.TRANS_LINEAR) # was 1.5 secs
 		if not t.is_active(): t.start()
 "
 

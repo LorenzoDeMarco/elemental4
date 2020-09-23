@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://scripts/ui/scenes/UniverseMap.gd" type="Script" id=1]
 [ext_resource path="res://materials/ui/UniverseBg.tres" type="Material" id=2]
+[ext_resource path="res://addons/shaderV/tools/random/randomFloat.gd" type="Script" id=3]
 
 [sub_resource type="OpenSimplexNoise" id=1]
 octaves = 1
@@ -12,6 +13,72 @@ width = 1024
 height = 1024
 seamless = true
 noise = SubResource( 1 )
+
+[sub_resource type="VisualShaderNodeInput" id=3]
+input_name = "color"
+
+[sub_resource type="VisualShaderNodeCustom" id=4]
+script = ExtResource( 3 )
+
+[sub_resource type="VisualShaderNodeInput" id=5]
+input_name = "color"
+
+[sub_resource type="VisualShader" id=6]
+code = "shader_type canvas_item;
+
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// Input:2
+	vec3 n_out2p0 = COLOR.rgb;
+
+// RandomFloat:3
+	float n_out3p0;
+	{
+		n_out3p0 = fract(sin(dot(UV, vec2(12.9898, 78.233))) * 43758.5453123);
+	}
+
+// Output:0
+	COLOR.rgb = n_out2p0;
+	COLOR.a = n_out3p0;
+
+}
+
+void light() {
+// Input:2
+	vec3 n_out2p0 = COLOR.rgb;
+
+// Output:0
+	LIGHT.rgb = n_out2p0;
+
+}
+"
+graph_offset = Vector2( -627, 99 )
+mode = 1
+flags/light_only = false
+nodes/fragment/2/node = SubResource( 3 )
+nodes/fragment/2/position = Vector2( -103, 167 )
+nodes/fragment/3/node = SubResource( 4 )
+nodes/fragment/3/position = Vector2( -100, 240 )
+nodes/fragment/connections = PoolIntArray( 2, 0, 0, 0, 3, 0, 0, 1 )
+nodes/light/2/node = SubResource( 5 )
+nodes/light/2/position = Vector2( -178, 166 )
+nodes/light/connections = PoolIntArray( 2, 0, 0, 0 )
+
+[sub_resource type="ShaderMaterial" id=7]
+shader = SubResource( 6 )
+
+[sub_resource type="PointMesh" id=8]
+material = SubResource( 7 )
+
+[sub_resource type="MultiMesh" id=9]
+color_format = 1
+mesh = SubResource( 8 )
 
 [node name="Universe" type="TextureRect"]
 material = ExtResource( 2 )
@@ -26,7 +93,11 @@ __meta__ = {
 }
 
 [node name="Camera2D" type="Camera2D" parent="."]
-anchor_mode = 0
+position = Vector2( 960, 540 )
 current = true
 smoothing_enabled = true
-[connection signal="gui_input" from="." to="." method="_on_gui_input"]
+
+[node name="Tween" type="Tween" parent="Camera2D"]
+
+[node name="MultiMeshInstance2D" type="MultiMeshInstance2D" parent="."]
+multimesh = SubResource( 9 )

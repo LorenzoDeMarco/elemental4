@@ -11,8 +11,8 @@ func get_pack_name() -> String:
 func _init():
 	filepath_db = FILEPATH_DB
 	filepath_packdb_default = FILEPATH_PACKDB_DEFAULT
-	remote_head_url = GlobalSettings.PRIMARY_SERVER_URL + "/api/universe/elements/count"
-	remote_sync_url = GlobalSettings.PRIMARY_SERVER_URL + "/api/universe/elements"
+	remote_head_url = Globals.PRIMARY_SERVER_URL + "/api/universe/elements/count"
+	remote_sync_url = Globals.PRIMARY_SERVER_URL + "/api/universe/elements"
 
 func element_model_by_id(id: int) -> ElementModel:
 	populate_db()

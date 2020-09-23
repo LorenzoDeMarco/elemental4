@@ -1,104 +1,212 @@
 extends Node
 
-var _username: String = ""
 var _logged_in: bool = false
 var _token: String = ""
 var _sid: String = ""
 var _user_remember: bool = true
-var _discovered_elements: Dictionary = {}
-var _achievements: Array = []
 
-const SKEY_TOKEN = "token"
-const SKEY_ELEMS = "discovered_elements"
-const SKEY_ACHIEVEMENTS = "achievements"
+var _profiles_manager: ProfilesManager = ProfilesManager.new()
+var _profile: PlayerProfile = PlayerProfile.new()
 
-const PATH_PROFILE = 'user://profile.json'
+const PATH_PROFILE = 'user://profiles/%s/profile.json'
+const PATH_SETTINGS = 'user://profiles/%s/settings.json'
 const PATH_PROFILE_DEFAULT = 'res://settings/profile.json'
+const PATH_SETTINGS_DEFAULT = 'res://settings/settings.json'
+
+class PlayerProfile:
+	
+	export var id: String = ID_DEFAULT
+	export var username: String = ID_DEFAULT
+	export var discovered_elements: Dictionary = {}
+	export var achievements: Array = []
+	export var settings: Dictionary = {}
+	
+	export var is_temporary: bool = false
+	
+	const ID_DEFAULT = "anonymous"
+	
+	const PKEY_USERNAME = "username"
+	const PKEY_ELEMS = "discovered_elements"
+	const PKEY_ACHIEVEMENTS = "achievements"
+	const PKEY_SETTINGS = "settings"
+	
+	signal username_changed(username)
+	signal setting_changed(key, value)
+	signal setting_removed(key)
+	signal achievement_done(achievement_id, data)
+	signal profile_loaded()
+	signal profile_saved()
+	
+	func wipe():
+		id = ID_DEFAULT
+		username = ID_DEFAULT
+		discovered_elements = {}
+		achievements = []
+	
+	func load_by_id(id: String) -> bool:
+		return load_from_file(PATH_PROFILE % id, id)
+	
+	func load_from_file(path: String = PATH_PROFILE_DEFAULT, id: String = ID_DEFAULT) -> bool:
+		var sf = File.new()
+		if sf.file_exists(path):
+			if sf.open(path, File.READ) == OK:
+				var data = parse_json(sf.get_as_text())
+				sf.close()
+				if typeof(data) == TYPE_DICTIONARY:
+					self.id = id
+					apply_raw(data)
+					return true
+		return false
+	
+	func apply_raw(profile: Dictionary):
+		if PKEY_ELEMS in profile:
+			discovered_elements = profile[PKEY_ELEMS]
+		if PKEY_ACHIEVEMENTS in profile:
+			achievements = profile[PKEY_ACHIEVEMENTS]
+		if PKEY_USERNAME in profile:
+			username = profile[PKEY_USERNAME]
+			emit_signal("username_changed", username)
+		if PKEY_SETTINGS in profile:
+			settings = profile[PKEY_SETTINGS]
+		emit_signal("profile_loaded")
+	
+	func save() -> bool:
+		if is_temporary: return true
+		var td : Dictionary = {}
+		td[PKEY_ELEMS] = username
+		td[PKEY_SETTINGS] = settings
+		td[PKEY_ELEMS] = discovered_elements
+		td[PKEY_ACHIEVEMENTS] = achievements
+		
+		var sf = File.new()
+		if sf.open(PATH_PROFILE % id, File.WRITE) == OK:
+			sf.store_string(JSON.print(td))
+			sf.close()
+			emit_signal("profile_saved")
+			return true
+		return false
+	
+	func has_setting(key) -> bool:
+		return settings.has(key)
+	
+	func get_setting(key):
+		return settings[key]
+	
+	func upsert_setting(key, value):
+		settings[key] = value
+		emit_signal("setting_changed", key, value)
+	
+	func delete_setting(key):
+		settings.erase(key)
+		emit_signal("setting_removed", key)
+
+class ProfilesManager:
+	var _profile_ids: Array = []
+	
+	func scan_profiles():
+		_profile_ids = []
+		var pd = Directory.new()
+		if pd.open("user://profiles") != OK: return
+		if pd.list_dir_begin() != OK: return
+		var fname : String = pd.get_next()
+		while fname != "":
+			if pd.current_is_dir():
+				_index_profile(fname)
+			fname = pd.get_next()
+	
+	func _index_profile(dir_name: String):
+		var pd = Directory.new()
+		if pd.open("user://profiles/%s" % dir_name) != OK: return
+		if not pd.file_exists("profile.json"): return
+		if not pd.file_exists("settings.json"): return
+		if _profile_ids.has(dir_name): return
+		_profile_ids.append(dir_name)
+	
+	func profile_id_exists(id: String) -> bool:
+		return _profile_ids.has(id)
+	
+	func profile_username_exists(username: String) -> bool:
+		return _profile_ids.has(username.sha256_text())
+	
+	func create_profile(username: String) -> bool:
+		var pd = Directory.new()
+		var id = username.sha256_text()
+		if pd.open("user://profiles") != OK: return false
+		if pd.dir_exists(id): return false
+		if pd.make_dir(id) != OK: return false
+		if pd.copy(PATH_PROFILE_DEFAULT, PATH_PROFILE % id) != OK: return false
+		if pd.copy(PATH_SETTINGS_DEFAULT, PATH_SETTINGS % id) != OK: return false
+		var tmp: PlayerProfile = PlayerProfile.new()
+		if not tmp.load_by_id(id): return false
+		tmp.username = username
+		if not tmp.save_profile(): return false
+		return true
+	
+	func get_profile_ids() -> Array:
+		return _profile_ids
+	
+	func get_profile_by_id(id: String) -> PlayerProfile:
+		if not profile_id_exists(id): return null
+		var tmp: PlayerProfile = PlayerProfile.new()
+		if not tmp.load_by_id(id): return null
+		return tmp
+	
+	func get_profile_by_username(username: String) -> PlayerProfile:
+		return get_profile_by_id(username.sha256_text())
 
 signal username_changed(username)
 signal signin_state_changed(signed_in)
 signal token_changed(token)
+signal profile_loaded()
+signal profile_saved()
 
-signal achievement_done(achievement_id, data)
+func get_profiles_manager() -> ProfilesManager:
+	return _profiles_manager
+
+func get_profile() -> PlayerProfile:
+	return _profile
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pause_mode = Node.PAUSE_MODE_PROCESS
-	
-	if not (load_profile() and save_profile()):
-		if not load_default_profile():
-			get_tree().quit(2)
-	connect("achievement_done", self, "_on_achievement_done")
+	_profiles_manager.scan_profiles()
+	_profile.connect("achievement_done", self, "_on_achievement_done")
+	_profile.connect("profile_loaded", self, "_on_profile_loaded")
+	_profile.connect("profile_saved", self, "_on_profile_saved")
+	#_profile.connect("username_changed", self, "_on_username_changed")
+
+func _on_profile_loaded():
+	_profile.save()
 
 func _on_achievement_done(_id, _data):
-	if not save_profile():
-		GlobalSettings.add_notification("Failed to save profile", "Please make sure your storage is writable!")
-
-func save_profile() -> bool:
-	if not _user_remember: return true
-	var td : Dictionary = {}
-	td[SKEY_TOKEN] = _token
-	td[SKEY_ELEMS] = _discovered_elements
-	td[SKEY_ACHIEVEMENTS] = _achievements
-	
-	var sf = File.new()
-	if sf.open(PATH_PROFILE, File.WRITE) == OK:
-		sf.store_string(JSON.print(td))
-		sf.close()
-		return true
-	return false
-
-func load_profile(path: String = PATH_PROFILE) -> bool:
-	var sf = File.new()
-	if sf.file_exists(path):
-		if sf.open(path, File.READ) == OK:
-			var data = parse_json(sf.get_as_text())
-			sf.close()
-			if typeof(data) == TYPE_DICTIONARY:
-				apply_profile_bulk(data)
-				return true
-	return false
-
-func load_default_profile() -> bool:
-	return load_profile(PATH_PROFILE_DEFAULT) and save_profile()
-
-func apply_profile_bulk(profile: Dictionary):
-	if SKEY_ELEMS in profile:
-		_discovered_elements = profile[SKEY_ELEMS]
-	if SKEY_ACHIEVEMENTS in profile:
-		_achievements = profile[SKEY_ACHIEVEMENTS]
-	if SKEY_TOKEN in profile: 
-		_token = profile[SKEY_TOKEN]
-		emit_signal("token_changed", _token)
-	pass
+	if not _profile.save_profile():
+		Globals.add_notification("Failed to save profile", "Please make sure your storage is writable!")
 
 func _online_signin_response(response: HTTPUtil.Response):
 	if response != null and response.response_code == HTTPClient.RESPONSE_OK:
 		var json = JSON.parse(response.body.get_string_from_utf8())
 		if json.error == OK and json.result is Dictionary:
-			_username = json.result['username']
+			_profile.username = json.result['username']
 			_token = json.result['token']
 			_sid = json.result['sid']
 			_logged_in = true
-		else:
-			_username = ""
-			_token = ""
-			_sid = ""
-			_logged_in = false
-	else:
-		_username = ""
-		_token = ""
-		_sid = ""
-		_logged_in = false
-	emit_signal("signin_state_changed", _logged_in)
-	emit_signal("username_changed", _username)
-	emit_signal("token_changed", _token)
-	save_profile()
+			emit_signal("signin_state_changed", _logged_in)
+			emit_signal("username_changed", _profile.username)
+			emit_signal("token_changed", _token)
+			_profile.save()
+			return
+	_profile.username = ""
+	_token = ""
+	_sid = ""
+	_logged_in = false
+	emit_signal("signin_state_changed", false)
+	emit_signal("username_changed", "")
+	emit_signal("token_changed", "")
 
 func online_signin(username: String, password_hb64: String, remember: bool = false) -> int:
 	_user_remember = remember
 	return HTTPUtil.request(funcref(self, "_online_signin_response"), \
-		HTTPClient.METHOD_POST, GlobalSettings.PRIMARY_SERVER_URL + "/api/auth/sessions", ["Content-Type: application/json"], \
+		HTTPClient.METHOD_POST, Globals.PRIMARY_SERVER_URL + "/api/auth/sessions", ["Content-Type: application/json"], \
 		JSON.print({
 		"username": username,
 		"key": password_hb64
@@ -106,9 +214,9 @@ func online_signin(username: String, password_hb64: String, remember: bool = fal
 
 func mixed_element(result: ElementModel):
 	var curr_pack = ElementDB.get_pack_name()
-	if not _discovered_elements.has(curr_pack):
-		_discovered_elements[curr_pack] = []
-		emit_signal("achievement_done", "universe:first_mix_of_pack", [result, curr_pack])
-	if not result.id in _discovered_elements[curr_pack]:
-		_discovered_elements[curr_pack].append(result.id)
-		emit_signal("achievement_done", "universe:mix_new_element", result)
+	if not _profile.discovered_elements.has(curr_pack):
+		_profile.discovered_elements[curr_pack] = []
+		_profile.emit_signal("achievement_done", "universe:first_mix_of_pack", [result, curr_pack])
+	if not result.id in _profile.discovered_elements[curr_pack]:
+		_profile.discovered_elements[curr_pack].append(result.id)
+		_profile.emit_signal("achievement_done", "universe:mix_new_element", result)

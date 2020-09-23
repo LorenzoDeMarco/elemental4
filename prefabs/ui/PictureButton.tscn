@@ -1,79 +1,47 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://fonts/presets/SairaExtraCondRegular.tres" type="DynamicFont" id=1]
-[ext_resource path="res://materials/ui/PictureButtonImgEffect.tres" type="Material" id=2]
 
 [sub_resource type="GDScript" id=1]
-script/source = "tool
-extends Button
+script/source = "extends Button
 
-export var button_picture : Texture setget set_button_picture, get_button_picture
-export var button_text : String setget set_button_text, get_button_text
-export var picture_offset : Vector2 = Vector2(0, 0) setget set_picture_offset, get_picture_offset
-export var picture_scale : Vector2 = Vector2(1, 1) setget set_picture_scale, get_picture_scale
-export var picture_scale_pivot : Vector2 = Vector2(0.5, 0.5) setget set_picture_scale_pivot, get_picture_scale_pivot
-export var picture_rotation : float = 0 setget set_picture_rotation, get_picture_rotation
-export var picture_rotation_pivot : Vector2 = Vector2(0.5, 0.5) setget set_picture_rotation_pivot, get_picture_rotation_pivot
+export var button_picture: Texture
+export var button_text: String
+export var picture_offset: Vector2
+export var picture_scale: Vector2
+export var picture_scale_pivot: Vector2
+export var picture_rotation: float
+export var picture_rotation_pivot: Vector2
 
-func set_button_picture(picture: Texture):
-	$Picture.texture = picture
+func update_display():
+	if not Engine.editor_hint:
+		$Bg.texture = button_picture
+		$Text.text = button_text
+		if $Bg.material != null:
+			$Bg.material.set_shader_param(\"Offset\", Vector3(picture_offset.x, picture_offset.y, 0))
+			$Bg.material.set_shader_param(\"Scale\", Vector3(picture_scale.x, picture_scale.y, 0))
+			$Bg.material.set_shader_param(\"ScalePivot\", Vector3(picture_scale_pivot.x, picture_scale_pivot.y, 0))
+			$Bg.material.set_shader_param(\"Rotation\", picture_rotation)
+			$Bg.material.set_shader_param(\"RotationPivot\", Vector3(picture_rotation_pivot.x, picture_rotation_pivot.y, 0))
 
-func get_button_picture() -> Texture:
-	return $Picture.texture
-
-func set_button_text(text: String):
-	$Text.text = text
-
-func get_button_text() -> String:
-	return $Text.text
-
-func set_picture_offset(offset: Vector2):
-	$Picture.material.set_shader_param(\"Offset\", Vector3(offset.x, offset.y, 0))
-
-func get_picture_offset() -> Vector2:
-	var tmp = ($Picture.material.get_shader_param(\"Offset\") as Vector3)
-	return Vector2(tmp.x, tmp.y)
-
-func set_picture_scale(scale: Vector2):
-	$Picture.material.set_shader_param(\"Scale\", Vector3(scale.x, scale.y, 0))
-
-func get_picture_scale() -> Vector2:
-	var tmp = ($Picture.material.get_shader_param(\"Scale\") as Vector3)
-	return Vector2(tmp.x, tmp.y)
-
-func set_picture_scale_pivot(scale_pivot: Vector2):
-	$Picture.material.set_shader_param(\"ScalePivot\", Vector3(scale_pivot.x, scale_pivot.y, 0))
-
-func get_picture_scale_pivot() -> Vector2:
-	var tmp = ($Picture.material.get_shader_param(\"ScalePivot\") as Vector3)
-	return Vector2(tmp.x, tmp.y)
-
-func set_picture_rotation(rotation: float):
-	$Picture.material.set_shader_param(\"Rotation\", rotation)
-
-func get_picture_rotation() -> float:
-	return $Picture.material.get_shader_param(\"Rotation\")
-
-func set_picture_rotation_pivot(rotation_pivot: Vector2):
-	$Picture.material.set_shader_param(\"RotationPivot\", Vector3(rotation_pivot.x, rotation_pivot.y, 0))
-
-func get_picture_rotation_pivot() -> Vector2:
-	var tmp = ($Picture.material.get_shader_param(\"RotationPivot\") as Vector3)
-	return Vector2(tmp.x, tmp.y)
+func _ready():
+	update_display()
 "
 
 [node name="PictureButton" type="Button"]
 margin_right = 300.0
 margin_bottom = 240.0
+rect_min_size = Vector2( 240, 140 )
 align = 0
 expand_icon = true
 script = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+picture_scale_pivot = Vector2( 0.5, 0.5 )
+picture_rotation_pivot = Vector2( 0.5, 0.5 )
 
-[node name="Picture" type="TextureRect" parent="."]
-material = ExtResource( 2 )
+[node name="Bg" type="TextureRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
 expand = true
