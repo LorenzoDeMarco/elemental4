@@ -1,56 +1,74 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://themes/Default.theme" type="Theme" id=1]
 [ext_resource path="res://fonts/presets/Heading1.tres" type="DynamicFont" id=2]
 [ext_resource path="res://prefabs/ui/Button.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scripts/ui/scenes/LoginOverlay.gd" type="Script" id=4]
 
-[sub_resource type="StyleBoxEmpty" id=1]
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.101961, 0.168627, 0.411765, 0.392157 )
 
-[sub_resource type="StyleBoxEmpty" id=2]
+[sub_resource type="StyleBoxFlat" id=2]
+content_margin_left = 6.0
+content_margin_right = 6.0
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color( 0.0509804, 0.0823529, 0.2, 1 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.101961, 0.168627, 0.411765, 1 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxEmpty" id=3]
+[sub_resource type="GDScript" id=3]
+script/source = "tool
+extends PanelContainer
+
+onready var min_size = rect_size
+
+func shrink_size():
+	rect_size = min_size
+
+func _on_notshrink(ns : bool):
+	if not ns: shrink_size()
+"
 
 [sub_resource type="StyleBoxEmpty" id=4]
 
 [sub_resource type="StyleBoxEmpty" id=5]
 
-[node name="LoginOverlay" type="Control"]
+[sub_resource type="StyleBoxEmpty" id=6]
+
+[node name="LoginOverlay" type="Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = ExtResource( 1 )
+custom_styles/panel = SubResource( 1 )
 script = ExtResource( 4 )
 __meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
+"_edit_lock_": true
 }
 
-[node name="BgColor" type="ColorRect" parent="."]
+[node name="Center" type="CenterContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color( 0, 0.505882, 1, 0.470588 )
-__meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
-}
-
-[node name="Panel" type="Panel" parent="."]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -160.0
-margin_top = -246.0
-margin_right = 160.0
-margin_bottom = 246.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Title" type="Label" parent="Panel"]
-anchor_right = 1.0
-margin_top = -72.0
-margin_bottom = -1.0
+[node name="VBody" type="VBoxContainer" parent="Center"]
+margin_left = 810.0
+margin_top = 285.0
+margin_right = 1110.0
+margin_bottom = 795.0
+
+[node name="Title" type="Label" parent="Center/VBody"]
+margin_right = 300.0
+margin_bottom = 71.0
 custom_fonts/font = ExtResource( 2 )
 text = "Let the fun begin!"
 align = 1
@@ -59,9 +77,26 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Subtitle" type="Label" parent="Panel"]
-anchor_right = 1.0
-margin_bottom = 48.0
+[node name="AutoPanel" type="PanelContainer" parent="Center/VBody"]
+margin_top = 75.0
+margin_right = 300.0
+margin_bottom = 510.0
+rect_min_size = Vector2( 300, 435 )
+custom_styles/panel = SubResource( 2 )
+script = SubResource( 3 )
+
+[node name="VMain" type="VBoxContainer" parent="Center/VBody/AutoPanel"]
+margin_left = 6.0
+margin_top = 4.0
+margin_right = 294.0
+margin_bottom = 431.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Subtitle" type="Label" parent="Center/VBody/AutoPanel/VMain"]
+margin_right = 288.0
+margin_bottom = 30.0
 text = "Log in to your account and start playing!"
 align = 1
 valign = 1
@@ -69,42 +104,46 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TabContainer" type="TabContainer" parent="Panel"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_top = 48.0
-custom_styles/panel = SubResource( 1 )
+[node name="Tabs" type="TabContainer" parent="Center/VBody/AutoPanel/VMain"]
+margin_top = 34.0
+margin_right = 288.0
+margin_bottom = 34.0
+custom_styles/panel = SubResource( 4 )
 tabs_visible = false
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LoginTab" type="Panel" parent="Panel/TabContainer"]
+[node name="LoginTab" type="Control" parent="Center/VBody/AutoPanel/VMain/Tabs"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-custom_styles/panel = SubResource( 2 )
 
-[node name="ProfilesList" type="ItemList" parent="Panel/TabContainer/LoginTab"]
-anchor_right = 1.0
-margin_left = 16.0
-margin_right = -12.0
-margin_bottom = 112.0
-custom_styles/bg_focus = SubResource( 3 )
-custom_styles/bg = SubResource( 4 )
+[node name="ProfilesList" type="ItemList" parent="Center/VBody/AutoPanel/VMain/Tabs/LoginTab"]
+margin_left = 8.0
+margin_top = 2.0
+margin_right = 280.0
+margin_bottom = 102.0
+rect_min_size = Vector2( 0, 100 )
+custom_styles/bg = SubResource( 5 )
+custom_constants/icon_margin = 4
 allow_rmb_select = true
-max_columns = 3
-icon_mode = 0
-fixed_icon_size = Vector2( 32, 32 )
+auto_height = true
+fixed_icon_size = Vector2( 40, 32 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="UsernameLbl" type="Label" parent="Panel/TabContainer/LoginTab"]
+[node name="LoginBody" type="Control" parent="Center/VBody/AutoPanel/VMain/Tabs/LoginTab"]
+margin_left = 8.0
+margin_top = 104.0
+margin_right = 280.0
+margin_bottom = 322.0
+
+[node name="UsernameLbl" type="Label" parent="Center/VBody/AutoPanel/VMain/Tabs/LoginTab/LoginBody"]
 anchor_right = 1.0
-margin_left = 16.0
-margin_top = 112.0
-margin_right = -16.0
-margin_bottom = 144.0
+margin_left = 8.0
+margin_right = -8.0
+margin_bottom = 30.0
 text = "Username:"
 valign = 1
 clip_text = true
@@ -112,26 +151,27 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="UsernameTxt" type="LineEdit" parent="Panel/TabContainer/LoginTab"]
+[node name="UsernameTxt" type="LineEdit" parent="Center/VBody/AutoPanel/VMain/Tabs/LoginTab/LoginBody"]
 anchor_right = 1.0
-margin_left = 24.0
-margin_top = 152.0
-margin_right = -24.0
-margin_bottom = 182.0
+margin_left = 16.0
+margin_top = 34.0
+margin_right = -16.0
+margin_bottom = 64.0
 max_length = 30
 context_menu_enabled = false
 placeholder_text = "e.g. FooBar35"
 caret_blink = true
+caret_blink_speed = 0.5
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PasswordLbl" type="Label" parent="Panel/TabContainer/LoginTab"]
+[node name="PasswordLbl" type="Label" parent="Center/VBody/AutoPanel/VMain/Tabs/LoginTab/LoginBody"]
 anchor_right = 1.0
-margin_left = 16.0
-margin_top = 184.0
-margin_right = -16.0
-margin_bottom = 216.0
+margin_left = 8.0
+margin_top = 68.0
+margin_right = -8.0
+margin_bottom = 98.0
 text = "Password:"
 valign = 1
 clip_text = true
@@ -139,88 +179,84 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PassTxt" type="LineEdit" parent="Panel/TabContainer/LoginTab"]
+[node name="PassTxt" type="LineEdit" parent="Center/VBody/AutoPanel/VMain/Tabs/LoginTab/LoginBody"]
 anchor_right = 1.0
-margin_left = 24.0
-margin_top = 224.0
-margin_right = -24.0
-margin_bottom = 254.0
+margin_left = 16.0
+margin_top = 102.0
+margin_right = -16.0
+margin_bottom = 132.0
 max_length = 100
 secret = true
 context_menu_enabled = false
 caret_blink = true
+caret_blink_speed = 0.5
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="RememberMe" type="CheckBox" parent="Panel/TabContainer/LoginTab"]
+[node name="RememberMe" type="CheckBox" parent="Center/VBody/AutoPanel/VMain/Tabs/LoginTab/LoginBody"]
 anchor_right = 1.0
 margin_left = 16.0
-margin_top = 264.0
+margin_top = 138.0
 margin_right = -16.0
-margin_bottom = 294.0
+margin_bottom = 168.0
 pressed = true
 text = "Remember me"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ForgotUsername" type="LinkButton" parent="Panel/TabContainer/LoginTab"]
-anchor_top = 1.0
+[node name="ForgotUsername" type="LinkButton" parent="Center/VBody/AutoPanel/VMain/Tabs/LoginTab/LoginBody"]
 anchor_right = 1.0
-anchor_bottom = 1.0
 margin_left = 16.0
-margin_top = -144.0
-margin_right = -32.0
-margin_bottom = -122.0
+margin_top = 170.0
+margin_right = -8.0
+margin_bottom = 192.0
 text = "I forgot my username"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ForgotPassword" type="LinkButton" parent="Panel/TabContainer/LoginTab"]
-anchor_top = 1.0
+[node name="ForgotPassword" type="LinkButton" parent="Center/VBody/AutoPanel/VMain/Tabs/LoginTab/LoginBody"]
 anchor_right = 1.0
-anchor_bottom = 1.0
 margin_left = 16.0
-margin_top = -112.0
-margin_right = -32.0
-margin_bottom = -90.0
+margin_top = 196.0
+margin_right = -8.0
+margin_bottom = 218.0
 text = "I forgot my password"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Register" type="LinkButton" parent="Panel/TabContainer/LoginTab"]
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 16.0
-margin_top = -80.0
-margin_right = -32.0
-margin_bottom = -58.0
+[node name="Register" type="LinkButton" parent="Center/VBody/AutoPanel/VMain/Tabs/LoginTab"]
+margin_left = 24.0
+margin_top = 326.0
+margin_right = 272.0
+margin_bottom = 348.0
 text = "Register"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Continue" parent="Panel/TabContainer/LoginTab" instance=ExtResource( 3 )]
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 16.0
-margin_top = -40.0
-margin_right = -16.0
-margin_bottom = -10.0
+[node name="Control" type="Control" parent="Center/VBody/AutoPanel/VMain/Tabs/LoginTab"]
+margin_top = 352.0
+margin_right = 288.0
+margin_bottom = 356.0
+rect_min_size = Vector2( 0, 4 )
+
+[node name="Continue" parent="Center/VBody/AutoPanel/VMain/Tabs/LoginTab" instance=ExtResource( 3 )]
+margin_top = 360.0
+margin_right = 288.0
+margin_bottom = 390.0
 text = "Continue"
 
-[node name="RegisterTab" type="Panel" parent="Panel/TabContainer"]
+[node name="RegisterTab" type="Panel" parent="Center/VBody/AutoPanel/VMain/Tabs"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-custom_styles/panel = SubResource( 5 )
+custom_styles/panel = SubResource( 6 )
 
-[node name="UsernameLbl" type="Label" parent="Panel/TabContainer/RegisterTab"]
+[node name="UsernameLbl" type="Label" parent="Center/VBody/AutoPanel/VMain/Tabs/RegisterTab"]
 anchor_right = 1.0
 margin_left = 16.0
 margin_top = 8.0
@@ -230,10 +266,11 @@ text = "Username:"
 valign = 1
 clip_text = true
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
-[node name="UsernameTxt" type="LineEdit" parent="Panel/TabContainer/RegisterTab"]
+[node name="UsernameTxt" type="LineEdit" parent="Center/VBody/AutoPanel/VMain/Tabs/RegisterTab"]
 anchor_right = 1.0
 margin_left = 24.0
 margin_top = 48.0
@@ -243,11 +280,13 @@ max_length = 30
 context_menu_enabled = false
 placeholder_text = "e.g. FooBar35"
 caret_blink = true
+caret_blink_speed = 0.5
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
-[node name="PasswordLbl" type="Label" parent="Panel/TabContainer/RegisterTab"]
+[node name="PasswordLbl" type="Label" parent="Center/VBody/AutoPanel/VMain/Tabs/RegisterTab"]
 anchor_right = 1.0
 margin_left = 16.0
 margin_top = 80.0
@@ -257,10 +296,11 @@ text = "Password:"
 valign = 1
 clip_text = true
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
-[node name="PassTxt" type="LineEdit" parent="Panel/TabContainer/RegisterTab"]
+[node name="PassTxt" type="LineEdit" parent="Center/VBody/AutoPanel/VMain/Tabs/RegisterTab"]
 anchor_right = 1.0
 margin_left = 24.0
 margin_top = 120.0
@@ -270,11 +310,13 @@ max_length = 100
 secret = true
 context_menu_enabled = false
 caret_blink = true
+caret_blink_speed = 0.5
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
-[node name="EmailLbl" type="Label" parent="Panel/TabContainer/RegisterTab"]
+[node name="EmailLbl" type="Label" parent="Center/VBody/AutoPanel/VMain/Tabs/RegisterTab"]
 anchor_right = 1.0
 margin_left = 16.0
 margin_top = 152.0
@@ -284,10 +326,11 @@ text = "Email:"
 valign = 1
 clip_text = true
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
-[node name="EmailTxt" type="LineEdit" parent="Panel/TabContainer/RegisterTab"]
+[node name="EmailTxt" type="LineEdit" parent="Center/VBody/AutoPanel/VMain/Tabs/RegisterTab"]
 anchor_right = 1.0
 margin_left = 24.0
 margin_top = 190.0
@@ -296,33 +339,36 @@ margin_bottom = 220.0
 max_length = 100
 context_menu_enabled = false
 caret_blink = true
+caret_blink_speed = 0.5
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
-[node name="Register" type="LinkButton" parent="Panel/TabContainer/RegisterTab"]
+[node name="Login" type="LinkButton" parent="Center/VBody/AutoPanel/VMain/Tabs/RegisterTab"]
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 16.0
-margin_top = -80.0
+margin_left = 24.0
+margin_top = 242.0
 margin_right = -16.0
-margin_bottom = -58.0
+margin_bottom = 264.0
 text = "I already have an account"
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
-[node name="Register2" parent="Panel/TabContainer/RegisterTab" instance=ExtResource( 3 )]
+[node name="Register2" parent="Center/VBody/AutoPanel/VMain/Tabs/RegisterTab" instance=ExtResource( 3 )]
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 16.0
-margin_top = -40.0
-margin_right = -16.0
-margin_bottom = -10.0
+margin_top = 362.0
+margin_right = 0.0
+margin_bottom = 392.0
 text = "Register"
-[connection signal="pressed" from="Panel/TabContainer/LoginTab/Register" to="." method="_switch_tab_register"]
-[connection signal="pressed" from="Panel/TabContainer/LoginTab/Continue" to="." method="_on_login_pressed"]
-[connection signal="pressed" from="Panel/TabContainer/RegisterTab/Register" to="." method="_switch_tab_login"]
-[connection signal="pressed" from="Panel/TabContainer/RegisterTab/Register2" to="." method="_on_register_pressed"]
+[connection signal="item_selected" from="Center/VBody/AutoPanel/VMain/Tabs/LoginTab/ProfilesList" to="." method="_on_profile_selected"]
+[connection signal="pressed" from="Center/VBody/AutoPanel/VMain/Tabs/LoginTab/Register" to="." method="_switch_tab_register"]
+[connection signal="pressed" from="Center/VBody/AutoPanel/VMain/Tabs/LoginTab/Continue" to="." method="_on_login_pressed"]
+[connection signal="pressed" from="Center/VBody/AutoPanel/VMain/Tabs/RegisterTab/Login" to="." method="_switch_tab_login"]
+[connection signal="pressed" from="Center/VBody/AutoPanel/VMain/Tabs/RegisterTab/Register2" to="." method="_on_register_pressed"]

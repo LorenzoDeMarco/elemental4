@@ -1,0 +1,14 @@
+[
+	{
+		"key":"universe.first_mix_of_pack", 
+		"title":"First mix of the pack!",
+		"subtitle":"Congrats on your first mix!",
+		"icon": "res://assets/ui/icons/achievement.png"
+	},
+	{
+		"key":"universe.mix_new_element", 
+		"title":"You discovered a new element!",
+		"subtitle":"%s",
+		"icon": "res://assets/ui/icons/element.png"
+	}
+]

@@ -69,6 +69,15 @@ func _on_result_lifted(_position, inputs: Array):
 	if auto_duplicate:
 		_on_inventory_update(null, null)
 
+func _mixed_elements(result: ElementModel):
+	var curr_pack = ElementDB.get_pack_name()
+	var profile = Player.get_profile()
+	if not profile.discovered_elements.has(curr_pack):
+		profile.discovered_elements[curr_pack] = []
+		profile.emit_signal("achievement_done", "universe:first_mix_of_pack", [result, curr_pack])
+	if not result.id in profile.discovered_elements[curr_pack]:
+		profile.discovered_elements[curr_pack].append(result.id)
+		profile.emit_signal("achievement_done", "universe:mix_new_element", result)
 
 func _on_suggest_pressed():
 	# Get inputs

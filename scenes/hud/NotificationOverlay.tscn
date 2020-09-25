@@ -7,7 +7,7 @@ script/source = "extends Control
 
 func _ready():
 	Globals.register_notification_adder(funcref(self, \"add_notification\"))
-	Player.connect(\"achievement_done\", self, \"_on_event\", [\"achievement\"], CONNECT_DEFERRED)
+	Player.get_profile().connect(\"achievement_done\", self, \"_on_event\", [\"achievement\"], CONNECT_DEFERRED)
 
 func add_notification(title: String, subtitle: String = \"\", icon: Texture = null):
 	raise()

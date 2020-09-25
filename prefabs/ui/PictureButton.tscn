@@ -1,34 +1,131 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://fonts/presets/SairaExtraCondRegular.tres" type="DynamicFont" id=1]
+[ext_resource path="res://materials/ui/PictureButtonImgEffect.tres" type="Material" id=2]
 
 [sub_resource type="GDScript" id=1]
-script/source = "extends Button
+script/source = "tool
+extends Button
 
-export var button_picture: Texture
-export var button_text: String
-export var picture_offset: Vector2
-export var picture_scale: Vector2
-export var picture_scale_pivot: Vector2
-export var picture_rotation: float
-export var picture_rotation_pivot: Vector2
+var _button_picture: Texture = null
+var _stretch_mode: int = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+var _text_color: Color = Color.black
+var _use_effect: bool = true
+var _button_text: String = \"\"
+var _picture_offset: Vector3 = Vector3(0, -0.14, 0)
+var _picture_scale: Vector3 = Vector3(1, 1, 1)
+var _picture_scale_pivot: Vector3 = Vector3(0.5, 0.5, 0)
+var _picture_rotation: float = 0
+var _picture_rotation_pivot: Vector3 = Vector3(0.5, 0.5, 0)
+var _is_ready: bool = false
 
-func update_display():
-	if not Engine.editor_hint:
-		$Bg.texture = button_picture
-		$Text.text = button_text
-		if $Bg.material != null:
-			$Bg.material.set_shader_param(\"Offset\", Vector3(picture_offset.x, picture_offset.y, 0))
-			$Bg.material.set_shader_param(\"Scale\", Vector3(picture_scale.x, picture_scale.y, 0))
-			$Bg.material.set_shader_param(\"ScalePivot\", Vector3(picture_scale_pivot.x, picture_scale_pivot.y, 0))
-			$Bg.material.set_shader_param(\"Rotation\", picture_rotation)
-			$Bg.material.set_shader_param(\"RotationPivot\", Vector3(picture_rotation_pivot.x, picture_rotation_pivot.y, 0))
+export var button_picture: Texture setget set_button_picture, get_button_picture
+export(int, \"Scale on expand\", \"Scale\", \"Tile\", \"Keep\", \"Keep centered\", \"Keep aspect\", \\
+	\"Keep aspect centered\", \"Keep aspect covered\") var stretch_mode setget set_stretch_mode, get_stretch_mode
+export var text_color: Color setget set_text_color, get_text_color
+export var use_effect: bool setget set_use_effect, get_use_effect
+export var button_text: String setget set_button_text, get_button_text
+export var picture_offset: Vector3 setget set_picture_offset, get_picture_offset
+export var picture_scale: Vector3 setget set_picture_scale, get_picture_scale
+export var picture_scale_pivot: Vector3 setget set_picture_scale_pivot, get_picture_scale_pivot
+export var picture_rotation: float setget set_picture_rotation, get_picture_rotation
+export var picture_rotation_pivot: Vector3 setget set_picture_rotation_pivot, get_picture_rotation_pivot
+
+const EFFECT_MAT = preload(\"res://materials/ui/PictureButtonImgEffect.tres\")
 
 func _ready():
+	_is_ready = true
 	update_display()
+
+func update_display():
+	if not _is_ready: return
+	$Bg.stretch_mode = _stretch_mode
+	$Text.text = _button_text
+	$Text.add_color_override(\"font_color\", _text_color)
+	if _use_effect:
+		$Bg.material = EFFECT_MAT
+		$Bg.texture = _button_picture
+		$Bg.material.set_shader_param(\"Offset\", _picture_offset)
+		$Bg.material.set_shader_param(\"Scale\", _picture_scale)
+		$Bg.material.set_shader_param(\"ScalePivot\", _picture_scale_pivot)
+		$Bg.material.set_shader_param(\"Rotation\", _picture_rotation)
+		$Bg.material.set_shader_param(\"RotationPivot\", _picture_rotation_pivot)
+	else:
+		$Bg.material = null
+
+func set_button_picture(texture: Texture):
+	_button_picture = texture
+	update_display()
+
+func get_button_picture() -> Texture:
+	return _button_picture
+
+func set_stretch_mode(mode: int):
+	_stretch_mode = mode
+	update_display()
+
+func get_stretch_mode() -> int:
+	return _stretch_mode
+
+func set_text_color(color: Color):
+	_text_color = color
+	update_display()
+
+func get_text_color() -> Color:
+	return _text_color
+
+func set_use_effect(use: bool):
+	_use_effect = use
+	update_display()
+
+func get_use_effect() -> bool:
+	return _use_effect
+
+func set_button_text(text: String):
+	_button_text = text
+	update_display()
+
+func get_button_text() -> String:
+	return _button_text
+
+func set_picture_offset(picture_offset: Vector3):
+	_picture_offset = picture_offset
+	update_display()
+
+func get_picture_offset() -> Vector3:
+	return _picture_offset
+
+func set_picture_scale(picture_scale: Vector3):
+	_picture_scale = picture_scale
+	update_display()
+
+func get_picture_scale() -> Vector3:
+	return _picture_scale
+
+func set_picture_scale_pivot(picture_scale_pivot: Vector3):
+	_picture_scale_pivot = picture_scale_pivot
+	update_display()
+
+func get_picture_scale_pivot() -> Vector3:
+	return _picture_scale_pivot
+
+func set_picture_rotation(picture_rotation: float):
+	_picture_rotation = picture_rotation
+	update_display()
+
+func get_picture_rotation() -> float:
+	return _picture_rotation
+
+func set_picture_rotation_pivot(picture_rotation_pivot: Vector3):
+	_picture_rotation_pivot = picture_rotation_pivot
+	update_display()
+
+func get_picture_rotation_pivot() -> Vector3:
+	return _picture_rotation_pivot
 "
 
 [node name="PictureButton" type="Button"]
+material = ExtResource( 2 )
 margin_right = 300.0
 margin_bottom = 240.0
 rect_min_size = Vector2( 240, 140 )
@@ -38,10 +135,16 @@ script = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-picture_scale_pivot = Vector2( 0.5, 0.5 )
-picture_rotation_pivot = Vector2( 0.5, 0.5 )
+stretch_mode = 7
+use_effect = true
+button_text = "Text"
+picture_offset = Vector3( 0, -0.14, 0 )
+picture_scale = Vector3( 1, 1, 0 )
+picture_scale_pivot = Vector3( 0.5, 0.5, 0 )
+picture_rotation_pivot = Vector3( 0.5, 0.5, 0 )
 
 [node name="Bg" type="TextureRect" parent="."]
+material = ExtResource( 2 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 expand = true
@@ -58,6 +161,7 @@ margin_top = -64.0
 custom_fonts/font = ExtResource( 1 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 custom_constants/line_spacing = 0
+text = "Text"
 align = 1
 valign = 1
 autowrap = true

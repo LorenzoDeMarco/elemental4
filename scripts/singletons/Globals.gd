@@ -10,7 +10,8 @@ var _audio_music_enabled : bool = true
 var _scene_tween : Tween = null
 var _notif_adder : FuncRef = null
 
-var _primary_server : String = PRIMARY_SERVER_URL
+var _notif_models : Dictionary = {}
+var _achv_models : Dictionary = {}
 
 export var primary_server : String = PRIMARY_SERVER_URL setget set_primary_server, get_primary_server
 
@@ -33,7 +34,7 @@ const SKEY_AUDIO_MUSIC = 'audio.music'
 const SKEY_PRIMARY_SERVER = 'net.primaryserver'
 
 const PATH_SETTINGS = 'user://profiles/%s/settings.json'
-const PATH_SETTINGS_DEFAULT = 'res://settings/default.json'
+const PATH_SETTINGS_DEFAULT = 'res://settings/default_profile.json'
 
 const AUDIO_GAME_CLASSIC_POP = preload('res://sounds/game/classic_pop.ogg')
 const AUDIO_UI_BUTTON_DOWN = preload('res://sounds/ui/button_down.wav')
@@ -41,19 +42,37 @@ const AUDIO_UI_BUTTON_HOVER = preload('res://sounds/ui/button_hover.wav')
 const AUDIO_UI_GENERIC = preload('res://sounds/ui/generic.wav')
 const AUDIO_UI_TOGGLE = preload('res://sounds/ui/toggle.wav')
 
+const NK_PROFILE_SAVE_FAILED = "profile_save_failed"
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pause_mode = Node.PAUSE_MODE_PROCESS
 	OS.min_window_size = WINDOW_MIN_SIZE
-	if not load_settings():
-		if not load_default_settings():
-			get_tree().quit(2)
+	_load_achievements()
+	_load_notifications()
 	_spawn_audio_player("UISFX")
 	_spawn_audio_player("GameSFX")
 	_spawn_audio_player("Music")
 	is_mobile = OS.has_feature("mobile")
-	set_primary_server(PRIMARY_SERVER_URL)
 	check_internet(true)
+
+func _load_achievements():
+	var nmf = File.new()
+	if nmf.open("res://settings/achievements.json") != OK: return
+	var nmr = JSON.parse(nmf.get_as_text())
+	nmf.close()
+	if nmr.error != OK: return
+	for elem in (nmr.result as Array):
+		_achv_models[elem['key']] = elem
+
+func _load_notifications():
+	var nmf = File.new()
+	if nmf.open("res://settings/notifications.json") != OK: return
+	var nmr = JSON.parse(nmf.get_as_text())
+	nmf.close()
+	if nmr.error != OK: return
+	for elem in (nmr.result as Array):
+		_notif_models[elem['key']] = elem
 
 func check_internet(force_emit: bool = false):
 	var status = Utility.internet_test()
@@ -73,6 +92,14 @@ func get_scene_tween() -> Tween:
 
 func add_notification(title: String, subtitle: String = "", icon: Texture = null):
 	if _notif_adder != null:
+		_notif_adder.call_func("", title, subtitle, icon)
+
+func add_notification_k(key: String):
+	if (_notif_adder != null) and (key in _notif_models):
+		var mdl = _notif_models[key]
+		var title: String = mdl['title'] if 'title' in mdl else ""
+		var subtitle: String = mdl['subtitle'] if 'subtitle' in mdl else ""
+		var icon: Texture = load(mdl['icon']) if 'icon' in mdl else null
 		_notif_adder.call_func(title, subtitle, icon)
 
 func _spawn_audio_player(bus: String):
@@ -102,64 +129,27 @@ func play_music(audio_res):
 	sfxp.stream = audio_res
 	sfxp.play()
 
-func save_settings() -> bool:
-	var td : Dictionary = {}
-	td[SKEY_AUDIO_UISFX] = _audio_uisfx_enabled
-	td[SKEY_AUDIO_GAMESFX] = _audio_gamesfx_enabled
-	td[SKEY_AUDIO_MUSIC] = _audio_music_enabled
-	td[SKEY_PRIMARY_SERVER] = _primary_server
-	var sf = File.new()
-	if sf.open(PATH_SETTINGS, File.WRITE) == OK:
-		sf.store_string(JSON.print(td, "	"))
-		sf.close()
-		return true
-	return false
-
-func load_settings(path: String = PATH_SETTINGS) -> bool:
-	var sf = File.new()
-	if sf.file_exists(path):
-		if sf.open(path, File.READ) == OK:
-			var data = parse_json(sf.get_as_text())
-			sf.close()
-			if typeof(data) == TYPE_DICTIONARY:
-				apply_settings_bulk(data)
-				return true
-	return false
-
-func load_default_settings() -> bool:
-	return load_settings(PATH_SETTINGS_DEFAULT) and save_settings()
-
-func apply_settings_bulk(settings: Dictionary):
-	if SKEY_AUDIO_UISFX in settings:
-		_audio_uisfx_enabled = settings[SKEY_AUDIO_UISFX]
-	if SKEY_AUDIO_GAMESFX in settings:
-		_audio_gamesfx_enabled = settings[SKEY_AUDIO_GAMESFX]
-	if SKEY_AUDIO_MUSIC in settings:
-		_audio_music_enabled = settings[SKEY_AUDIO_MUSIC]
-	if SKEY_PRIMARY_SERVER in settings:
-		_primary_server = settings[SKEY_PRIMARY_SERVER]
-
 func get_ui_sfx_player() -> AudioStreamPlayer:
-	return ($UISFXPlayer as AudioStreamPlayer) if _audio_uisfx_enabled else null
+	return ($UISFXPlayer as AudioStreamPlayer) if Player.get_profile().get_setting(SKEY_AUDIO_UISFX) else null
 
 func get_game_sfx_player() -> AudioStreamPlayer:
-	return ($GameSFXPlayer as AudioStreamPlayer) if _audio_gamesfx_enabled else null
+	return ($GameSFXPlayer as AudioStreamPlayer) if Player.get_profile().get_setting(SKEY_AUDIO_GAMESFX) else null
 
 func get_music_player() -> AudioStreamPlayer:
-	return ($MusicPlayer as AudioStreamPlayer) if _audio_music_enabled else null
+	return ($MusicPlayer as AudioStreamPlayer) if Player.get_profile().get_setting(SKEY_AUDIO_MUSIC) else null
 
 func set_uisfx_enabled(enabled: bool):
-	_audio_uisfx_enabled = enabled
+	Player.get_profile().upsert_setting(SKEY_AUDIO_UISFX, enabled)
 
 func set_gamesfx_enabled(enabled: bool):
-	_audio_gamesfx_enabled = enabled
+	Player.get_profile().upsert_setting(SKEY_AUDIO_GAMESFX, enabled)
 
 func set_music_enabled(enabled: bool):
-	_audio_music_enabled = enabled
+	Player.get_profile().upsert_setting(SKEY_AUDIO_MUSIC, enabled)
 
 func get_primary_server() -> String:
-	return _primary_server
+	return Player.get_profile().get_setting(SKEY_PRIMARY_SERVER)
 
 func set_primary_server(url: String):
-	_primary_server = url
+	Player.get_profile().upsert_setting(SKEY_PRIMARY_SERVER, url)
 	emit_signal("primary_server_changed", url)

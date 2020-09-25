@@ -1,7 +1,7 @@
 extends Panel
 
 func _ready():
-	$Version.text = Globals.VERSION
+	$Content/OptionsTab/ScrollContainer/HBoxContainer/Info/Version.text %= Globals.VERSION
 	Player.connect("username_changed", self, "_on_username_changed")
 	Player.connect("signin_state_changed", self, "_on_signin_state_changed")
 	Globals.connect("internet_status_changed", self, "_on_internet_state_changed")

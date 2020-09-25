@@ -9,14 +9,13 @@ var _profiles_manager: ProfilesManager = ProfilesManager.new()
 var _profile: PlayerProfile = PlayerProfile.new()
 
 const PATH_PROFILE = 'user://profiles/%s/profile.json'
-const PATH_SETTINGS = 'user://profiles/%s/settings.json'
-const PATH_PROFILE_DEFAULT = 'res://settings/profile.json'
-const PATH_SETTINGS_DEFAULT = 'res://settings/settings.json'
+const PATH_PROFILE_DEFAULT = 'res://settings/default_profile.json'
 
 class PlayerProfile:
 	
 	export var id: String = ID_DEFAULT
 	export var username: String = ID_DEFAULT
+	export var pwh: String = "password".sha256_text()
 	export var discovered_elements: Dictionary = {}
 	export var achievements: Array = []
 	export var settings: Dictionary = {}
@@ -26,6 +25,7 @@ class PlayerProfile:
 	const ID_DEFAULT = "anonymous"
 	
 	const PKEY_USERNAME = "username"
+	const PKEY_PWH = "pwh"
 	const PKEY_ELEMS = "discovered_elements"
 	const PKEY_ACHIEVEMENTS = "achievements"
 	const PKEY_SETTINGS = "settings"
@@ -40,8 +40,10 @@ class PlayerProfile:
 	func wipe():
 		id = ID_DEFAULT
 		username = ID_DEFAULT
+		pwh = "password".sha256_text()
 		discovered_elements = {}
 		achievements = []
+		settings = {}
 	
 	func load_by_id(id: String) -> bool:
 		return load_from_file(PATH_PROFILE % id, id)
@@ -59,21 +61,24 @@ class PlayerProfile:
 		return false
 	
 	func apply_raw(profile: Dictionary):
+		if PKEY_USERNAME in profile:
+			username = profile[PKEY_USERNAME]
+			emit_signal("username_changed", username)
+		if PKEY_PWH in profile:
+			pwh = profile[PKEY_PWH]
+		if PKEY_SETTINGS in profile:
+			settings = profile[PKEY_SETTINGS]
 		if PKEY_ELEMS in profile:
 			discovered_elements = profile[PKEY_ELEMS]
 		if PKEY_ACHIEVEMENTS in profile:
 			achievements = profile[PKEY_ACHIEVEMENTS]
-		if PKEY_USERNAME in profile:
-			username = profile[PKEY_USERNAME]
-			emit_signal("username_changed", username)
-		if PKEY_SETTINGS in profile:
-			settings = profile[PKEY_SETTINGS]
 		emit_signal("profile_loaded")
 	
 	func save() -> bool:
 		if is_temporary: return true
 		var td : Dictionary = {}
-		td[PKEY_ELEMS] = username
+		td[PKEY_USERNAME] = username
+		td[PKEY_PWH] = pwh
 		td[PKEY_SETTINGS] = settings
 		td[PKEY_ELEMS] = discovered_elements
 		td[PKEY_ACHIEVEMENTS] = achievements
@@ -118,7 +123,6 @@ class ProfilesManager:
 		var pd = Directory.new()
 		if pd.open("user://profiles/%s" % dir_name) != OK: return
 		if not pd.file_exists("profile.json"): return
-		if not pd.file_exists("settings.json"): return
 		if _profile_ids.has(dir_name): return
 		_profile_ids.append(dir_name)
 	
@@ -135,7 +139,6 @@ class ProfilesManager:
 		if pd.dir_exists(id): return false
 		if pd.make_dir(id) != OK: return false
 		if pd.copy(PATH_PROFILE_DEFAULT, PATH_PROFILE % id) != OK: return false
-		if pd.copy(PATH_SETTINGS_DEFAULT, PATH_SETTINGS % id) != OK: return false
 		var tmp: PlayerProfile = PlayerProfile.new()
 		if not tmp.load_by_id(id): return false
 		tmp.username = username
@@ -169,18 +172,18 @@ func get_profile() -> PlayerProfile:
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pause_mode = Node.PAUSE_MODE_PROCESS
+	_profile.load_from_file()
 	_profiles_manager.scan_profiles()
 	_profile.connect("achievement_done", self, "_on_achievement_done")
 	_profile.connect("profile_loaded", self, "_on_profile_loaded")
 	_profile.connect("profile_saved", self, "_on_profile_saved")
-	#_profile.connect("username_changed", self, "_on_username_changed")
 
 func _on_profile_loaded():
 	_profile.save()
 
 func _on_achievement_done(_id, _data):
-	if not _profile.save_profile():
-		Globals.add_notification("Failed to save profile", "Please make sure your storage is writable!")
+	if not _profile.save():
+		Globals.add_notification_k(Globals.NK_PROFILE_SAVE_FAILED)
 
 func _online_signin_response(response: HTTPUtil.Response):
 	if response != null and response.response_code == HTTPClient.RESPONSE_OK:
@@ -211,12 +214,3 @@ func online_signin(username: String, password_hb64: String, remember: bool = fal
 		"username": username,
 		"key": password_hb64
 	}))
-
-func mixed_element(result: ElementModel):
-	var curr_pack = ElementDB.get_pack_name()
-	if not _profile.discovered_elements.has(curr_pack):
-		_profile.discovered_elements[curr_pack] = []
-		_profile.emit_signal("achievement_done", "universe:first_mix_of_pack", [result, curr_pack])
-	if not result.id in _profile.discovered_elements[curr_pack]:
-		_profile.discovered_elements[curr_pack].append(result.id)
-		_profile.emit_signal("achievement_done", "universe:mix_new_element", result)
