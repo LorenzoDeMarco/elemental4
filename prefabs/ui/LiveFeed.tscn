@@ -51,7 +51,7 @@ func _refresh_data():
 	var dt_frame = OS.get_datetime_from_unix_time(OS.get_unix_time() - 600) # Last 10 minutes
 	print(dt_frame)
 	HTTPUtil.request(funcref(self, \"_on_data\"), HTTPClient.METHOD_GET, 
-		Globals.PRIMARY_SERVER_URL + \"/api/events/latest\",
+		Globals.get_primary_server() + \"/api/events/latest\",
 		[\"Content-Type: application/json\"], \"\\\"%s\\\"\" % Utility.date_dict_to_ISO(dt_frame))
 "
 

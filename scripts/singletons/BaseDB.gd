@@ -10,8 +10,15 @@ signal db_sync_progress(added_count)
 signal db_sync_done()
 signal db_sync_size(size)
 
-var _db : Dictionary = {
-}
+var _db : Dictionary = {}
+
+var _pack_name : String = "default"
+
+func set_pack_name(name: String):
+	_pack_name = name
+
+func get_pack_name() -> String:
+	return _pack_name
 
 func _ready():
 	connect("db_sync_done", self, "_on_db_synced", [], CONNECT_DEFERRED)
@@ -38,11 +45,8 @@ func populate_db():
 			emit_signal("db_sync_done")
 
 func load_remote_db():
-	HTTPUtil.request(funcref(self, "_remote_data_head"), HTTPClient.METHOD_GET, remote_head_url, \
-		["Content-Type: application/json"], JSON.print({
-		"pack_id": "default",
-		"last_known_id": get_db_max_key()
-	}))
+	HTTPUtil.request(funcref(self, "_remote_data_head"), HTTPClient.METHOD_GET, 
+		remote_head_url + "?pack_id=%s&last_known_id=%d" % ["default", get_db_max_key()])
 
 func _remote_data_head(resp: HTTPUtil.Response):
 	if resp.response_code == HTTPClient.RESPONSE_OK:
@@ -51,11 +55,8 @@ func _remote_data_head(resp: HTTPUtil.Response):
 			emit_signal("db_sync_done")
 			return
 		emit_signal("db_sync_size", size)
-		HTTPUtil.request(funcref(self, "_remote_data"), HTTPClient.METHOD_GET, remote_sync_url, \
-			["Content-Type: application/json"], JSON.print({
-			"pack_id": "default",
-			"last_known_id": get_db_max_key()
-		}))
+		HTTPUtil.request(funcref(self, "_remote_data"), HTTPClient.METHOD_GET, 
+			remote_sync_url + "?pack_id=%s&last_known_id=%d" % ["default", get_db_max_key()])
 	else:
 		emit_signal("db_sync_done")
 

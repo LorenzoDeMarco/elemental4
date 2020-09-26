@@ -16,6 +16,7 @@ func add_notification(title: String, subtitle: String = \"\", icon: Texture = nu
 	ni.subtitle = subtitle
 	if icon != null: ni.icon = icon
 	$VBoxContainer.add_child(ni)
+	ni.animate($VBoxContainer.get_child_count() - 1)
 
 func _on_event(id, data, type):
 	match type:

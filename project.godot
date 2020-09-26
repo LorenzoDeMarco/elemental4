@@ -728,9 +728,9 @@ driver=""
 Utility="*res://scripts/singletons/Utility.gd"
 HTTPUtil="*res://scripts/singletons/HTTPUtil.gd"
 Globals="*res://scripts/singletons/Globals.gd"
+Player="*res://scripts/singletons/Player.gd"
 ElementDB="*res://scripts/singletons/ElementDB.gd"
 FormulaDB="*res://scripts/singletons/FormulaDB.gd"
-Player="*res://scripts/singletons/Player.gd"
 
 [debug]
 

@@ -1,6 +1,8 @@
 {
 	"username": "anonymous",
-	"discovered_elements": {},
+	"discovered_elements": {
+		"default": []
+	},
 	"achievements": [],
 	"settings": {
 		"audio.uisfx": true,

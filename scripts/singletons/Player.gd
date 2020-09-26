@@ -11,14 +11,20 @@ var _profile: PlayerProfile = PlayerProfile.new()
 const PATH_PROFILE = 'user://profiles/%s/profile.json'
 const PATH_PROFILE_DEFAULT = 'res://settings/default_profile.json'
 
+const SKEY_AUDIO_UISFX = 'audio.uisfx'
+const SKEY_AUDIO_GAMESFX = 'audio.gamesfx'
+const SKEY_AUDIO_MUSIC = 'audio.music'
+
+const SKEY_PRIMARY_SERVER = 'net.primaryserver'
+
 class PlayerProfile:
 	
-	export var id: String = ID_DEFAULT
-	export var username: String = ID_DEFAULT
-	export var pwh: String = "password".sha256_text()
-	export var discovered_elements: Dictionary = {}
-	export var achievements: Array = []
-	export var settings: Dictionary = {}
+	export var id: String
+	export var username: String
+	export var pwh: String
+	export var discovered_elements: Dictionary
+	export var achievements: Array
+	export var settings: Dictionary
 	
 	export var is_temporary: bool = false
 	
@@ -33,9 +39,12 @@ class PlayerProfile:
 	signal username_changed(username)
 	signal setting_changed(key, value)
 	signal setting_removed(key)
-	signal achievement_done(achievement_id, data)
+	signal achievement_done(achievement_id, titleData, subtitleData)
 	signal profile_loaded()
 	signal profile_saved()
+	
+	func _init():
+		wipe()
 	
 	func wipe():
 		id = ID_DEFAULT
@@ -72,6 +81,8 @@ class PlayerProfile:
 			discovered_elements = profile[PKEY_ELEMS]
 		if PKEY_ACHIEVEMENTS in profile:
 			achievements = profile[PKEY_ACHIEVEMENTS]
+		for sk in settings.keys():
+			emit_signal("setting_changed", sk, settings[sk])
 		emit_signal("profile_loaded")
 	
 	func save() -> bool:
@@ -95,6 +106,8 @@ class PlayerProfile:
 		return settings.has(key)
 	
 	func get_setting(key):
+		if OS.is_debug_build() and key == SKEY_PRIMARY_SERVER and Globals.OVERRIDE_LOCALSERVER:
+			return "http://localhost:3100"
 		return settings[key]
 	
 	func upsert_setting(key, value):
@@ -172,18 +185,25 @@ func get_profile() -> PlayerProfile:
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pause_mode = Node.PAUSE_MODE_PROCESS
-	_profile.load_from_file()
 	_profiles_manager.scan_profiles()
 	_profile.connect("achievement_done", self, "_on_achievement_done")
 	_profile.connect("profile_loaded", self, "_on_profile_loaded")
 	_profile.connect("profile_saved", self, "_on_profile_saved")
 
+func load_default():
+	_profile.load_from_file()
+
 func _on_profile_loaded():
+	if OS.is_debug_build():
+		print_debug("Loaded profile '%s'" % _profile.username)
 	_profile.save()
 
 func _on_achievement_done(_id, _data):
 	if not _profile.save():
 		Globals.add_notification_k(Globals.NK_PROFILE_SAVE_FAILED)
+
+func is_logged_in() -> bool:
+	return _logged_in
 
 func _online_signin_response(response: HTTPUtil.Response):
 	if response != null and response.response_code == HTTPClient.RESPONSE_OK:
@@ -209,7 +229,7 @@ func _online_signin_response(response: HTTPUtil.Response):
 func online_signin(username: String, password_hb64: String, remember: bool = false) -> int:
 	_user_remember = remember
 	return HTTPUtil.request(funcref(self, "_online_signin_response"), \
-		HTTPClient.METHOD_POST, Globals.PRIMARY_SERVER_URL + "/api/auth/sessions", ["Content-Type: application/json"], \
+		HTTPClient.METHOD_POST, Globals.get_primary_server() + "/api/auth/sessions", ["Content-Type: application/json"], \
 		JSON.print({
 		"username": username,
 		"key": password_hb64

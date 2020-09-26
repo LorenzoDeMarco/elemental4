@@ -55,13 +55,16 @@ func _on_inventory_update(_element, _position):
 		# Save for later
 		_result = elem_node.get_path()
 		# Trigger achievement
-		Player.mixed_element(ElementDB.element_model_by_id(formula_mdl.output_id))
+		_mixed_elements(ElementDB.element_model_by_id(formula_mdl.output_id))
 	else:
 		get_node(suggest_new_btn).visible = true
 		_has_result = false
 
 func _on_result_lifted(_position, inputs: Array):
 	if consume_inputs:
+		# Clear slots
+		for slot in mixer_slots:
+			get_node(slot).clear_items()
 		# Destroy inputs
 		for input in inputs:
 			input.queue_free()
@@ -74,10 +77,10 @@ func _mixed_elements(result: ElementModel):
 	var profile = Player.get_profile()
 	if not profile.discovered_elements.has(curr_pack):
 		profile.discovered_elements[curr_pack] = []
-		profile.emit_signal("achievement_done", "universe:first_mix_of_pack", [result, curr_pack])
+		profile.emit_signal("achievement_done", "universe.first_mix_of_pack", [result, curr_pack])
 	if not result.id in profile.discovered_elements[curr_pack]:
 		profile.discovered_elements[curr_pack].append(result.id)
-		profile.emit_signal("achievement_done", "universe:mix_new_element", result)
+		profile.emit_signal("achievement_done", "universe.mix_new_element", result)
 
 func _on_suggest_pressed():
 	# Get inputs

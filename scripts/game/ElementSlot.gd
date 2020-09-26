@@ -56,5 +56,8 @@ func get_item():
 func get_items():
 	return _contents
 
+func clear_items():
+	_contents = []
+
 func _on_resized() -> void:
 	rect_pivot_offset = Vector2(rect_size.x / 2, rect_size.y / 2)

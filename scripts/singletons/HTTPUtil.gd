@@ -22,7 +22,9 @@ func _on_request_completed(result, response_code, headers, body, handler: HTTPRe
 	tmp.headers = headers
 	tmp.body = body
 	handler.queue_free()
-	callbackfn.call_func(tmp)
+	if response_code == 0: return
+	if callbackfn != null:
+		callbackfn.call_func(tmp)
 
 func request(callback: FuncRef, method: int, url: String, headers: PoolStringArray = PoolStringArray(), body: String = "", token: bool = true) -> int:
 	var handler : HTTPRequest = _register_httprequest(String(randi() % 1000))

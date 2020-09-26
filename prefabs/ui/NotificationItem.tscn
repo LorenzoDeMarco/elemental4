@@ -11,6 +11,11 @@ export var title: String setget set_title, get_title
 export var subtitle: String setget set_subtitle, get_subtitle
 export var icon: Texture setget set_notification_icon, get_notification_icon
 
+func animate(delta):
+	var tpos = Vector2(rect_global_position.x, rect_global_position.y + (rect_size.y + 2) * delta)
+	Globals.get_scene_tween().interpolate_property(self, \"rect_global_position\", \\
+		tpos + Vector2(rect_size.x, 0), tpos, 0.8, Tween.TRANS_BACK, Tween.EASE_IN_OUT)
+
 func set_title(title: String):
 	$Title.text = title
 

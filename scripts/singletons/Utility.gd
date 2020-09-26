@@ -72,7 +72,7 @@ func formula_model_from_dto(dto: Dictionary) -> FormulaModel:
 
 func internet_test() -> bool:
 	var hc = HTTPClient.new()
-	var err = hc.connect_to_host("example.com", 80)
+	var err = hc.connect_to_host("ledomsoft.com", 443, true)
 	if err != OK: return false
 	while hc.get_status() == HTTPClient.STATUS_CONNECTING or hc.get_status() == HTTPClient.STATUS_RESOLVING:
 		hc.poll()
