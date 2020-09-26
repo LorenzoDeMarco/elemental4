@@ -78,6 +78,9 @@ func _on_register_pressed():
 		if errc == 0: $Center/VBody/AutoPanel/VMain/Tabs/RegisterTab/EmailTxt.grab_focus()
 		errc += 1
 	if errc > 0: return
+	Player.connect("signin_state_changed", self, "_on_signin_state_changed", [], CONNECT_DEFERRED | CONNECT_ONESHOT)
+	if Player.online_signup(usern, passw.sha256_text(), email) != OK:
+		_on_signin_state_changed(false)
 
 func _on_profile_selected(index: int):
 	$Center/VBody/AutoPanel/VMain/Tabs/LoginTab/LoginBody/PassTxt.text = ""

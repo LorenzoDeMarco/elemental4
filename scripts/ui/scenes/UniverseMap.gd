@@ -20,7 +20,7 @@ func _ready():
 
 
 func _elem_pos(model: ElementModel) -> Vector2:
-	var dist = model.id + (model._birth - 1470780624) / 60
+	var dist = model.id + (model._birth - 1470780624) / 60.0
 	var orig = ORIGIN * rect_size
 	seed(model._birth + model.id)
 	var a = PI * randf() * 2

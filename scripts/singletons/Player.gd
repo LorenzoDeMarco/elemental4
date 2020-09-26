@@ -234,3 +234,12 @@ func online_signin(username: String, password_hb64: String, remember: bool = fal
 		"username": username,
 		"key": password_hb64
 	}))
+
+func online_signup(username: String, password_hb64: String, email: String) -> int:
+	_user_remember = true
+	return HTTPUtil.request(funcref(self, "_online_signin_response"), \
+		HTTPClient.METHOD_POST, Globals.get_primary_server() + "/api/auth/sessions", ["Content-Type: application/json"], \
+		JSON.print({
+		"username": username,
+		"key": password_hb64
+	}))
