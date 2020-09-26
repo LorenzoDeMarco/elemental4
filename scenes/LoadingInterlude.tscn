@@ -1,0 +1,52 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://scripts/ui/scenes/LoadingInterlude.gd" type="Script" id=1]
+[ext_resource path="res://textures/ui/preview_explore_universe.png" type="Texture" id=2]
+[ext_resource path="res://materials/ui/Blur.tres" type="Material" id=3]
+[ext_resource path="res://textures/ui/background-art.png" type="Texture" id=4]
+[ext_resource path="res://materials/ui/LoadingInterludeOverlay.material" type="Material" id=5]
+[ext_resource path="res://fonts/presets/Heading1.tres" type="DynamicFont" id=8]
+
+[node name="LoadingInterlude" type="TextureRect"]
+material = ExtResource( 3 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 2 )
+stretch_mode = 7
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Effect" type="TextureRect" parent="."]
+material = ExtResource( 5 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 4 )
+stretch_mode = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ProgressBar" type="ProgressBar" parent="Effect"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 64.0
+margin_top = -72.0
+margin_right = 449.0
+margin_bottom = -52.0
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Effect"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 64.0
+margin_top = -152.0
+margin_right = 232.0
+margin_bottom = -88.0
+custom_fonts/font = ExtResource( 8 )
+text = "Loading..."
+valign = 1

@@ -1,0 +1,106 @@
+[gd_resource type="ShaderMaterial" load_steps=8 format=2]
+
+[ext_resource path="res://addons/shaderV/rgba/blur/blurCustom.gd" type="Script" id=1]
+
+[sub_resource type="VisualShaderNodeInput" id=1]
+input_name = "texture"
+
+[sub_resource type="VisualShaderNodeInput" id=2]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeCustom" id=3]
+default_input_values = [ 2, -1.0, 3, 5, 4, 0.001 ]
+script = ExtResource( 1 )
+
+[sub_resource type="VisualShaderNodeScalarUniform" id=4]
+uniform_name = "Amount"
+
+[sub_resource type="VisualShaderNodeScalarUniform" id=5]
+uniform_name = "Offset"
+
+[sub_resource type="VisualShader" id=6]
+code = "shader_type canvas_item;
+uniform float Amount;
+uniform float Offset;
+
+
+// BlurCustom
+
+vec4 blurWithAmountFunc(sampler2D _tex_b1r_cst, vec2 _uv_b1r_cst, float _l0d_b1r_cst, int _amnt_b1r_cst, float _0ffst_b1r_cst) {
+	vec4 _c0l_b1r_cst = vec4(0, 0, 0, 0);
+	_amnt_b1r_cst = int(max(min(float(_amnt_b1r_cst), 20.0), 0.0)); // have to do this int() float() shit because of gles2 
+																	// max _amnt_b1r_cst is 20 for not to kill PC
+	for(int x = -_amnt_b1r_cst; x <= _amnt_b1r_cst; x++) {
+		for(int y = -_amnt_b1r_cst; y <= _amnt_b1r_cst; y++) {
+			vec2 _c00rd_b1r_cst = _uv_b1r_cst + vec2(float(x), float(y)) * _0ffst_b1r_cst;
+			if (_l0d_b1r_cst < 0.0){
+				_c0l_b1r_cst += texture(_tex_b1r_cst, _c00rd_b1r_cst);
+			}else{
+				_c0l_b1r_cst += textureLod(_tex_b1r_cst, _c00rd_b1r_cst, _l0d_b1r_cst);
+			}
+		}
+	}
+	int _nmb_ne1ghb0urs_b1r_cst = (_amnt_b1r_cst * 2 + 1) * (_amnt_b1r_cst * 2 + 1);
+	_c0l_b1r_cst /= float(_nmb_ne1ghb0urs_b1r_cst);
+	return _c0l_b1r_cst;
+}
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// Input:3
+
+// Input:4
+	vec3 n_out4p0 = vec3(UV, 0.0);
+
+// ScalarUniform:6
+	float n_out6p0 = Amount;
+
+// ScalarUniform:7
+	float n_out7p0 = Offset;
+
+// BlurCustom:5
+	float n_in5p2 = -1.00000;
+	vec3 n_out5p0;
+	float n_out5p1;
+	{
+		vec4 n_out5p0n_out5p1 = blurWithAmountFunc(TEXTURE, n_out4p0.xy, n_in5p2, int(n_out6p0), n_out7p0);
+		n_out5p0 = n_out5p0n_out5p1.rgb;
+		n_out5p1 = n_out5p0n_out5p1.a;
+	}
+
+// Output:0
+	COLOR.rgb = n_out5p0;
+	COLOR.a = n_out5p1;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( -534, 261 )
+mode = 1
+flags/light_only = false
+nodes/fragment/0/position = Vector2( 480, 200 )
+nodes/fragment/3/node = SubResource( 1 )
+nodes/fragment/3/position = Vector2( -246, 223 )
+nodes/fragment/4/node = SubResource( 2 )
+nodes/fragment/4/position = Vector2( -240, 300 )
+nodes/fragment/5/node = SubResource( 3 )
+nodes/fragment/5/position = Vector2( 120, 200 )
+nodes/fragment/6/node = SubResource( 4 )
+nodes/fragment/6/position = Vector2( -240, 380 )
+nodes/fragment/7/node = SubResource( 5 )
+nodes/fragment/7/position = Vector2( -240, 440 )
+nodes/fragment/connections = PoolIntArray( 3, 0, 5, 0, 4, 0, 5, 1, 5, 0, 0, 0, 5, 1, 0, 1, 6, 0, 5, 3, 7, 0, 5, 4 )
+
+[resource]
+shader = SubResource( 6 )
+shader_param/Amount = 1.0
+shader_param/Offset = 0.001

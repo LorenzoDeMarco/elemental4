@@ -2,6 +2,7 @@ extends Node
 
 var is_mobile: bool = false
 var internet_access: bool = false
+var target_scene_path: String = ""
 
 var _prim_svr : String = NET_PRIMARY_SERVER
 
@@ -46,6 +47,10 @@ func _ready():
 	_spawn_audio_player("Music")
 	is_mobile = OS.has_feature("mobile")
 	check_internet(true)
+
+func move_to_scene(name: String) -> int:
+	target_scene_path = name
+	return get_tree().change_scene("res://scenes/LoadingInterlude.tscn")
 
 func _load_achievements():
 	var nmf = File.new()
