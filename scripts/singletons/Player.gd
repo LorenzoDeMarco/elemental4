@@ -55,10 +55,12 @@ class PlayerProfile:
 		settings = {}
 	
 	func load_by_id(id: String) -> bool:
+		if OS.is_debug_build(): print_debug("Loading profile ID %s" % id)
 		return load_from_file(PATH_PROFILE % id, id)
 	
 	func load_from_file(path: String = PATH_PROFILE_DEFAULT, id: String = ID_DEFAULT) -> bool:
 		var sf = File.new()
+		if OS.is_debug_build(): print_debug("Loading profile file %s with ID %s" % [path, id])
 		if sf.file_exists(path):
 			if sf.open(path, File.READ) == OK:
 				var data = parse_json(sf.get_as_text())
@@ -95,7 +97,8 @@ class PlayerProfile:
 		td[PKEY_ACHIEVEMENTS] = achievements
 		
 		var sf = File.new()
-		if sf.open(PATH_PROFILE % id, File.WRITE) == OK:
+		var p = PATH_PROFILE % id
+		if sf.open(p, File.WRITE) == OK:
 			sf.store_string(JSON.print(td))
 			sf.close()
 			emit_signal("profile_saved")
@@ -188,7 +191,6 @@ func _ready():
 	_profiles_manager.scan_profiles()
 	_profile.connect("achievement_done", self, "_on_achievement_done")
 	_profile.connect("profile_loaded", self, "_on_profile_loaded")
-	_profile.connect("profile_saved", self, "_on_profile_saved")
 
 func load_default():
 	_profile.load_from_file()

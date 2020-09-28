@@ -1,10 +1,20 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=41 format=2]
 
+[ext_resource path="res://prefabs/ui/ElemSquareUI.tscn" type="PackedScene" id=1]
 [ext_resource path="res://fonts/presets/Heading1.tres" type="DynamicFont" id=2]
 [ext_resource path="res://fonts/presets/Heading2.tres" type="DynamicFont" id=3]
 [ext_resource path="res://prefabs/ui/Element.tscn" type="PackedScene" id=4]
+[ext_resource path="res://textures/ui/PictureButtonEffectV.tres" type="Texture" id=5]
+[ext_resource path="res://textures/ui/PictureButtonEffectH.tres" type="Texture" id=6]
 [ext_resource path="res://prefabs/ui/Button.tscn" type="PackedScene" id=7]
 [ext_resource path="res://themes/Default.theme" type="Theme" id=8]
+[ext_resource path="res://addons/shaderV/uv/rotate.gd" type="Script" id=9]
+[ext_resource path="res://scripts/game/Element.gd" type="Script" id=10]
+[ext_resource path="res://addons/shaderV/rgba/generate_shapes/generateRect.gd" type="Script" id=11]
+[ext_resource path="res://addons/shaderV/uv/transformUV.gd" type="Script" id=12]
+[ext_resource path="res://addons/shaderV/rgba/maskAlpha.gd" type="Script" id=13]
+[ext_resource path="res://fonts/presets/ElementName.tres" type="DynamicFont" id=14]
+[ext_resource path="res://materials/ui/GlowExtMaterial.tres" type="Material" id=15]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Control
@@ -29,7 +39,6 @@ func _ready():
 		e.is_slot = false
 		e.animate = false
 		$Panel/InputsScroll/InputsHContainer.add_child(e)
-
 
 func _on_newelement_toggled(button_pressed: bool) -> void:
 	_is_new_elem = button_pressed
@@ -64,28 +73,334 @@ func _on_cancel_pressed():
 
 func _on_suggest_response(response: HTTPUtil.Response):
 	if response.response_code != HTTPClient.RESPONSE_OK:
-		Globals.add_notification(\"Whoops!\", \"An error has occurred. Please retry later.\")
+		Globals.add_notification_k(\"error\")
 	else:
-		Globals.add_notification(\"Success!\", \"Your suggestion has been saved.\")
+		Globals.add_notification_k(\"suggest_succeeded\")
 		queue_free()
 
-func _suggest(internet: bool):
-	if internet:
+func _on_confirm_pressed():
+	if Globals.internet_access:
 		HTTPUtil.request(funcref(self, \"_on_suggest_response\"), \\
-			HTTPClient.METHOD_POST, Globals.PRIMARY_SERVER_URL + \"/api/universe/formulas\", \\
+			HTTPClient.METHOD_POST, Globals.get_primary_server() + \"/api/universe/formulas\", \\
 			[\"Content-Type: application/json\"], \\
 			JSON.print(bake_request_object()))
 	else:
-		Globals.add_notification(\"To suggest formulas, you must connect to the Internet.\", \"Please retry later.\")
-
-func _on_confirm_pressed():
-	Globals.connect(\"internet_status_changed\", self, \"_suggest\", [], CONNECT_ONESHOT)
-	Globals.check_internet(true)
+		Globals.add_notification_k(\"suggest_no_internet\")
 "
 
 [sub_resource type="StyleBoxEmpty" id=2]
 
 [sub_resource type="StyleBoxEmpty" id=3]
+
+[sub_resource type="StreamTexture" id=4]
+resource_local_to_scene = true
+flags = 4
+load_path = "res://.import/elem_square.png-d784ec3259573ad434c3c446a25e0f2b.stex"
+
+[sub_resource type="VisualShaderNodeCustom" id=5]
+default_input_values = [ 1, 1, 2, 1 ]
+script = ExtResource( 13 )
+
+[sub_resource type="VisualShaderNodeTextureUniform" id=6]
+uniform_name = "Gradient"
+texture_type = 1
+
+[sub_resource type="VisualShaderNodeCustom" id=7]
+default_input_values = [ 1, 1, 2, 1 ]
+script = ExtResource( 13 )
+
+[sub_resource type="VisualShaderNodeTextureUniform" id=8]
+uniform_name = "GradientV"
+
+[sub_resource type="VisualShaderNodeCustom" id=9]
+default_input_values = [ 1, 1, 2, 1 ]
+script = ExtResource( 13 )
+
+[sub_resource type="VisualShaderNodeCustom" id=10]
+default_input_values = [ 1, 0.0, 2, Vector3( 0.5, 0.5, 0 ) ]
+script = ExtResource( 9 )
+
+[sub_resource type="VisualShaderNodeScalarFunc" id=11]
+default_input_values = [ 0, 90.0 ]
+function = 27
+
+[sub_resource type="VisualShaderNodeCustom" id=12]
+default_input_values = [ 1, Vector3( 0, 0, 0 ), 2, Vector3( 1, 1, 0 ), 3, Vector3( 0.5, 0.5, 0 ), 4, 0, 5, Vector3( 0.5, 0.5, 0 ) ]
+script = ExtResource( 12 )
+
+[sub_resource type="VisualShaderNodeCustom" id=13]
+output_port_for_preview = 1
+default_input_values = [ 1, Vector3( 0.5, 0.5, 0 ), 2, Vector3( 0.5, 0.5, 0 ), 3, Vector3( 1, 1, 1 ), 4, 1.0 ]
+script = ExtResource( 11 )
+
+[sub_resource type="VisualShaderNodeVec3Uniform" id=14]
+uniform_name = "Offset"
+
+[sub_resource type="VisualShaderNodeVec3Uniform" id=15]
+uniform_name = "Scale"
+
+[sub_resource type="VisualShaderNodeVec3Uniform" id=16]
+uniform_name = "ScalePivot"
+
+[sub_resource type="VisualShaderNodeScalarUniform" id=17]
+uniform_name = "Rotation"
+
+[sub_resource type="VisualShaderNodeVec3Uniform" id=18]
+uniform_name = "RotationPivot"
+
+[sub_resource type="VisualShaderNodeScalarOp" id=19]
+operator = 7
+
+[sub_resource type="VisualShaderNodeInput" id=20]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeInput" id=21]
+input_name = "texture"
+
+[sub_resource type="VisualShaderNodeTexture" id=22]
+source = 5
+
+[sub_resource type="VisualShaderNodeCustom" id=23]
+default_input_values = [ 1, Vector3( 0, 0, 0 ), 2, Vector3( 1, 1, 0 ), 3, Vector3( 0.5, 0.5, 0 ), 4, 0, 5, Vector3( 0.5, 0.5, 0 ) ]
+script = ExtResource( 12 )
+
+[sub_resource type="VisualShader" id=24]
+code = "shader_type canvas_item;
+uniform vec3 Offset;
+uniform vec3 Scale;
+uniform vec3 ScalePivot;
+uniform float Rotation;
+uniform vec3 RotationPivot;
+uniform sampler2D Gradient : hint_albedo;
+uniform sampler2D GradientV;
+
+
+// TransformUV
+
+vec2 transformUVFunc(vec2 _uv_transform, vec2 _scale_uv_, vec2 _pivot_scale_uv_, vec2 _offset_uv_, float _rotate_uv, vec2 _pivot_rotate_uv_){
+	_uv_transform -= _offset_uv_; // offset
+	_uv_transform = (_uv_transform - _pivot_scale_uv_) * _scale_uv_ + _pivot_scale_uv_; // zoom
+	vec2 _rot_uv_angl = vec2(cos(_rotate_uv), sin(_rotate_uv));
+	mat2 _rot_matrix = mat2(vec2(_rot_uv_angl.x, - _rot_uv_angl.y), vec2(_rot_uv_angl.y, _rot_uv_angl.x));
+	_uv_transform = (_uv_transform - _pivot_rotate_uv_) * _rot_matrix + _pivot_rotate_uv_; // rotate
+	return _uv_transform;
+}
+
+// RectShape
+
+float rectCreati0nFunc(vec2 _uv_rect_generate, vec2 _pos_rect_generate, vec2 _size_rect_generate){
+	vec2 sw_rect_gen = _pos_rect_generate - _size_rect_generate / 2.0;
+	vec2 ne_rect_gen = _pos_rect_generate + _size_rect_generate / 2.0;
+	vec2 _pct_temp_var = step(sw_rect_gen, _uv_rect_generate);
+	_pct_temp_var -= step(ne_rect_gen, _uv_rect_generate);
+	return _pct_temp_var.x * _pct_temp_var.y;
+}
+
+// MaskAlpha
+
+vec4 maskAlphaFunc(vec4 _col_to_mask, float _mask_alpha_to_mask){
+	return vec4(_col_to_mask.rgb, _col_to_mask.a * _mask_alpha_to_mask);
+}
+
+// RotateUV
+
+vec3 r0tateUVFunc(vec3 _uv_r0tate, vec2 _pivot_r0tate, float _r0tation_r0tate){
+	//_r0tation_r0tate = radians(_r0tationDeg_r0tate);
+	vec2 _r0tAngle = vec2(cos(_r0tation_r0tate), sin(_r0tation_r0tate));
+	_uv_r0tate.xy -= _pivot_r0tate;
+	_uv_r0tate.xy = vec2((_uv_r0tate.x*_r0tAngle.x-_uv_r0tate.y*_r0tAngle.y),(_uv_r0tate.x*_r0tAngle.y+_uv_r0tate.y*_r0tAngle.x));
+	_uv_r0tate.xy += _pivot_r0tate;
+	return _uv_r0tate;
+}
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// Input:3
+	vec3 n_out3p0 = vec3(UV, 0.0);
+
+// VectorUniform:20
+	vec3 n_out20p0 = Offset;
+
+// VectorUniform:21
+	vec3 n_out21p0 = Scale;
+
+// VectorUniform:22
+	vec3 n_out22p0 = ScalePivot;
+
+// ScalarUniform:23
+	float n_out23p0 = Rotation;
+
+// VectorUniform:24
+	vec3 n_out24p0 = RotationPivot;
+
+// TransformUV:19
+	vec3 n_out19p0;
+	{
+		n_out19p0.xy = transformUVFunc(n_out3p0.xy, n_out21p0.xy, n_out22p0.xy, n_out20p0.xy, n_out23p0, n_out24p0.xy);
+	}
+
+// Input:4
+
+// Texture:6
+	vec3 n_out6p0;
+	float n_out6p1;
+	{
+		vec4 TEXTURE_tex_read = texture(TEXTURE, n_out19p0.xy);
+		n_out6p0 = TEXTURE_tex_read.rgb;
+		n_out6p1 = TEXTURE_tex_read.a;
+	}
+
+// TransformUV:9
+	vec3 n_in9p1 = vec3(0.00000, 0.00000, 0.00000);
+	vec3 n_in9p2 = vec3(1.00000, 1.00000, 0.00000);
+	vec3 n_in9p3 = vec3(0.50000, 0.50000, 0.00000);
+	float n_in9p4 = 0.00000;
+	vec3 n_in9p5 = vec3(0.50000, 0.50000, 0.00000);
+	vec3 n_out9p0;
+	{
+		n_out9p0.xy = transformUVFunc(n_out3p0.xy, n_in9p2.xy, n_in9p3.xy, n_in9p1.xy, n_in9p4, n_in9p5.xy);
+	}
+
+// RectShape:2
+	vec3 n_in2p1 = vec3(0.50000, 0.50000, 0.00000);
+	vec3 n_in2p2 = vec3(0.50000, 0.50000, 0.00000);
+	vec3 n_in2p3 = vec3(1.00000, 1.00000, 1.00000);
+	float n_in2p4 = 1.00000;
+	vec3 n_out2p0;
+	float n_out2p1;
+	{
+		n_out2p0 = n_in2p3;
+		n_out2p1 = rectCreati0nFunc(n_out9p0.xy, n_in2p1.xy, n_in2p2.xy) * n_in2p4;
+	}
+
+// MaskAlpha:11
+	float n_in11p1 = 1.00000;
+	vec3 n_out11p0;
+	float n_out11p1;
+	{
+		n_out11p0 = maskAlphaFunc(vec4(n_out6p0, n_in11p1), n_out2p1).rgb;
+		n_out11p1 = maskAlphaFunc(vec4(n_out6p0, n_in11p1), n_out2p1).a;
+	}
+
+// TextureUniform:13
+	vec3 n_out13p0;
+	float n_out13p1;
+	{
+		vec4 n_tex_read = texture(Gradient, n_out9p0.xy);
+		n_out13p0 = n_tex_read.rgb;
+		n_out13p1 = n_tex_read.a;
+	}
+
+// MaskAlpha:14
+	float n_in14p1 = 1.00000;
+	vec3 n_out14p0;
+	float n_out14p1;
+	{
+		n_out14p0 = maskAlphaFunc(vec4(vec3(n_out11p1), n_in14p1), n_out13p1).rgb;
+		n_out14p1 = maskAlphaFunc(vec4(vec3(n_out11p1), n_in14p1), n_out13p1).a;
+	}
+
+// ScalarFunc:18
+	float n_in18p0 = 90.00000;
+	float n_out18p0 = radians(n_in18p0);
+
+// RotateUV:17
+	vec3 n_in17p2 = vec3(0.50000, 0.50000, 0.00000);
+	vec3 n_out17p0;
+	{
+		n_out17p0 = r0tateUVFunc(n_out9p0, n_in17p2.xy, n_out18p0);
+	}
+
+// TextureUniform:15
+	vec3 n_out15p0;
+	float n_out15p1;
+	{
+		vec4 n_tex_read = texture(GradientV, n_out17p0.xy);
+		n_out15p0 = n_tex_read.rgb;
+		n_out15p1 = n_tex_read.a;
+	}
+
+// MaskAlpha:16
+	float n_in16p1 = 1.00000;
+	vec3 n_out16p0;
+	float n_out16p1;
+	{
+		n_out16p0 = maskAlphaFunc(vec4(vec3(n_out14p1), n_in16p1), n_out15p1).rgb;
+		n_out16p1 = maskAlphaFunc(vec4(vec3(n_out14p1), n_in16p1), n_out15p1).a;
+	}
+
+// ScalarOp:27
+	float n_out27p0 = min(n_out6p1, n_out16p1);
+
+// Output:0
+	COLOR.rgb = n_out11p0;
+	COLOR.a = n_out27p0;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+mode = 1
+flags/light_only = false
+nodes/fragment/0/position = Vector2( 940, 100 )
+nodes/fragment/2/node = SubResource( 13 )
+nodes/fragment/2/position = Vector2( 140, 120 )
+nodes/fragment/3/node = SubResource( 20 )
+nodes/fragment/3/position = Vector2( -196, -26 )
+nodes/fragment/4/node = SubResource( 21 )
+nodes/fragment/4/position = Vector2( 0, -20 )
+nodes/fragment/6/node = SubResource( 22 )
+nodes/fragment/6/position = Vector2( 240, -40 )
+nodes/fragment/9/node = SubResource( 23 )
+nodes/fragment/9/position = Vector2( -160, 80 )
+nodes/fragment/11/node = SubResource( 5 )
+nodes/fragment/11/position = Vector2( 440, 100 )
+nodes/fragment/13/node = SubResource( 6 )
+nodes/fragment/13/position = Vector2( -140, 300 )
+nodes/fragment/14/node = SubResource( 7 )
+nodes/fragment/14/position = Vector2( 440, 240 )
+nodes/fragment/15/node = SubResource( 8 )
+nodes/fragment/15/position = Vector2( -140, 480 )
+nodes/fragment/16/node = SubResource( 9 )
+nodes/fragment/16/position = Vector2( 440, 360 )
+nodes/fragment/17/node = SubResource( 10 )
+nodes/fragment/17/position = Vector2( -360, 480 )
+nodes/fragment/18/node = SubResource( 11 )
+nodes/fragment/18/position = Vector2( -480, 380 )
+nodes/fragment/19/node = SubResource( 12 )
+nodes/fragment/19/position = Vector2( -440, 80 )
+nodes/fragment/20/node = SubResource( 14 )
+nodes/fragment/20/position = Vector2( -760, 80 )
+nodes/fragment/21/node = SubResource( 15 )
+nodes/fragment/21/position = Vector2( -760, 140 )
+nodes/fragment/22/node = SubResource( 16 )
+nodes/fragment/22/position = Vector2( -760, 200 )
+nodes/fragment/23/node = SubResource( 17 )
+nodes/fragment/23/position = Vector2( -760, 260 )
+nodes/fragment/24/node = SubResource( 18 )
+nodes/fragment/24/position = Vector2( -760, 320 )
+nodes/fragment/27/node = SubResource( 19 )
+nodes/fragment/27/position = Vector2( 720, 160 )
+nodes/fragment/connections = PoolIntArray( 3, 0, 9, 0, 9, 0, 2, 0, 6, 0, 11, 0, 11, 1, 14, 0, 11, 0, 0, 0, 13, 1, 14, 2, 9, 0, 13, 0, 14, 1, 16, 0, 9, 0, 17, 0, 18, 0, 17, 1, 17, 0, 15, 0, 15, 1, 16, 2, 3, 0, 19, 0, 20, 0, 19, 1, 22, 0, 19, 3, 23, 0, 19, 4, 24, 0, 19, 5, 21, 0, 19, 2, 4, 0, 6, 2, 19, 0, 6, 0, 2, 1, 11, 2, 6, 1, 27, 0, 16, 1, 27, 1, 27, 0, 0, 1 )
+
+[sub_resource type="ShaderMaterial" id=25]
+resource_local_to_scene = true
+shader = SubResource( 24 )
+shader_param/Offset = Vector3( 0, -0.14, 0 )
+shader_param/Scale = Vector3( 1, 1, 0 )
+shader_param/ScalePivot = Vector3( 0.5, 0.5, 0 )
+shader_param/Rotation = 0.0
+shader_param/RotationPivot = Vector3( 0.5, 0.5, 0 )
+shader_param/Gradient = ExtResource( 6 )
+shader_param/GradientV = ExtResource( 5 )
 
 [node name="SuggestFormulaOverlay" type="Control"]
 anchor_right = 1.0
@@ -222,13 +537,61 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="ResultPreview" parent="Panel/ResultPanel/TabContainer/TabNew" instance=ExtResource( 4 )]
+[node name="ResultPreview" type="Control" parent="Panel/ResultPanel/TabContainer/TabNew" groups=[
+"elements",
+]]
+material = ExtResource( 15 )
 margin_left = 8.0
 margin_top = 8.0
 margin_right = 104.0
 margin_bottom = 104.0
+rect_min_size = Vector2( 50, 50 )
+rect_pivot_offset = Vector2( 32, 32 )
+script = ExtResource( 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 can_be_dragged = false
 animate = false
+
+[node name="ElemSquare" parent="Panel/ResultPanel/TabContainer/TabNew/ResultPreview" instance=ExtResource( 1 )]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 0.0
+margin_bottom = 0.0
+texture = SubResource( 4 )
+use_gray_texture = true
+
+[node name="Picture" type="TextureRect" parent="Panel/ResultPanel/TabContainer/TabNew/ResultPreview"]
+material = SubResource( 25 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 2.0
+margin_top = 2.0
+margin_right = -2.0
+margin_bottom = -2.0
+expand = true
+stretch_mode = 7
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ElemName" type="Label" parent="Panel/ResultPanel/TabContainer/TabNew/ResultPreview"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_clip_content = true
+mouse_filter = 1
+custom_fonts/font = ExtResource( 14 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_constants/line_spacing = -5
+text = "Energy drink"
+align = 1
+autowrap = true
+clip_text = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
 
 [node name="TxtResultMark" type="LineEdit" parent="Panel/ResultPanel/TabContainer/TabNew"]
 anchor_right = 1.0
@@ -292,6 +655,7 @@ margin_right = 128.0
 margin_bottom = -8.0
 text = "Cancel"
 [connection signal="toggled" from="Panel/ResultPanel/CheckButton" to="." method="_on_newelement_toggled"]
+[connection signal="resized" from="Panel/ResultPanel/TabContainer/TabNew/ResultPreview" to="Panel/ResultPanel/TabContainer/TabNew/ResultPreview" method="_on_resized"]
 [connection signal="text_changed" from="Panel/ResultPanel/TabContainer/TabNew/TxtResultMark" to="." method="_on_newelem_mark_changed"]
 [connection signal="text_changed" from="Panel/ResultPanel/TabContainer/TabNew/TxtResultName" to="." method="_on_newelem_name_changed"]
 [connection signal="color_changed" from="Panel/ResultPanel/TabContainer/TabNew/ColorPickerButton" to="." method="_on_newelem_color_changed"]

@@ -12,7 +12,7 @@ const ORIGIN = Vector2(0.5, 0.5)
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	ElementDB.populate_db()
-	$MultiMeshInstance2D.multimesh.instance_count = ElementDB._db.size()
+	$VC/Viewport/MultiMeshInstance2D.multimesh.instance_count = ElementDB._db.size()
 	var k = 0
 	for i in ElementDB._db.keys():
 		_add_element(k, i)
@@ -29,9 +29,9 @@ func _elem_pos(model: ElementModel) -> Vector2:
 func _add_element(idx: int, id: int):
 	var mdl = ElementDB.element_model_by_id(id)
 	var pos = _elem_pos(mdl)
-	$MultiMeshInstance2D.multimesh.set_instance_transform_2d(idx, \
+	$VC/Viewport/MultiMeshInstance2D.multimesh.set_instance_transform_2d(idx, \
 		Transform2D(0, pos))
-	$MultiMeshInstance2D.multimesh.set_instance_color(idx, mdl.color)
+	$VC/Viewport/MultiMeshInstance2D.multimesh.set_instance_color(idx, mdl.color)
 	
 #	var elem = elem_scene.instance()
 #	elem.animate = false
@@ -47,15 +47,15 @@ func anim_cam_zoom(target_zoom: Vector2):
 	#if $Camera2D/Tween.is_active():
 	#	$Camera2D/Tween.stop($Camera2D, "zoom")
 	_target_zoom = target_zoom
-	$Camera2D/Tween.interpolate_property($Camera2D, "zoom", $Camera2D.zoom, _target_zoom, 0.4)
-	if not $Camera2D/Tween.is_active():
-		$Camera2D/Tween.start()
+	$VC/Viewport/Camera2D/Tween.interpolate_property($VC/Viewport/Camera2D, "zoom", $VC/Viewport/Camera2D.zoom, _target_zoom, 0.4)
+	if not $VC/Viewport/Camera2D/Tween.is_active():
+		$VC/Viewport/Camera2D/Tween.start()
 
-func zoom_out(mult):
-	anim_cam_zoom($Camera2D.zoom - (Vector2(0.3, 0.3) * mult))
+func zoom_out(mult = zoom_factor):
+	anim_cam_zoom($VC/Viewport/Camera2D.zoom - (Vector2(0.3, 0.3) * mult))
 
-func zoom_in(mult):
-	anim_cam_zoom($Camera2D.zoom + (Vector2(0.3, 0.3) * mult))
+func zoom_in(mult = zoom_factor):
+	anim_cam_zoom($VC/Viewport/Camera2D.zoom + (Vector2(0.3, 0.3) * mult))
 
 func _input(event: InputEvent):
 	if event.is_pressed() and event is InputEventMouseButton:

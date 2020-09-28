@@ -42,6 +42,7 @@ func get_controls_intersecting(target: Control, parent: Node, max_depth: int = 0
 func element_model_from_dto(dto: Dictionary) -> ElementModel:
 	if dto == null or dto.size() == 0: return null
 	var id: int = ElementModel.ID_NONE if dto['id'] < ElementModel.ID_NONE else dto['id']
+	var picture_id: int = dto['picture_id'] if 'picture_id' in dto else -1
 	var name: String = dto['name']
 	var color: Color = Color(dto['color'])
 	var birth: int = int(dto['birthTime']) if dto['birthTime'] is String else dto['birthTime']
@@ -50,6 +51,7 @@ func element_model_from_dto(dto: Dictionary) -> ElementModel:
 	if 'originalEquation' in dto:
 		original_eq = int(dto['originalEquation']) if dto['originalEquation'] is String else dto['originalEquation']
 	var tmp = ElementModel.new(id, name, color, mark)
+	tmp._picture_id = picture_id
 	tmp._birth = birth
 	tmp._original_equation_id = original_eq
 	return tmp

@@ -6,7 +6,8 @@ script/source = "extends Control
 export var max_records: int = 15
 
 enum FeedEventType {
-	UserRegistered = 0
+	UserRegistered = 0,
+	FormulaSuggested = 1
 }
 
 # Live Feed controller
@@ -22,8 +23,20 @@ func _add_event_record(e: Dictionary):
 	)
 	match int(e['event_type']):
 		FeedEventType.UserRegistered:
-			fe.title = e['event_data']['username'] + \" joined for the first time!\"
+			fe.title = \"%s joined for the first time!\" % e['event_data']['username']
 			fe.icon = preload(\"res://assets/ui/icons/user.png\")
+		FeedEventType.FormulaSuggested:
+			var dat = e['event_data']
+			fe.title = \"%s suggested a new formula!\" % dat['username']['username']
+			fe.subtitle = \"\"
+			for elem_id in dat['inputs']:
+				fe.subtitle += \"%s + \" % ElementDB.element_model_by_id(elem_id).name
+			fe.subtitle = fe.subtitle.substr(0, fe.subtitle.length() - 2)
+			if dat['output_id'] == null:
+				fe.subtitle += \"= %s\" % dat['output_new']['name']
+			else:
+				fe.subtitle += \"= %s\" % ElementDB.element_model_by_id(dat['output_id']).name
+				fe.element_id = dat['output_id']
 		_: # Unsupported
 			fe.title = \"**ERROR**\"
 			fe.subtitle = \"\"
@@ -49,7 +62,6 @@ func _on_inet_state_changed(state: bool):
 
 func _refresh_data():
 	var dt_frame = OS.get_datetime_from_unix_time(OS.get_unix_time() - 600) # Last 10 minutes
-	print(dt_frame)
 	HTTPUtil.request(funcref(self, \"_on_data\"), HTTPClient.METHOD_GET, 
 		Globals.get_primary_server() + \"/api/events/latest\",
 		[\"Content-Type: application/json\"], \"\\\"%s\\\"\" % Utility.date_dict_to_ISO(dt_frame))

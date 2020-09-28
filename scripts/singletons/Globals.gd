@@ -24,7 +24,7 @@ const VERSION = "0.2.1-alpha"
 const IS_ALPHA : bool = true
 
 const NET_PRIMARY_SERVER = "https://ledomsoft.com:3101"
-const NET_DEBUG_SERVER = "https://localhost:3101"
+const NET_DEBUG_SERVER = "http://localhost:3100"
 
 const AUDIO_GAME_CLASSIC_POP = preload('res://sounds/game/classic_pop.ogg')
 const AUDIO_UI_BUTTON_DOWN = preload('res://sounds/ui/button_down.wav')

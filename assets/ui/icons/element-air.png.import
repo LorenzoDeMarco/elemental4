@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/fire.png-01825550afb0bb0da7d415204dc1ef53.stex"
+path="res://.import/element-air.png-ceb35d8b6f9d348b687110772a317114.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/fire.png"
-dest_files=[ "res://.import/fire.png-01825550afb0bb0da7d415204dc1ef53.stex" ]
+source_file="res://assets/ui/icons/element-air.png"
+dest_files=[ "res://.import/element-air.png-ceb35d8b6f9d348b687110772a317114.stex" ]
 
 [params]
 
@@ -21,7 +21,7 @@ compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
 flags/filter=true
-flags/mipmaps=true
+flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2
 process/fix_alpha_border=true

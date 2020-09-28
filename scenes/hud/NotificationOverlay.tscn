@@ -10,7 +10,7 @@ func _ready():
 	Player.get_profile().connect(\"achievement_done\", self, \"_on_event\", [\"achievement\"], CONNECT_DEFERRED)
 
 func add_notification(title: String, subtitle: String = \"\", icon: Texture = null):
-	raise()
+	call_deferred(\"raise\")
 	var ni = preload(\"res://prefabs/ui/NotificationItem.tscn\").instance()
 	ni.title = title
 	ni.subtitle = subtitle

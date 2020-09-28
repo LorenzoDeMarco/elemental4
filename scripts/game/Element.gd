@@ -97,14 +97,26 @@ func _ready():
 		_tween.start()
 		anim_state = 0
 
+func _on_model_picture(picture: Texture):
+	$Picture.texture = picture
+
+func update_picture():
+	_model.connect("picture_cached", self, "_on_model_picture", [], CONNECT_DEFERRED | CONNECT_ONESHOT)
+	_model.resolve_picture()
+
 func update_element_display():
 	# Fetch model
-	_model = ElementDB.element_model_by_id(_element_id) if model_override == null else model_override
+	if model_override != null:
+		_model = model_override
+	else:
+		_model = ElementDB.element_model_by_id(_element_id)
 	if _model == null:
 		return
+	# Picture
+	update_picture()
 	# Name
 	$ElemName.text = _model.name
-	$ElemName.get_font("font").set_size(0.21875 * rect_size.y)
+	#$ElemName.get_font("font").set_size(0.21875 * rect_size.y)
 	# Colors
 	$ElemSquare.modulate = _model.color
 	$ElemName.add_color_override("font_color", Color.from_hsv(0, 0, 0 if 1 - _model.color.v < 0.2 else 1, 1))

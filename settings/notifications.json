@@ -1,8 +1,26 @@
 [
 	{
+		"key":"error", 
+		"title":"Whoops!",
+		"subtitle":"An error has occurred. Please retry later.",
+		"icon": "res://assets/ui/icons/alert-circle.png"
+	},
+	{
 		"key":"profile_save_failed", 
 		"title":"Failed to save profile",
 		"subtitle":"Please make sure your local storage is writable!",
+		"icon": "res://assets/ui/icons/alert-circle.png"
+	},
+	{
+		"key":"suggest_no_internet", 
+		"title":"To suggest formulas, you must connect to the Internet.",
+		"subtitle":"Please retry later.",
+		"icon": "res://assets/ui/icons/alert-circle.png"
+	},
+	{
+		"key":"suggest_succeeded", 
+		"title":"Success!",
+		"subtitle":"Your suggestion has been submitted.",
 		"icon": "res://assets/ui/icons/alert-circle.png"
 	}
 ]

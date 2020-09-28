@@ -7,7 +7,8 @@ func _ready():
 	Globals.connect("internet_status_changed", self, "_on_internet_state_changed")
 	if Globals.internet_access: _sign_in()
 	else: _on_internet_state_changed(false)
-	get_tree().get_root().add_child(preload("res://scenes/hud/NotificationOverlay.tscn").instance())
+	var root = get_tree().get_root()
+	root.call_deferred("add_child", preload("res://scenes/hud/NotificationOverlay.tscn").instance())
 
 func _on_username_changed(username: String):
 	$Username.text = username
@@ -26,7 +27,7 @@ func _on_internet_state_changed(state: bool):
 
 
 func _goto_universemap():
-	get_tree().change_scene("res://scenes/universe_map/UniverseMap.tscn")
+	Globals.move_to_scene("res://scenes/universe_map/UniverseMap.tscn")
 
 
 func _sign_in():
