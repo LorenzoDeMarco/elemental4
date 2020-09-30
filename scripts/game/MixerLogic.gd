@@ -3,6 +3,7 @@ extends Node
 export var mixer_slots : Array
 export var target_slot : NodePath
 export var suggest_new_btn : NodePath
+export var suggest_container : NodePath
 
 export var consume_inputs : bool
 export var auto_duplicate : bool
@@ -95,4 +96,4 @@ func _on_suggest_pressed():
 	# Show "suggest formula" overlay
 	var sgui = preload("res://scenes/hud/SuggestFormulaOverlay.tscn").instance()
 	sgui.formula_input_ids = inputs
-	get_tree().get_root().add_child(sgui)
+	get_node(suggest_container).add_child(sgui)

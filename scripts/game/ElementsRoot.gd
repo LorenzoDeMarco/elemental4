@@ -29,19 +29,29 @@ func lift_element_off(element: Element, source: Control, position: Vector2 = Vec
 	source.emit_signal("lift", element, position if position != Vector2.INF else element.rect_global_position)
 	return true
 
+func prio_sort(a: Node, b: Node):
+	return ('priority' in a) and \
+		('priority' in b) and \
+		(a.priority < b.priority)
+
 func element_end_drag(position: Vector2, element: Element):
 	var found = false
 	if allow_element_stacking:
-		for matched in get_collectors_with(element):
-			if drop_element_on(element, matched, position):
-				found = true
-				break
+		var cw = get_collectors_with(element)
+		if cw != null:
+			cw.sort_custom(self, "prio_sort")
+			for matched in cw:
+				if drop_element_on(element, matched, position):
+					found = true
+					break
 	if not found: element.restore_source_position()
 
 func get_collectors_with(element: Element) -> Array:
 	var inside: Array = []
 	for collector in get_tree().get_nodes_in_group(stacking_collectors_group):
-		inside += Utility.get_controls_intersecting(element, collector, -1)
+		var cis = Utility.get_controls_intersecting(element, collector, -1)
+		if cis != null:
+			inside += cis
 	inside += Utility.get_controls_intersecting(element, self)
 	return inside
 

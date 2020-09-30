@@ -1,9 +1,9 @@
-[gd_scene load_steps=41 format=2]
+[gd_scene load_steps=44 format=2]
 
 [ext_resource path="res://prefabs/ui/ElemSquareUI.tscn" type="PackedScene" id=1]
 [ext_resource path="res://fonts/presets/Heading1.tres" type="DynamicFont" id=2]
 [ext_resource path="res://fonts/presets/Heading2.tres" type="DynamicFont" id=3]
-[ext_resource path="res://prefabs/ui/Element.tscn" type="PackedScene" id=4]
+[ext_resource path="res://prefabs/ui/ElementSlot.tscn" type="PackedScene" id=4]
 [ext_resource path="res://textures/ui/PictureButtonEffectV.tres" type="Texture" id=5]
 [ext_resource path="res://textures/ui/PictureButtonEffectH.tres" type="Texture" id=6]
 [ext_resource path="res://prefabs/ui/Button.tscn" type="PackedScene" id=7]
@@ -15,6 +15,9 @@
 [ext_resource path="res://addons/shaderV/rgba/maskAlpha.gd" type="Script" id=13]
 [ext_resource path="res://fonts/presets/ElementName.tres" type="DynamicFont" id=14]
 [ext_resource path="res://materials/ui/GlowExtMaterial.tres" type="Material" id=15]
+[ext_resource path="res://textures/ui/HandArrowBLeft.atlastex" type="Texture" id=16]
+[ext_resource path="res://materials/ui/InverseColor.material" type="Material" id=17]
+[ext_resource path="res://scripts/game/NullSlot.gd" type="Script" id=18]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Control
@@ -27,8 +30,8 @@ var _is_new_elem : bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$Panel/ResultPanel/TabContainer/TabNew/ResultPreview.model_override = new_elem_model
-	$Panel/ResultPanel/TabContainer/TabNew/ResultPreview.update_element_display()
+	$CL/Panel/ResultPanel/TabContainer/TabNew/ResultPreview.model_override = new_elem_model
+	$CL/Panel/ResultPanel/TabContainer/TabNew/ResultPreview.update_element_display()
 	_on_newelement_toggled(false)
 	var es = preload(\"res://prefabs/ui/Element.tscn\")
 	for id in formula_input_ids:
@@ -38,24 +41,24 @@ func _ready():
 		e.can_be_dragged = false
 		e.is_slot = false
 		e.animate = false
-		$Panel/InputsScroll/InputsHContainer.add_child(e)
+		$CL/Panel/InputsScroll/InputsHContainer.add_child(e)
 
 func _on_newelement_toggled(button_pressed: bool) -> void:
 	_is_new_elem = button_pressed
-	$Panel/ResultPanel/TabContainer.set_current_tab(1 if button_pressed else 0)
+	$CL/Panel/ResultPanel/TabContainer.set_current_tab(1 if button_pressed else 0)
 
 func _on_newelem_name_changed(new_text: String):
 	new_elem_model.name = new_text
-	$Panel/ResultPanel/TabContainer/TabNew/ResultPreview.model_override = new_elem_model
-	$Panel/ResultPanel/TabContainer/TabNew/ResultPreview.update_element_display()
+	$CL/Panel/ResultPanel/TabContainer/TabNew/ResultPreview.model_override = new_elem_model
+	$CL/Panel/ResultPanel/TabContainer/TabNew/ResultPreview.update_element_display()
 
 func _on_newelem_mark_changed(new_text: String):
 	new_elem_model.mark = new_text
 
 func _on_newelem_color_changed(value: Color):
 	new_elem_model.color = value
-	$Panel/ResultPanel/TabContainer/TabNew/ResultPreview.model_override = new_elem_model
-	$Panel/ResultPanel/TabContainer/TabNew/ResultPreview.update_element_display()
+	$CL/Panel/ResultPanel/TabContainer/TabNew/ResultPreview.model_override = new_elem_model
+	$CL/Panel/ResultPanel/TabContainer/TabNew/ResultPreview.update_element_display()
 
 func bake_request_object():
 	var tmp : Dictionary = {
@@ -412,7 +415,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Panel" type="Panel" parent="."]
+[node name="CL" type="CanvasLayer" parent="."]
+layer = 127
+
+[node name="Panel" type="Panel" parent="CL"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -421,12 +427,14 @@ margin_left = -256.0
 margin_top = -237.5
 margin_right = 256.0
 margin_bottom = 237.5
+theme = ExtResource( 8 )
+script = ExtResource( 18 )
 __meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
+"_edit_lock_": true
 }
+priority = -2
 
-[node name="Title" type="Label" parent="Panel"]
+[node name="Title" type="Label" parent="CL/Panel"]
 anchor_right = 1.0
 margin_bottom = 44.0
 custom_fonts/font = ExtResource( 2 )
@@ -436,7 +444,7 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="InputsScroll" type="ScrollContainer" parent="Panel"]
+[node name="InputsScroll" type="ScrollContainer" parent="CL/Panel"]
 anchor_right = 1.0
 margin_left = 8.0
 margin_top = 132.0
@@ -447,12 +455,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="InputsHContainer" type="HBoxContainer" parent="Panel/InputsScroll"]
+[node name="InputsHContainer" type="HBoxContainer" parent="CL/Panel/InputsScroll"]
 margin_right = 140.0
 margin_bottom = 70.0
 rect_min_size = Vector2( 140, 70 )
 
-[node name="MixingLbl" type="Label" parent="Panel"]
+[node name="MixingLbl" type="Label" parent="CL/Panel"]
 anchor_right = 1.0
 margin_left = 8.0
 margin_top = 76.0
@@ -465,7 +473,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ResultLbl" type="Label" parent="Panel"]
+[node name="ResultLbl" type="Label" parent="CL/Panel"]
 anchor_right = 1.0
 margin_left = 8.0
 margin_top = 214.0
@@ -478,7 +486,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ResultPanel" type="Panel" parent="Panel"]
+[node name="ResultPanel" type="Panel" parent="CL/Panel"]
 anchor_right = 1.0
 margin_left = 8.0
 margin_top = 262.0
@@ -489,7 +497,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="CheckButton" type="CheckButton" parent="Panel/ResultPanel"]
+[node name="CheckButton" type="CheckButton" parent="CL/Panel/ResultPanel"]
 anchor_right = 1.0
 margin_left = 8.0
 margin_top = 8.0
@@ -500,7 +508,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TabContainer" type="TabContainer" parent="Panel/ResultPanel"]
+[node name="TabContainer" type="TabContainer" parent="CL/Panel/ResultPanel"]
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -512,7 +520,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TabExisting" type="Panel" parent="Panel/ResultPanel/TabContainer"]
+[node name="TabExisting" type="Panel" parent="CL/Panel/ResultPanel/TabContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 custom_styles/panel = SubResource( 3 )
@@ -520,15 +528,40 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="ResultPreview" parent="Panel/ResultPanel/TabContainer/TabExisting" instance=ExtResource( 4 )]
-margin_left = 8.0
-margin_top = 8.0
-margin_right = 104.0
-margin_bottom = 104.0
-can_be_dragged = false
-animate = false
+[node name="ElementSlot" parent="CL/Panel/ResultPanel/TabContainer/TabExisting" groups=[
+"element_collectors",
+] instance=ExtResource( 4 )]
+margin_left = 16.0
+margin_top = 22.5
+margin_right = 80.0
+margin_bottom = 86.5
+priority = -1
+is_input = true
 
-[node name="TabNew" type="Panel" parent="Panel/ResultPanel/TabContainer"]
+[node name="Label" type="Label" parent="CL/Panel/ResultPanel/TabContainer/TabExisting"]
+margin_left = 96.0
+margin_top = 23.0
+margin_right = 488.0
+margin_bottom = 63.0
+custom_colors/font_color = Color( 0.517647, 0.517647, 0.517647, 1 )
+text = "drop the element here or tick \"Create new element\""
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="CL/Panel/ResultPanel/TabContainer/TabExisting"]
+material = ExtResource( 17 )
+margin_left = 88.0
+margin_top = 56.0
+margin_right = 152.0
+margin_bottom = 87.0
+texture = ExtResource( 16 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TabNew" type="Panel" parent="CL/Panel/ResultPanel/TabContainer"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -537,9 +570,7 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="ResultPreview" type="Control" parent="Panel/ResultPanel/TabContainer/TabNew" groups=[
-"elements",
-]]
+[node name="ResultPreview" type="Control" parent="CL/Panel/ResultPanel/TabContainer/TabNew"]
 material = ExtResource( 15 )
 margin_left = 8.0
 margin_top = 8.0
@@ -554,7 +585,7 @@ __meta__ = {
 can_be_dragged = false
 animate = false
 
-[node name="ElemSquare" parent="Panel/ResultPanel/TabContainer/TabNew/ResultPreview" instance=ExtResource( 1 )]
+[node name="ElemSquare" parent="CL/Panel/ResultPanel/TabContainer/TabNew/ResultPreview" instance=ExtResource( 1 )]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = 0.0
@@ -562,7 +593,7 @@ margin_bottom = 0.0
 texture = SubResource( 4 )
 use_gray_texture = true
 
-[node name="Picture" type="TextureRect" parent="Panel/ResultPanel/TabContainer/TabNew/ResultPreview"]
+[node name="Picture" type="TextureRect" parent="CL/Panel/ResultPanel/TabContainer/TabNew/ResultPreview"]
 material = SubResource( 25 )
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -576,7 +607,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ElemName" type="Label" parent="Panel/ResultPanel/TabContainer/TabNew/ResultPreview"]
+[node name="ElemName" type="Label" parent="CL/Panel/ResultPanel/TabContainer/TabNew/ResultPreview"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_clip_content = true
@@ -593,7 +624,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TxtResultMark" type="LineEdit" parent="Panel/ResultPanel/TabContainer/TabNew"]
+[node name="TxtResultMark" type="LineEdit" parent="CL/Panel/ResultPanel/TabContainer/TabNew"]
 anchor_right = 1.0
 margin_left = 112.0
 margin_top = 56.0
@@ -603,11 +634,12 @@ max_length = 550
 clear_button_enabled = true
 placeholder_text = "Enter your mark here or leave empty."
 caret_blink = true
+caret_blink_speed = 0.5
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TxtResultName" type="LineEdit" parent="Panel/ResultPanel/TabContainer/TabNew"]
+[node name="TxtResultName" type="LineEdit" parent="CL/Panel/ResultPanel/TabContainer/TabNew"]
 anchor_right = 1.0
 margin_left = 112.0
 margin_top = 8.0
@@ -618,11 +650,12 @@ context_menu_enabled = false
 clear_button_enabled = true
 placeholder_text = "Element name"
 caret_blink = true
+caret_blink_speed = 0.5
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ColorPickerButton" type="ColorPickerButton" parent="Panel/ResultPanel/TabContainer/TabNew"]
+[node name="ColorPickerButton" type="ColorPickerButton" parent="CL/Panel/ResultPanel/TabContainer/TabNew"]
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -48.0
@@ -635,7 +668,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Confirm" parent="Panel" instance=ExtResource( 7 )]
+[node name="Confirm" parent="CL/Panel" instance=ExtResource( 7 )]
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
@@ -646,7 +679,7 @@ margin_right = -8.0
 margin_bottom = -8.0
 text = "Confirm"
 
-[node name="Cancel" parent="Panel" instance=ExtResource( 7 )]
+[node name="Cancel" parent="CL/Panel" instance=ExtResource( 7 )]
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 8.0
@@ -654,10 +687,10 @@ margin_top = -38.0
 margin_right = 128.0
 margin_bottom = -8.0
 text = "Cancel"
-[connection signal="toggled" from="Panel/ResultPanel/CheckButton" to="." method="_on_newelement_toggled"]
-[connection signal="resized" from="Panel/ResultPanel/TabContainer/TabNew/ResultPreview" to="Panel/ResultPanel/TabContainer/TabNew/ResultPreview" method="_on_resized"]
-[connection signal="text_changed" from="Panel/ResultPanel/TabContainer/TabNew/TxtResultMark" to="." method="_on_newelem_mark_changed"]
-[connection signal="text_changed" from="Panel/ResultPanel/TabContainer/TabNew/TxtResultName" to="." method="_on_newelem_name_changed"]
-[connection signal="color_changed" from="Panel/ResultPanel/TabContainer/TabNew/ColorPickerButton" to="." method="_on_newelem_color_changed"]
-[connection signal="pressed" from="Panel/Confirm" to="." method="_on_confirm_pressed" flags=3]
-[connection signal="pressed" from="Panel/Cancel" to="." method="_on_cancel_pressed"]
+[connection signal="toggled" from="CL/Panel/ResultPanel/CheckButton" to="." method="_on_newelement_toggled"]
+[connection signal="resized" from="CL/Panel/ResultPanel/TabContainer/TabNew/ResultPreview" to="CL/Panel/ResultPanel/TabContainer/TabNew/ResultPreview" method="_on_resized"]
+[connection signal="text_changed" from="CL/Panel/ResultPanel/TabContainer/TabNew/TxtResultMark" to="." method="_on_newelem_mark_changed"]
+[connection signal="text_changed" from="CL/Panel/ResultPanel/TabContainer/TabNew/TxtResultName" to="." method="_on_newelem_name_changed"]
+[connection signal="color_changed" from="CL/Panel/ResultPanel/TabContainer/TabNew/ColorPickerButton" to="." method="_on_newelem_color_changed"]
+[connection signal="pressed" from="CL/Panel/Confirm" to="." method="_on_confirm_pressed" flags=3]
+[connection signal="pressed" from="CL/Panel/Cancel" to="." method="_on_cancel_pressed"]

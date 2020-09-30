@@ -1,6 +1,7 @@
 extends Control
 
 var _accept_drop : bool
+export var priority: int = 0
 
 var _contents: Array = []
 

@@ -1,3 +1,5 @@
+extends Node
+
 const CACHE_DIR_PATH = "user://cache"
 const CACHE_PATH = "user://cache/%s_%s.cep"
 

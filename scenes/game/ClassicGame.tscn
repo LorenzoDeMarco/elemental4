@@ -475,6 +475,7 @@ script = ExtResource( 13 )
 mixer_slots = [ NodePath("../MixerDropzone/MixInputSlot1"), NodePath("../MixerDropzone/MixInputSlot2"), NodePath("../MixerDropzone/MixInputSlot3"), NodePath("../MixerDropzone/MixInputSlot4") ]
 target_slot = NodePath("../MixerDropzone/MixResultSlot")
 suggest_new_btn = NodePath("../MixerDropzone/MixResultSlot/SuggestNewBtn")
+suggest_container = NodePath("../SuggestContainer")
 auto_duplicate = true
 
 [node name="SellingLogic" type="Node" parent="."]
@@ -824,7 +825,18 @@ margin_top = -120.0
 margin_right = -72.0
 margin_bottom = -8.0
 
-[node name="ElementsCollector" parent="." instance=ExtResource( 2 )]
+[node name="SuggestContainer" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ElemsCanvas" type="CanvasLayer" parent="."]
+layer = 128
+
+[node name="ElementsCollector" parent="ElemsCanvas" instance=ExtResource( 2 )]
 mouse_filter = 2
 stacking_collectors_group = "element_collectors"
 

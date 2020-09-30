@@ -11,13 +11,13 @@ func _ready():
 		var elem_node = preload("res://prefabs/ui/Element.tscn").instance()
 		elem_node.set_element_id(base + i if i != 4 else base)
 		bind_element(elem_node)
-		$ElementsCollector.drop_element_on(elem_node, get_node("QADropzone/QASlot" + str(i + 1)))
+		$ElemsCanvas/ElementsCollector.drop_element_on(elem_node, get_node("QADropzone/QASlot" + str(i + 1)))
 
 func bind_element(elem_node: Element):
 	elem_node.rect_size = element_size
 	elem_node.connect("show_info", self, "show_element_info")
 	elem_node.connect("hide_info", self, "hide_element_info")
-	$ElementsCollector.add_element(elem_node)
+	$ElemsCanvas/ElementsCollector.add_element(elem_node)
 
 func show_element_info(model):
 	$InfoPanel.element_model = model

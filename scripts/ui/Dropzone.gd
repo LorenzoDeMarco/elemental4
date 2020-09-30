@@ -3,6 +3,7 @@ class_name Dropzone
 
 export var accept_drop : bool
 export var snap_elements : bool
+export var priority: int = 0
 
 signal drop(element, position)
 signal lift(element, position)
