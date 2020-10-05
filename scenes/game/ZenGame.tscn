@@ -1,0 +1,550 @@
+[gd_scene load_steps=25 format=2]
+
+[ext_resource path="res://prefabs/ui/ElementSlot.tscn" type="PackedScene" id=1]
+[ext_resource path="res://prefabs/ui/ElementsRoot.tscn" type="PackedScene" id=2]
+[ext_resource path="res://prefabs/classicGame/InventoryDropzoneClassic.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/ui/arrow_white.png" type="Texture" id=4]
+[ext_resource path="res://fonts/presets/Heading1.tres" type="DynamicFont" id=5]
+[ext_resource path="res://fonts/equivalent/EQUIVALENT.ttf" type="DynamicFontData" id=6]
+[ext_resource path="res://textures/ui/zenbg.jpg" type="Texture" id=7]
+[ext_resource path="res://scripts/ui/ClassicGameHUD.gd" type="Script" id=8]
+[ext_resource path="res://materials/ui/InverseColor.material" type="Material" id=9]
+[ext_resource path="res://assets/ui/icons/element-air.png" type="Texture" id=10]
+[ext_resource path="res://scripts/game/SellingLogic.gd" type="Script" id=11]
+[ext_resource path="res://prefabs/ui/Button.tscn" type="PackedScene" id=12]
+[ext_resource path="res://scripts/game/MixerLogic.gd" type="Script" id=13]
+[ext_resource path="res://prefabs/ui/ElemShortInfoPanel.tscn" type="PackedScene" id=14]
+[ext_resource path="res://assets/ui/icons/question-circle.png" type="Texture" id=15]
+[ext_resource path="res://scripts/game/DuplicatorLogic.gd" type="Script" id=16]
+[ext_resource path="res://assets/ui/icons/volume-off.png" type="Texture" id=17]
+[ext_resource path="res://assets/ui/icons/menu.png" type="Texture" id=18]
+[ext_resource path="res://assets/ui/icons/element-water.png" type="Texture" id=19]
+[ext_resource path="res://assets/ui/icons/element-earth.png" type="Texture" id=20]
+[ext_resource path="res://assets/ui/icons/element-fire.png" type="Texture" id=21]
+
+[sub_resource type="DynamicFont" id=1]
+size = 24
+font_data = ExtResource( 6 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.384314, 0.258824, 0.552941, 1 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id=3]
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="ZenGame" type="TextureRect"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 7 )
+expand = true
+stretch_mode = 7
+script = ExtResource( 8 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="MixerLogic" type="Node" parent="."]
+script = ExtResource( 13 )
+mixer_slots = [ NodePath("../MixerDropzone/MixInputSlot1"), NodePath("../MixerDropzone/MixInputSlot2"), NodePath("../MixerDropzone/MixInputSlot3"), NodePath("../MixerDropzone/MixInputSlot4") ]
+target_slot = NodePath("../../ZenGame/MixerDropzone/MixResultSlot")
+suggest_new_btn = NodePath("../../ZenGame/MixerDropzone/MixResultSlot/SuggestNewBtn")
+suggest_container = NodePath("../../ZenGame/SuggestContainer")
+auto_duplicate = true
+
+[node name="SellingLogic" type="Node" parent="."]
+script = ExtResource( 11 )
+slot = NodePath("../../ZenGame/SellingDropzone/SellSlot")
+
+[node name="DuplicatorLogic" type="Node" parent="."]
+script = ExtResource( 16 )
+input_slot = NodePath("../../ZenGame/DuplicateDropzone/DuplicateInputSlot")
+output_slot = NodePath("../../ZenGame/DuplicateDropzone/DuplicateResultSlot")
+
+[node name="Title" type="Label" parent="."]
+margin_left = 7.0
+margin_top = 8.0
+margin_right = 440.0
+margin_bottom = 79.0
+custom_fonts/font = ExtResource( 5 )
+text = "Zen Mode"
+valign = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="QADropzone" parent="." instance=ExtResource( 3 )]
+anchor_right = 0.0
+margin_left = 7.0
+margin_top = 88.0
+margin_right = 135.0
+margin_bottom = -128.0
+rect_min_size = Vector2( 128, 384 )
+grid_snap = false
+
+[node name="QALabel" type="Label" parent="QADropzone"]
+anchor_top = 1.0
+anchor_right = 0.083
+anchor_bottom = 1.0
+margin_right = 373.376
+margin_bottom = 36.0
+rect_rotation = -90.0
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color = Color( 0, 0, 0, 0.196078 )
+text = "Quick access"
+clip_text = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="QASlot1" parent="QADropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 33.0
+margin_top = 32.0
+margin_right = 97.0
+margin_bottom = 96.0
+allow_stack = true
+is_input = true
+
+[node name="QASlot2" parent="QADropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 33.0
+margin_top = 104.0
+margin_right = 97.0
+margin_bottom = 168.0
+allow_stack = true
+is_input = true
+
+[node name="QASlot3" parent="QADropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 33.0
+margin_top = 176.0
+margin_right = 97.0
+margin_bottom = 240.0
+allow_stack = true
+is_input = true
+
+[node name="QASlot4" parent="QADropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 33.0
+margin_top = 248.0
+margin_right = 97.0
+margin_bottom = 312.0
+allow_stack = true
+is_input = true
+
+[node name="QASlot5" parent="QADropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 33.0
+margin_top = 320.0
+margin_right = 97.0
+margin_bottom = 384.0
+allow_stack = true
+is_input = true
+
+[node name="DuplicateDropzone" parent="." instance=ExtResource( 3 )]
+anchor_top = 1.0
+anchor_right = 0.0
+margin_left = 7.0
+margin_top = -120.0
+margin_right = 320.0
+margin_bottom = -8.0
+rect_min_size = Vector2( 296, 112 )
+grid_snap = false
+
+[node name="DuplicateLbl" type="Label" parent="DuplicateDropzone"]
+anchor_right = 0.115
+anchor_bottom = 1.0
+margin_top = 112.0
+margin_right = 76.005
+margin_bottom = 36.0
+rect_rotation = -90.0
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color = Color( 0, 0, 0, 0.196078 )
+text = "Duplicate"
+clip_text = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Arrow" type="NinePatchRect" parent="DuplicateDropzone"]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = 113.0
+margin_top = -8.0
+margin_right = -112.0
+margin_bottom = 9.0
+texture = ExtResource( 4 )
+patch_margin_top = 4
+patch_margin_right = 11
+patch_margin_bottom = 4
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="DuplicateInputSlot" parent="DuplicateDropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 33.0
+margin_top = 24.0
+margin_right = 97.0
+margin_bottom = 88.0
+is_input = true
+
+[node name="DuplicateResultSlot" parent="DuplicateDropzone" instance=ExtResource( 1 )]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -96.0
+margin_top = 24.0
+margin_right = -32.0
+margin_bottom = 88.0
+
+[node name="SellingDropzone" parent="." instance=ExtResource( 3 )]
+anchor_top = 1.0
+anchor_right = 0.0
+margin_left = 328.0
+margin_top = -120.0
+margin_right = 456.0
+margin_bottom = -8.0
+rect_min_size = Vector2( 110, 112 )
+grid_snap = false
+
+[node name="SellingLabel" type="Label" parent="SellingDropzone"]
+anchor_top = 1.0
+anchor_right = 0.083
+anchor_bottom = 1.0
+margin_right = 101.376
+margin_bottom = 36.0
+rect_rotation = -90.0
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color = Color( 0, 0, 0, 0.196078 )
+text = "Sell"
+clip_text = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="SellSlot" parent="SellingDropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 32.0
+margin_top = -88.0
+margin_right = 96.0
+margin_bottom = -24.0
+is_input = true
+
+[node name="MixerDropzone" parent="." instance=ExtResource( 3 )]
+anchor_top = 1.0
+anchor_right = 0.0
+margin_left = 464.0
+margin_top = -120.0
+margin_right = 952.0
+margin_bottom = -8.0
+rect_min_size = Vector2( 488, 112 )
+grid_snap = false
+
+[node name="MixInputSlot1" parent="MixerDropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 32.0
+margin_top = 24.0
+margin_right = 96.0
+margin_bottom = 88.0
+is_input = true
+
+[node name="MixInputSlot2" parent="MixerDropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 104.0
+margin_top = 24.0
+margin_right = 168.0
+margin_bottom = 88.0
+is_input = true
+
+[node name="MixInputSlot3" parent="MixerDropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 176.0
+margin_top = 24.0
+margin_right = 240.0
+margin_bottom = 88.0
+is_input = true
+
+[node name="MixInputSlot4" parent="MixerDropzone" groups=[
+"element_collectors",
+] instance=ExtResource( 1 )]
+margin_left = 248.0
+margin_top = 24.0
+margin_right = 312.0
+margin_bottom = 88.0
+is_input = true
+
+[node name="MixResultSlot" parent="MixerDropzone" instance=ExtResource( 1 )]
+margin_left = 392.0
+margin_top = 24.0
+margin_right = 456.0
+margin_bottom = 88.0
+
+[node name="SuggestNewBtn" type="TextureButton" parent="MixerDropzone/MixResultSlot"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -8.0
+button_mask = 3
+texture_normal = ExtResource( 15 )
+expand = true
+stretch_mode = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MixerLabel" type="Label" parent="MixerDropzone"]
+anchor_right = 0.074
+anchor_bottom = 1.0
+margin_top = 112.0
+margin_right = 75.888
+margin_bottom = 36.0
+rect_rotation = -90.0
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color = Color( 0, 0, 0, 0.196078 )
+text = "Mix"
+clip_text = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Arrow" type="NinePatchRect" parent="MixerDropzone"]
+margin_left = 328.0
+margin_top = 48.0
+margin_right = 376.0
+margin_bottom = 65.0
+texture = ExtResource( 4 )
+patch_margin_top = 4
+patch_margin_right = 11
+patch_margin_bottom = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="InventoryDropzone" parent="." groups=[
+"element_collectors",
+] instance=ExtResource( 3 )]
+anchor_right = 0.0
+margin_left = 144.0
+margin_top = 88.0
+margin_right = 952.0
+margin_bottom = -128.0
+rect_min_size = Vector2( 808, 300 )
+accept_drop = true
+grid_size = Vector2( 68, 68 )
+
+[node name="InventoryLabel" type="Label" parent="InventoryDropzone"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_right = 864.0
+margin_bottom = 36.0
+rect_rotation = -90.0
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color = Color( 0, 0, 0, 0.196078 )
+text = "Inventory"
+clip_text = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="NoSFXBtn" parent="." instance=ExtResource( 12 )]
+material = ExtResource( 9 )
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -144.0
+margin_top = 16.0
+margin_right = -80.0
+margin_bottom = 80.0
+toggle_mode = true
+icon = ExtResource( 17 )
+flat = true
+expand_icon = true
+
+[node name="PauseBtn" parent="." instance=ExtResource( 12 )]
+material = ExtResource( 9 )
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -72.0
+margin_top = 16.0
+margin_right = -8.0
+margin_bottom = 80.0
+icon = ExtResource( 18 )
+flat = true
+expand_icon = true
+
+[node name="InfoPanel" parent="." instance=ExtResource( 14 )]
+anchor_top = 1.0
+margin_left = 960.0
+margin_top = -120.0
+margin_right = -8.0
+margin_bottom = -8.0
+
+[node name="SuggestContainer" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="ElemsCanvas" type="CanvasLayer" parent="."]
+layer = 128
+
+[node name="ElementsCollector" parent="ElemsCanvas" instance=ExtResource( 2 )]
+mouse_filter = 2
+stacking_collectors_group = "element_collectors"
+
+[node name="Tween" type="Tween" parent="."]
+
+[node name="ZenIndicator" parent="." instance=ExtResource( 3 )]
+margin_left = 968.0
+margin_top = 88.0
+margin_right = -312.0
+margin_bottom = -920.0
+priority = 1000
+grid_snap = false
+
+[node name="ElemIcon" type="TextureRect" parent="ZenIndicator"]
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 88.0
+margin_bottom = -8.0
+texture = ExtResource( 10 )
+expand = true
+stretch_mode = 6
+
+[node name="Level" type="ProgressBar" parent="ZenIndicator"]
+margin_left = 88.0
+margin_top = 24.0
+margin_right = 632.0
+margin_bottom = 46.0
+custom_styles/fg = SubResource( 2 )
+custom_styles/bg = SubResource( 3 )
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ZenIndicator2" parent="." instance=ExtResource( 3 )]
+margin_left = 968.0
+margin_top = 168.0
+margin_right = -312.0
+margin_bottom = -840.0
+priority = 1000
+grid_snap = false
+
+[node name="ElemIcon" type="TextureRect" parent="ZenIndicator2"]
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 88.0
+margin_bottom = -8.0
+texture = ExtResource( 20 )
+expand = true
+stretch_mode = 6
+
+[node name="Level" type="ProgressBar" parent="ZenIndicator2"]
+margin_left = 88.0
+margin_top = 24.0
+margin_right = 632.0
+margin_bottom = 46.0
+custom_styles/fg = SubResource( 2 )
+custom_styles/bg = SubResource( 3 )
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ZenIndicator3" parent="." instance=ExtResource( 3 )]
+margin_left = 968.0
+margin_top = 248.0
+margin_right = -312.0
+margin_bottom = -760.0
+priority = 1000
+grid_snap = false
+
+[node name="ElemIcon" type="TextureRect" parent="ZenIndicator3"]
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 88.0
+margin_bottom = -8.0
+texture = ExtResource( 21 )
+expand = true
+stretch_mode = 6
+
+[node name="Level" type="ProgressBar" parent="ZenIndicator3"]
+margin_left = 88.0
+margin_top = 24.0
+margin_right = 632.0
+margin_bottom = 46.0
+custom_styles/fg = SubResource( 2 )
+custom_styles/bg = SubResource( 3 )
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ZenIndicator4" parent="." instance=ExtResource( 3 )]
+margin_left = 968.0
+margin_top = 328.0
+margin_right = -312.0
+margin_bottom = -680.0
+priority = 1000
+grid_snap = false
+
+[node name="ElemIcon" type="TextureRect" parent="ZenIndicator4"]
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 88.0
+margin_bottom = -8.0
+texture = ExtResource( 19 )
+expand = true
+stretch_mode = 6
+
+[node name="Level" type="ProgressBar" parent="ZenIndicator4"]
+margin_left = 88.0
+margin_top = 24.0
+margin_right = 632.0
+margin_bottom = 46.0
+custom_styles/fg = SubResource( 2 )
+custom_styles/bg = SubResource( 3 )
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="pressed" from="MixerDropzone/MixResultSlot/SuggestNewBtn" to="MixerLogic" method="_on_suggest_pressed"]
+[connection signal="toggled" from="NoSFXBtn" to="." method="_on_nosfxbtn_toggled"]
+[connection signal="pressed" from="PauseBtn" to="." method="_on_pause_pressed"]
