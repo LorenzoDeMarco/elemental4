@@ -5,7 +5,13 @@ func _ready():
 	Player.connect("username_changed", self, "_on_username_changed")
 	Player.connect("signin_state_changed", self, "_on_signin_state_changed")
 	Globals.connect("internet_status_changed", self, "_on_internet_state_changed")
-	if Globals.internet_access: _sign_in()
+	if Globals.internet_access:
+		if not Player.is_logged_in():
+			$SignInLnk.visible = true
+			_sign_in()
+		else:
+			$SignInLnk.visible = false
+			_on_signin_state_changed(true)
 	else: _on_internet_state_changed(false)
 	var root = get_tree().get_root()
 	root.call_deferred("add_child", preload("res://scenes/hud/NotificationOverlay.tscn").instance())
@@ -15,8 +21,11 @@ func _on_username_changed(username: String):
 
 func _on_signin_state_changed(state: bool):
 	$SignInLnk.visible = not state
-	if not state:
+	if not state or Player.get_profile().id == Player.PlayerProfile.ID_DEFAULT:
 		$Username.text = "Not signed in"
+		$Stats.text = "0 eC - lv. 0"
+	else:
+		$Username.text = Player.get_profile().username
 		$Stats.text = "0 eC - lv. 0"
 
 func _on_internet_state_changed(state: bool):
@@ -32,3 +41,10 @@ func _goto_universemap():
 
 func _sign_in():
 	get_parent().add_child(preload("res://scenes/hud/LoginOverlay.tscn").instance())
+
+
+func start_sp_zen() -> void:
+	Globals.move_to_scene("res://scenes/game/ZenGame.tscn", Globals.BACKDROP_ZEN)
+
+func start_sp_classic() -> void:
+	Globals.move_to_scene("res://scenes/game/ClassicGame.tscn", Globals.BACKDROP_CLASSIC)

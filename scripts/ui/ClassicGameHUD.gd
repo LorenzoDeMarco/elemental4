@@ -1,4 +1,4 @@
-extends Panel
+extends TextureRect
 
 export var element_size : Vector2 = Vector2(64, 64)
 

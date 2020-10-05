@@ -3,6 +3,7 @@ extends Node
 var is_mobile: bool = false
 var internet_access: bool = false
 var target_scene_path: String = ""
+var target_scene_backdrop: Texture = null
 
 var _prim_svr : String = NET_PRIMARY_SERVER
 
@@ -20,7 +21,7 @@ const OVERRIDE_LOCALSERVER = false
 
 const WINDOW_MIN_SIZE = Vector2(890, 680)
 
-const VERSION = "0.2.1-alpha"
+const VERSION = "0.2.2-alpha"
 const IS_ALPHA : bool = true
 
 const NET_PRIMARY_SERVER = "https://ledomsoft.com:3101"
@@ -33,6 +34,9 @@ const AUDIO_UI_GENERIC = preload('res://sounds/ui/generic.wav')
 const AUDIO_UI_TOGGLE = preload('res://sounds/ui/toggle.wav')
 
 const NK_PROFILE_SAVE_FAILED = "profile_save_failed"
+
+const BACKDROP_CLASSIC: Texture = preload("res://textures/ui/preview_classic_sp.png")
+const BACKDROP_ZEN: Texture = preload("res://textures/ui/preview_zen.jpg")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -48,8 +52,9 @@ func _ready():
 	is_mobile = OS.has_feature("mobile")
 	check_internet(true)
 
-func move_to_scene(name: String) -> int:
+func move_to_scene(name: String, backdrop: Texture = null) -> int:
 	target_scene_path = name
+	target_scene_backdrop = backdrop
 	return get_tree().change_scene("res://scenes/LoadingInterlude.tscn")
 
 func _load_achievements():

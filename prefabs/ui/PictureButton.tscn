@@ -63,29 +63,29 @@ uniform_name = "RotationPivot"
 [sub_resource type="VisualShaderNodeScalarOp" id=15]
 operator = 7
 
-[sub_resource type="VisualShaderNodeScalarInterp" id=23]
+[sub_resource type="VisualShaderNodeScalarInterp" id=16]
 
-[sub_resource type="VisualShaderNodeBooleanUniform" id=24]
+[sub_resource type="VisualShaderNodeBooleanUniform" id=17]
 uniform_name = "Enabled"
 
-[sub_resource type="VisualShaderNodeInput" id=16]
+[sub_resource type="VisualShaderNodeInput" id=18]
 input_name = "uv"
 
-[sub_resource type="VisualShaderNodeVectorScalarMix" id=25]
+[sub_resource type="VisualShaderNodeVectorScalarMix" id=19]
 
-[sub_resource type="VisualShaderNodeVectorScalarMix" id=26]
+[sub_resource type="VisualShaderNodeVectorScalarMix" id=20]
 
-[sub_resource type="VisualShaderNodeInput" id=17]
+[sub_resource type="VisualShaderNodeInput" id=21]
 input_name = "texture"
 
-[sub_resource type="VisualShaderNodeTexture" id=18]
+[sub_resource type="VisualShaderNodeTexture" id=22]
 source = 5
 
-[sub_resource type="VisualShaderNodeCustom" id=19]
+[sub_resource type="VisualShaderNodeCustom" id=23]
 default_input_values = [ 1, Vector3( 0, 0, 0 ), 2, Vector3( 1, 1, 0 ), 3, Vector3( 0.5, 0.5, 0 ), 4, 0, 5, Vector3( 0.5, 0.5, 0 ) ]
 script = ExtResource( 7 )
 
-[sub_resource type="VisualShader" id=20]
+[sub_resource type="VisualShader" id=24]
 code = "shader_type canvas_item;
 uniform vec3 Offset;
 uniform vec3 Scale;
@@ -288,13 +288,13 @@ flags/light_only = false
 nodes/fragment/0/position = Vector2( 1220, 100 )
 nodes/fragment/2/node = SubResource( 9 )
 nodes/fragment/2/position = Vector2( 140, 120 )
-nodes/fragment/3/node = SubResource( 16 )
+nodes/fragment/3/node = SubResource( 18 )
 nodes/fragment/3/position = Vector2( -380, -40 )
-nodes/fragment/4/node = SubResource( 17 )
+nodes/fragment/4/node = SubResource( 21 )
 nodes/fragment/4/position = Vector2( 20, -140 )
-nodes/fragment/6/node = SubResource( 18 )
+nodes/fragment/6/node = SubResource( 22 )
 nodes/fragment/6/position = Vector2( 240, -40 )
-nodes/fragment/9/node = SubResource( 19 )
+nodes/fragment/9/node = SubResource( 23 )
 nodes/fragment/9/position = Vector2( -160, 80 )
 nodes/fragment/11/node = SubResource( 1 )
 nodes/fragment/11/position = Vector2( 440, 100 )
@@ -324,18 +324,18 @@ nodes/fragment/24/node = SubResource( 14 )
 nodes/fragment/24/position = Vector2( -760, 320 )
 nodes/fragment/27/node = SubResource( 15 )
 nodes/fragment/27/position = Vector2( 720, 160 )
-nodes/fragment/28/node = SubResource( 23 )
+nodes/fragment/28/node = SubResource( 16 )
 nodes/fragment/28/position = Vector2( 920, 160 )
-nodes/fragment/29/node = SubResource( 24 )
+nodes/fragment/29/node = SubResource( 17 )
 nodes/fragment/29/position = Vector2( 240, -140 )
-nodes/fragment/30/node = SubResource( 25 )
+nodes/fragment/30/node = SubResource( 19 )
 nodes/fragment/30/position = Vector2( 920, 0 )
-nodes/fragment/31/node = SubResource( 26 )
+nodes/fragment/31/node = SubResource( 20 )
 nodes/fragment/31/position = Vector2( -160, -60 )
 nodes/fragment/connections = PoolIntArray( 3, 0, 9, 0, 9, 0, 2, 0, 6, 0, 11, 0, 11, 1, 14, 0, 13, 1, 14, 2, 9, 0, 13, 0, 14, 1, 16, 0, 9, 0, 17, 0, 18, 0, 17, 1, 17, 0, 15, 0, 15, 1, 16, 2, 3, 0, 19, 0, 20, 0, 19, 1, 22, 0, 19, 3, 23, 0, 19, 4, 24, 0, 19, 5, 21, 0, 19, 2, 4, 0, 6, 2, 2, 1, 11, 2, 6, 1, 27, 0, 16, 1, 27, 1, 29, 0, 28, 2, 27, 0, 28, 1, 28, 0, 0, 1, 6, 1, 28, 0, 29, 0, 30, 2, 11, 0, 30, 1, 30, 0, 0, 0, 6, 0, 30, 0, 29, 0, 31, 2, 19, 0, 31, 1, 31, 0, 6, 0, 3, 0, 31, 0 )
 
-[sub_resource type="ShaderMaterial" id=21]
-shader = SubResource( 20 )
+[sub_resource type="ShaderMaterial" id=25]
+shader = SubResource( 24 )
 shader_param/Offset = Vector3( 0, 0, 0 )
 shader_param/Scale = Vector3( 0.5, 0.5, 0 )
 shader_param/ScalePivot = Vector3( 0.5, 0.5, 0 )
@@ -345,7 +345,7 @@ shader_param/Enabled = true
 shader_param/Gradient = ExtResource( 4 )
 shader_param/GradientV = ExtResource( 5 )
 
-[sub_resource type="GDScript" id=22]
+[sub_resource type="GDScript" id=26]
 script/source = "tool
 extends Button
 
@@ -474,13 +474,13 @@ func get_picture_rotation_pivot() -> Vector3:
 "
 
 [node name="PictureButton" type="Button"]
-material = SubResource( 21 )
+material = SubResource( 25 )
 margin_right = 300.0
 margin_bottom = 240.0
 rect_min_size = Vector2( 240, 140 )
 align = 0
 expand_icon = true
-script = SubResource( 22 )
+script = SubResource( 26 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

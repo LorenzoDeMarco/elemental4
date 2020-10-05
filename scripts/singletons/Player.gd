@@ -54,11 +54,11 @@ class PlayerProfile:
 		achievements = []
 		settings = {}
 	
-	func load_by_id(id: String) -> bool:
+	func load_by_id(id: String, silent: bool = false) -> bool:
 		if OS.is_debug_build(): print_debug("Loading profile ID %s" % id)
-		return load_from_file(PATH_PROFILE % id, id)
+		return load_from_file(PATH_PROFILE % id, id, silent)
 	
-	func load_from_file(path: String = PATH_PROFILE_DEFAULT, id: String = ID_DEFAULT) -> bool:
+	func load_from_file(path: String = PATH_PROFILE_DEFAULT, id: String = ID_DEFAULT, silent: bool = false) -> bool:
 		var sf = File.new()
 		if OS.is_debug_build(): print_debug("Loading profile file %s with ID %s" % [path, id])
 		if sf.file_exists(path):
@@ -67,11 +67,11 @@ class PlayerProfile:
 				sf.close()
 				if typeof(data) == TYPE_DICTIONARY:
 					self.id = id
-					apply_raw(data)
+					apply_raw(data, silent)
 					return true
 		return false
 	
-	func apply_raw(profile: Dictionary):
+	func apply_raw(profile: Dictionary, silent: bool = false):
 		if PKEY_USERNAME in profile:
 			username = profile[PKEY_USERNAME]
 			emit_signal("username_changed", username)
@@ -83,9 +83,10 @@ class PlayerProfile:
 			discovered_elements = profile[PKEY_ELEMS]
 		if PKEY_ACHIEVEMENTS in profile:
 			achievements = profile[PKEY_ACHIEVEMENTS]
-		for sk in settings.keys():
-			emit_signal("setting_changed", sk, settings[sk])
-		emit_signal("profile_loaded")
+		if not silent:
+			for sk in settings.keys():
+				emit_signal("setting_changed", sk, settings[sk])
+			emit_signal("profile_loaded")
 	
 	func save() -> bool:
 		if is_temporary: return true
@@ -127,7 +128,9 @@ class ProfilesManager:
 	func scan_profiles():
 		_profile_ids = []
 		var pd = Directory.new()
-		if pd.open("user://profiles") != OK: return
+		if pd.open("user://profiles") != OK:
+			pd.make_dir("user://profiles")
+			return
 		if pd.list_dir_begin() != OK: return
 		var fname : String = pd.get_next()
 		while fname != "":
@@ -148,7 +151,7 @@ class ProfilesManager:
 	func profile_username_exists(username: String) -> bool:
 		return _profile_ids.has(username.sha256_text())
 	
-	func create_profile(username: String) -> bool:
+	func create_profile(username: String, autoload: bool = false, silent_load: bool = false) -> bool:
 		var pd = Directory.new()
 		var id = username.sha256_text()
 		if pd.open("user://profiles") != OK: return false
@@ -158,7 +161,9 @@ class ProfilesManager:
 		var tmp: PlayerProfile = PlayerProfile.new()
 		if not tmp.load_by_id(id): return false
 		tmp.username = username
-		if not tmp.save_profile(): return false
+		if not tmp.save(): return false
+		if autoload:
+			return Player.get_profile().load_by_id(id, silent_load)
 		return true
 	
 	func get_profile_ids() -> Array:
@@ -192,8 +197,8 @@ func _ready():
 	_profile.connect("achievement_done", self, "_on_achievement_done")
 	_profile.connect("profile_loaded", self, "_on_profile_loaded")
 
-func load_default():
-	_profile.load_from_file()
+func load_default(silent: bool = false):
+	_profile.load_from_file(PATH_PROFILE_DEFAULT, PlayerProfile.ID_DEFAULT, silent)
 
 func _on_profile_loaded():
 	if OS.is_debug_build():
@@ -211,7 +216,12 @@ func _online_signin_response(response: HTTPUtil.Response):
 	if response != null and response.response_code == HTTPClient.RESPONSE_OK:
 		var json = JSON.parse(response.body.get_string_from_utf8())
 		if json.error == OK and json.result is Dictionary:
+			if not get_profiles_manager().profile_username_exists(json.result['username']):
+				if not get_profiles_manager().create_profile(json.result['username'], true, true):
+					emit_signal("signin_state_changed", false)
+					return
 			_profile.username = json.result['username']
+			_profile.id = _profile.username.sha256_text()
 			_token = json.result['token']
 			_sid = json.result['sid']
 			_logged_in = true
@@ -220,6 +230,7 @@ func _online_signin_response(response: HTTPUtil.Response):
 			emit_signal("token_changed", _token)
 			_profile.save()
 			return
+	load_default(true)
 	_profile.username = ""
 	_token = ""
 	_sid = ""
