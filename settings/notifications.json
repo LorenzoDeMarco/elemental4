@@ -15,12 +15,18 @@
 		"key":"suggest_no_internet", 
 		"title":"To suggest formulas, you must connect to the Internet.",
 		"subtitle":"Please retry later.",
-		"icon": "res://assets/ui/icons/alert-circle.png"
+		"icon": "res://assets/ui/icons/offline.png"
 	},
 	{
 		"key":"suggest_succeeded", 
 		"title":"Success!",
 		"subtitle":"Your suggestion has been submitted.",
 		"icon": "res://assets/ui/icons/alert-circle.png"
+	},
+	{
+		"key":"oobe_offline", 
+		"title":"You must be online to start your first session.",
+		"subtitle":"Retrying in 5 seconds...",
+		"icon": "res://assets/ui/icons/offline.png"
 	}
 ]

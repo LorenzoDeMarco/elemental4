@@ -13,8 +13,10 @@ export var icon: Texture setget set_notification_icon, get_notification_icon
 
 func animate(delta):
 	var tpos = Vector2(rect_global_position.x, rect_global_position.y + (rect_size.y + 2) * delta)
-	Globals.get_scene_tween().interpolate_property(self, \"rect_global_position\", \\
-		tpos + Vector2(rect_size.x, 0), tpos, 0.8, Tween.TRANS_BACK, Tween.EASE_IN_OUT)
+	var tw = Globals.get_scene_tween()
+	if tw != null:
+		tw.interpolate_property(self, \"rect_global_position\", \\
+			tpos + Vector2(rect_size.x, 0), tpos, 0.8, Tween.TRANS_BACK, Tween.EASE_IN_OUT)
 
 func set_title(title: String):
 	$Title.text = title
@@ -23,7 +25,7 @@ func get_title() -> String:
 	return $Title.text
 
 func set_subtitle(subtitle: String):
-	$Subtitle.text = title
+	$Subtitle.text = subtitle
 
 func get_subtitle() -> String:
 	return $Subtitle.text
@@ -155,6 +157,7 @@ margin_left = 64.0
 margin_bottom = 37.0
 custom_fonts/font = SubResource( 2 )
 valign = 1
+clip_text = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -162,7 +165,7 @@ __meta__ = {
 [node name="Subtitle" type="Label" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 64.0
+margin_left = 72.0
 margin_top = 37.0
 custom_fonts/font = SubResource( 3 )
 __meta__ = {

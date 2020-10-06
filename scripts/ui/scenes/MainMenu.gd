@@ -2,17 +2,19 @@ extends Panel
 
 func _ready():
 	$Content/OptionsTab/ScrollContainer/HBoxContainer/Info/Version.text %= Globals.VERSION
+	
 	Player.connect("username_changed", self, "_on_username_changed")
 	Player.connect("signin_state_changed", self, "_on_signin_state_changed")
 	Globals.connect("internet_status_changed", self, "_on_internet_state_changed")
+	var li = Player.is_logged_in()
+	$SignInLnk.visible = not li
 	if Globals.internet_access:
-		if not Player.is_logged_in():
-			$SignInLnk.visible = true
-			_sign_in()
-		else:
-			$SignInLnk.visible = false
-			_on_signin_state_changed(true)
-	else: _on_internet_state_changed(false)
+		_on_signin_state_changed(li)
+	else:
+		_on_internet_state_changed(false)
+	if not li:
+		_sign_in()
+		
 	var root = get_tree().get_root()
 	root.call_deferred("add_child", preload("res://scenes/hud/NotificationOverlay.tscn").instance())
 
@@ -24,9 +26,11 @@ func _on_signin_state_changed(state: bool):
 	if not state or Player.get_profile().id == Player.PlayerProfile.ID_DEFAULT:
 		$Username.text = "Not signed in"
 		$Stats.text = "0 eC - lv. 0"
+		$SignInLnk.visible = true
 	else:
 		$Username.text = Player.get_profile().username
 		$Stats.text = "0 eC - lv. 0"
+		$SignInLnk.visible = false
 
 func _on_internet_state_changed(state: bool):
 	if not state:

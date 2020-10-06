@@ -56,6 +56,10 @@ __meta__ = {
 [node name="Center" type="CenterContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_left = -4.0
+margin_top = -1.0
+margin_right = -4.0
+margin_bottom = -1.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -212,6 +216,7 @@ margin_left = 16.0
 margin_top = 170.0
 margin_right = -8.0
 margin_bottom = 192.0
+disabled = true
 text = "I forgot my username"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -223,6 +228,7 @@ margin_left = 16.0
 margin_top = 196.0
 margin_right = -8.0
 margin_bottom = 218.0
+disabled = true
 text = "I forgot my password"
 __meta__ = {
 "_edit_use_anchors_": false

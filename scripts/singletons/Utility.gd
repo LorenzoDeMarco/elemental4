@@ -73,6 +73,8 @@ func formula_model_from_dto(dto: Dictionary) -> FormulaModel:
 	return FormulaModel.new(id, inputs, output, new_element, birth, votes, consensus)
 
 func internet_test() -> bool:
+	if Globals.OVERRIDE_OFFLINE:
+		return false
 	var hc = HTTPClient.new()
 	var err = hc.connect_to_host("ledomsoft.com", 443, true)
 	if err != OK: return false

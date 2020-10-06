@@ -725,6 +725,7 @@ driver=""
 
 [autoload]
 
+ExtContentMgr="*res://scripts/singletons/ExtContentMgr.gd"
 Utility="*res://scripts/singletons/Utility.gd"
 HTTPUtil="*res://scripts/singletons/HTTPUtil.gd"
 Globals="*res://scripts/singletons/Globals.gd"
@@ -760,7 +761,7 @@ locale_filter=[ 1, [ "en", "it" ] ]
 
 [logging]
 
-file_logging/enable_file_logging=true
+file_logging/enable_file_logging.pc=false
 
 [memory]
 

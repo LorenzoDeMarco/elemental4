@@ -240,6 +240,10 @@ func _online_signin_response(response: HTTPUtil.Response):
 	emit_signal("token_changed", "")
 
 func online_signin(username: String, password_hb64: String, remember: bool = false) -> int:
+	if not Globals.internet_access:
+		if get_profiles_manager().profile_username_exists(username):
+			return OK
+		return ERR_CANT_CONNECT
 	_user_remember = remember
 	return HTTPUtil.request(funcref(self, "_online_signin_response"), \
 		HTTPClient.METHOD_POST, Globals.get_primary_server() + "/api/auth/sessions", ["Content-Type: application/json"], \
@@ -248,11 +252,14 @@ func online_signin(username: String, password_hb64: String, remember: bool = fal
 		"key": password_hb64
 	}))
 
-func online_signup(username: String, password_hb64: String, email: String) -> int:
+func online_signup(username: String, password_hb64: String, email: String, callbackfn: FuncRef) -> int:
+	if not Globals.internet_access:
+		return ERR_CANT_CONNECT
 	_user_remember = true
-	return HTTPUtil.request(funcref(self, "_online_signin_response"), \
-		HTTPClient.METHOD_POST, Globals.get_primary_server() + "/api/auth/sessions", ["Content-Type: application/json"], \
+	return HTTPUtil.request(callbackfn, \
+		HTTPClient.METHOD_POST, Globals.get_primary_server() + "/api/users", ["Content-Type: application/json"], \
 		JSON.print({
 		"username": username,
-		"key": password_hb64
+		"password": password_hb64,
+		"email": email
 	}))

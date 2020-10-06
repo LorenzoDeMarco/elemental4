@@ -18,10 +18,11 @@ signal primary_server_changed(url)
 
 const OVERRIDE_DESKTOPALWAYS = true
 const OVERRIDE_LOCALSERVER = false
+const OVERRIDE_OFFLINE = true
 
 const WINDOW_MIN_SIZE = Vector2(890, 680)
 
-const VERSION = "0.2.2-alpha"
+const VERSION = "0.2.4-alpha"
 const IS_ALPHA : bool = true
 
 const NET_PRIMARY_SERVER = "https://ledomsoft.com:3101"

@@ -30,18 +30,21 @@ func _add_event_record(e: Dictionary):
 			fe.title = \"%s suggested a new formula!\" % dat['username']['username']
 			fe.subtitle = \"\"
 			for elem_id in dat['inputs']:
-				fe.subtitle += \"%s + \" % ElementDB.element_model_by_id(elem_id).name
+				if elem_id >= 0:
+					fe.subtitle += \"%s + \" % ElementDB.element_model_by_id(elem_id).name
 			fe.subtitle = fe.subtitle.substr(0, fe.subtitle.length() - 2)
 			if dat['output_id'] == null:
 				fe.subtitle += \"= %s\" % dat['output_new']['name']
 			else:
-				fe.subtitle += \"= %s\" % ElementDB.element_model_by_id(dat['output_id']).name
-				fe.element_id = dat['output_id']
+				if dat['output_id'] >= 0:
+					fe.subtitle += \"= %s\" % ElementDB.element_model_by_id(dat['output_id']).name
+					fe.element_id = dat['output_id']
 		_: # Unsupported
 			fe.title = \"**ERROR**\"
 			fe.subtitle = \"\"
 	if fe.title.length() > 36:
 		fe.title = fe.title.substr(0, 33) + \"…\"
+	fe.rect_min_size.x = rect_size.x - 1
 	$VBoxContainer.add_child(fe)
 	var cc = $VBoxContainer.get_child_count()
 	while cc > max_records:
