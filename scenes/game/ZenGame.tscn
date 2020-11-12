@@ -12,7 +12,7 @@
 [ext_resource path="res://assets/ui/icons/element-air.png" type="Texture" id=10]
 [ext_resource path="res://scripts/game/SellingLogic.gd" type="Script" id=11]
 [ext_resource path="res://prefabs/ui/Button.tscn" type="PackedScene" id=12]
-[ext_resource path="res://scripts/game/MixerLogic.gd" type="Script" id=13]
+[ext_resource path="res://scripts/game/ZenMixerLogic.gd" type="Script" id=13]
 [ext_resource path="res://prefabs/ui/ElemShortInfoPanel.tscn" type="PackedScene" id=14]
 [ext_resource path="res://assets/ui/icons/question-circle.png" type="Texture" id=15]
 [ext_resource path="res://scripts/game/DuplicatorLogic.gd" type="Script" id=16]
@@ -53,10 +53,10 @@ __meta__ = {
 [node name="MixerLogic" type="Node" parent="."]
 script = ExtResource( 13 )
 mixer_slots = [ NodePath("../MixerDropzone/MixInputSlot1"), NodePath("../MixerDropzone/MixInputSlot2"), NodePath("../MixerDropzone/MixInputSlot3"), NodePath("../MixerDropzone/MixInputSlot4") ]
-target_slot = NodePath("../../ZenGame/MixerDropzone/MixResultSlot")
-suggest_new_btn = NodePath("../../ZenGame/MixerDropzone/MixResultSlot/SuggestNewBtn")
-suggest_container = NodePath("../../ZenGame/SuggestContainer")
-auto_duplicate = true
+target_slot = NodePath("../MixerDropzone/MixResultSlot")
+suggest_new_btn = NodePath("../MixerDropzone/MixResultSlot/SuggestNewBtn")
+suggest_container = NodePath("../SuggestContainer")
+consume_inputs = true
 
 [node name="SellingLogic" type="Node" parent="."]
 script = ExtResource( 11 )
@@ -426,7 +426,7 @@ stacking_collectors_group = "element_collectors"
 
 [node name="Tween" type="Tween" parent="."]
 
-[node name="ZenIndicator" parent="." instance=ExtResource( 3 )]
+[node name="AirZenIndicator" parent="." instance=ExtResource( 3 )]
 margin_left = 968.0
 margin_top = 88.0
 margin_right = -312.0
@@ -434,7 +434,7 @@ margin_bottom = -920.0
 priority = 1000
 grid_snap = false
 
-[node name="ElemIcon" type="TextureRect" parent="ZenIndicator"]
+[node name="ElemIcon" type="TextureRect" parent="AirZenIndicator"]
 anchor_bottom = 1.0
 margin_left = 8.0
 margin_top = 8.0
@@ -444,7 +444,7 @@ texture = ExtResource( 10 )
 expand = true
 stretch_mode = 6
 
-[node name="Level" type="ProgressBar" parent="ZenIndicator"]
+[node name="Level" type="ProgressBar" parent="AirZenIndicator"]
 margin_left = 88.0
 margin_top = 24.0
 margin_right = 632.0
@@ -456,7 +456,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ZenIndicator2" parent="." instance=ExtResource( 3 )]
+[node name="EarthZenIndicator" parent="." instance=ExtResource( 3 )]
 margin_left = 968.0
 margin_top = 168.0
 margin_right = -312.0
@@ -464,7 +464,7 @@ margin_bottom = -840.0
 priority = 1000
 grid_snap = false
 
-[node name="ElemIcon" type="TextureRect" parent="ZenIndicator2"]
+[node name="ElemIcon" type="TextureRect" parent="EarthZenIndicator"]
 anchor_bottom = 1.0
 margin_left = 8.0
 margin_top = 8.0
@@ -474,7 +474,7 @@ texture = ExtResource( 20 )
 expand = true
 stretch_mode = 6
 
-[node name="Level" type="ProgressBar" parent="ZenIndicator2"]
+[node name="Level" type="ProgressBar" parent="EarthZenIndicator"]
 margin_left = 88.0
 margin_top = 24.0
 margin_right = 632.0
@@ -486,7 +486,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ZenIndicator3" parent="." instance=ExtResource( 3 )]
+[node name="FireZenIndicator" parent="." instance=ExtResource( 3 )]
 margin_left = 968.0
 margin_top = 248.0
 margin_right = -312.0
@@ -494,7 +494,7 @@ margin_bottom = -760.0
 priority = 1000
 grid_snap = false
 
-[node name="ElemIcon" type="TextureRect" parent="ZenIndicator3"]
+[node name="ElemIcon" type="TextureRect" parent="FireZenIndicator"]
 anchor_bottom = 1.0
 margin_left = 8.0
 margin_top = 8.0
@@ -504,7 +504,7 @@ texture = ExtResource( 21 )
 expand = true
 stretch_mode = 6
 
-[node name="Level" type="ProgressBar" parent="ZenIndicator3"]
+[node name="Level" type="ProgressBar" parent="FireZenIndicator"]
 margin_left = 88.0
 margin_top = 24.0
 margin_right = 632.0
@@ -516,7 +516,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ZenIndicator4" parent="." instance=ExtResource( 3 )]
+[node name="WaterZenIndicator" parent="." instance=ExtResource( 3 )]
 margin_left = 968.0
 margin_top = 328.0
 margin_right = -312.0
@@ -524,7 +524,7 @@ margin_bottom = -680.0
 priority = 1000
 grid_snap = false
 
-[node name="ElemIcon" type="TextureRect" parent="ZenIndicator4"]
+[node name="ElemIcon" type="TextureRect" parent="WaterZenIndicator"]
 anchor_bottom = 1.0
 margin_left = 8.0
 margin_top = 8.0
@@ -534,7 +534,7 @@ texture = ExtResource( 19 )
 expand = true
 stretch_mode = 6
 
-[node name="Level" type="ProgressBar" parent="ZenIndicator4"]
+[node name="Level" type="ProgressBar" parent="WaterZenIndicator"]
 margin_left = 88.0
 margin_top = 24.0
 margin_right = 632.0

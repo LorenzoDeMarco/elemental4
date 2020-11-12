@@ -109,32 +109,14 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="VC" type="ViewportContainer" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-stretch = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="MultiMeshInstance2D" type="MultiMeshInstance2D" parent="."]
+multimesh = SubResource( 9 )
 
-[node name="Viewport" type="Viewport" parent="VC"]
-size = Vector2( 1920, 1080 )
-transparent_bg = true
-handle_input_locally = false
-msaa = 1
-usage = 0
-render_target_update_mode = 3
-gui_disable_input = true
-
-[node name="Camera2D" type="Camera2D" parent="VC/Viewport"]
+[node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 960, 540 )
 smoothing_enabled = true
 
-[node name="Tween" type="Tween" parent="VC/Viewport/Camera2D"]
-
-[node name="MultiMeshInstance2D" type="MultiMeshInstance2D" parent="VC/Viewport"]
-multimesh = SubResource( 9 )
+[node name="Tween" type="Tween" parent="Camera2D"]
 
 [node name="Controls" type="PanelContainer" parent="."]
 anchor_left = 1.0
@@ -203,9 +185,9 @@ bbcode_text = "[b]Total elements:[/b] %d
 [b]Origin time:[/b] %d
 [b]Galaxy diameter:[/b] %d ly"
 meta_underlined = false
-text = "Total elements: %d
-Origin time: %d
-Galaxy diameter: %d ly"
+text = "Total elements: %s
+Origin time: %s
+Galaxy diameter: %s ly"
 fit_content_height = true
 scroll_active = false
 __meta__ = {

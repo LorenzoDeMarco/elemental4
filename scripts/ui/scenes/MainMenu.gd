@@ -1,9 +1,11 @@
 extends Panel
 
 func _ready():
-	$Content/OptionsTab/ScrollContainer/HBoxContainer/Info/Version.text %= Globals.VERSION
+	if Globals.is_mobile:
+		$FormFactorSwitcher.set_form_factor(FormFactorSwitcher.FormFactor.MOBILE)
+	else:
+		$FormFactorSwitcher.set_form_factor(FormFactorSwitcher.FormFactor.DESKTOP)
 	
-	Player.connect("username_changed", self, "_on_username_changed")
 	Player.connect("signin_state_changed", self, "_on_signin_state_changed")
 	Globals.connect("internet_status_changed", self, "_on_internet_state_changed")
 	var li = Player.is_logged_in()
@@ -38,14 +40,11 @@ func _on_internet_state_changed(state: bool):
 		$Stats.text = "0 eC - lv. 0"
 		$SignInLnk.visible = not Player._logged_in
 
-
 func _goto_universemap():
 	Globals.move_to_scene("res://scenes/universe_map/UniverseMap.tscn")
 
-
 func _sign_in():
 	get_parent().add_child(preload("res://scenes/hud/LoginOverlay.tscn").instance())
-
 
 func start_sp_zen() -> void:
 	Globals.move_to_scene("res://scenes/game/ZenGame.tscn", Globals.BACKDROP_ZEN)

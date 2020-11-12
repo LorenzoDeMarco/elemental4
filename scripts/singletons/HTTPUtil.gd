@@ -1,7 +1,7 @@
 extends Node
 
 class Response:
-	var result
+	var result: int
 	var response_code: int
 	var headers: PoolStringArray
 	var body: PoolByteArray

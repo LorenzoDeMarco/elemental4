@@ -17,6 +17,8 @@ const SKEY_AUDIO_MUSIC = 'audio.music'
 
 const SKEY_PRIMARY_SERVER = 'net.primaryserver'
 
+const STKEY_PLAYTIME = "playtime"
+
 class PlayerProfile:
 	
 	export var id: String
@@ -25,8 +27,11 @@ class PlayerProfile:
 	export var discovered_elements: Dictionary
 	export var achievements: Array
 	export var settings: Dictionary
+	export var stats: Dictionary
 	
 	export var is_temporary: bool = false
+	
+	var _session_time: int = 0
 	
 	const ID_DEFAULT = "anonymous"
 	
@@ -35,6 +40,7 @@ class PlayerProfile:
 	const PKEY_ELEMS = "discovered_elements"
 	const PKEY_ACHIEVEMENTS = "achievements"
 	const PKEY_SETTINGS = "settings"
+	const PKEY_STATS = "stats"
 	
 	signal username_changed(username)
 	signal setting_changed(key, value)
@@ -53,6 +59,8 @@ class PlayerProfile:
 		discovered_elements = {}
 		achievements = []
 		settings = {}
+		stats = {}
+		_session_time = 0
 	
 	func load_by_id(id: String, silent: bool = false) -> bool:
 		if OS.is_debug_build(): print_debug("Loading profile ID %s" % id)
@@ -79,6 +87,12 @@ class PlayerProfile:
 			pwh = profile[PKEY_PWH]
 		if PKEY_SETTINGS in profile:
 			settings = profile[PKEY_SETTINGS]
+		if PKEY_STATS in profile:
+			stats = profile[PKEY_STATS]
+		else:
+			stats = {
+				"%s" % STKEY_PLAYTIME: 0
+			}
 		if PKEY_ELEMS in profile:
 			discovered_elements = profile[PKEY_ELEMS]
 		if PKEY_ACHIEVEMENTS in profile:
@@ -91,9 +105,12 @@ class PlayerProfile:
 	func save() -> bool:
 		if is_temporary: return true
 		var td : Dictionary = {}
+		stats[STKEY_PLAYTIME] += _session_time
+		_session_time = 0
 		td[PKEY_USERNAME] = username
 		td[PKEY_PWH] = pwh
 		td[PKEY_SETTINGS] = settings
+		td[PKEY_STATS] = stats
 		td[PKEY_ELEMS] = discovered_elements
 		td[PKEY_ACHIEVEMENTS] = achievements
 		

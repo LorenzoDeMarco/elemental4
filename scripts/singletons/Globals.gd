@@ -18,15 +18,14 @@ signal primary_server_changed(url)
 
 const OVERRIDE_DESKTOPALWAYS = true
 const OVERRIDE_LOCALSERVER = false
-const OVERRIDE_OFFLINE = true
+const OVERRIDE_OFFLINE = false
 
 const WINDOW_MIN_SIZE = Vector2(890, 680)
 
-const VERSION = "0.2.4-alpha"
+export var VERSION: String setget set_version, get_version
 const IS_ALPHA : bool = true
 
-const NET_PRIMARY_SERVER = "https://ledomsoft.com:3101"
-const NET_DEBUG_SERVER = "http://localhost:3100"
+const NET_PRIMARY_SERVER = "https://e4api.ledomsoft.com"
 
 const AUDIO_GAME_CLASSIC_POP = preload('res://sounds/game/classic_pop.ogg')
 const AUDIO_UI_BUTTON_DOWN = preload('res://sounds/ui/button_down.wav')
@@ -43,8 +42,6 @@ const BACKDROP_ZEN: Texture = preload("res://textures/ui/preview_zen.jpg")
 func _ready():
 	pause_mode = Node.PAUSE_MODE_PROCESS
 	OS.min_window_size = WINDOW_MIN_SIZE
-	_prim_svr = NET_DEBUG_SERVER if (OS.is_debug_build() or OVERRIDE_LOCALSERVER) \
-		else NET_PRIMARY_SERVER
 	_load_achievements()
 	_load_notifications()
 	_spawn_audio_player("UISFX")
@@ -151,3 +148,9 @@ func set_music_enabled(enabled: bool):
 
 func get_primary_server() -> String:
 	return _prim_svr
+
+func set_version(value: String):
+	ProjectSettings.set_setting('application/config/version', value)
+
+func get_version() -> String:
+	return ProjectSettings.get_setting('application/config/version')

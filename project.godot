@@ -34,6 +34,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/models/ElementModel.gd"
 }, {
+"base": "Control",
+"class": "FormFactorSwitcher",
+"language": "GDScript",
+"path": "res://scripts/ui/FormFactorSwitcher.gd"
+}, {
 "base": "Object",
 "class": "FormulaModel",
 "language": "GDScript",
@@ -595,6 +600,7 @@ _global_script_class_icons={
 "Dropzone": "",
 "Element": "",
 "ElementModel": "",
+"FormFactorSwitcher": "",
 "FormulaModel": "",
 "VisualShaderNodeDeepParallax": "",
 "VisualShaderNodeDepth": "",
@@ -717,6 +723,7 @@ boot_splash/image="res://assets/branding/splash_light.png"
 boot_splash/bg_color=Color( 1, 1, 1, 1 )
 config/icon="res://icon.png"
 config/windows_native_icon="res://icon.ico"
+config/version="0.9.2"
 
 [audio]
 
@@ -747,9 +754,10 @@ gdscript/warnings/return_value_discarded=false
 
 window/size/width=1920
 window/size/height=1080
+window/dpi/allow_hidpi=true
 mouse_cursor/custom_image="res://assets/ui/cursor.png"
 mouse_cursor/tooltip_position_offset=Vector2( 50, 50 )
-window/stretch/aspect="keep_width"
+window/stretch/aspect="expand"
 
 [gui]
 

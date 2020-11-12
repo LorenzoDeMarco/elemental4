@@ -1,0 +1,49 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends ScrollContainer
+
+# Suggestions list controller
+
+func _ready():
+	Globals.connect(\"internet_status_changed\", self, \"_on_inet_state_changed\", [], CONNECT_DEFERRED)
+	_refresh_data()
+
+func _add_formula_record(e: Dictionary):
+	var fe = preload(\"res://prefabs/ui/SuggFormulaRecord.tscn\").instance()
+	fe.model = e
+	fe.rect_min_size.x = rect_size.x - 1
+	$VBoxContainer.add_child(fe)
+
+func _on_data(resp: HTTPUtil.Response):
+	if resp.response_code == HTTPClient.RESPONSE_OK:
+		var jpr = JSON.parse(resp.body.get_string_from_utf8())
+		if jpr.error != OK: return
+		if typeof(jpr.result) == TYPE_ARRAY:
+			for event in jpr.result:
+				_add_formula_record(event)
+
+func _on_inet_state_changed(state: bool):
+	if state: _refresh_data()
+
+func _refresh_data():
+	_add_formula_record({})
+	var dt_frame = OS.get_datetime_from_unix_time(OS.get_unix_time() - 600) # Last 10 minutes
+	HTTPUtil.request(funcref(self, \"_on_data\"), HTTPClient.METHOD_GET, 
+		Globals.get_primary_server() + \"/api/universe/formulas/suggested\",
+		[\"Content-Type: application/json\"], \"\\\"%s\\\"\" % Utility.date_dict_to_ISO(dt_frame))
+"
+
+[node name="SuggestionsList" type="ScrollContainer"]
+anchor_bottom = 1.0
+margin_right = 350.0
+rect_min_size = Vector2( 350, 0 )
+rect_clip_content = false
+scroll_horizontal_enabled = false
+script = SubResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+alignment = 1

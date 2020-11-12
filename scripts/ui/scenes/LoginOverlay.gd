@@ -65,11 +65,11 @@ func _on_login_pressed():
 			Globals.add_notification_k("oobe_offline")
 			yield(get_tree().create_timer(5), "timeout")
 			Globals.check_internet()
-		$Center/VBody/AutoPanel/VMain/Tabs/LoginTab/Register.disabled = false
 	if Player.online_signin(usern, passw, $Center/VBody/AutoPanel/VMain/Tabs/LoginTab/LoginBody/RememberMe.pressed) != OK:
 		_on_signin_state_changed(false)
 	else:
 		Player.get_profile().load_by_id(_id)
+		_on_signin_state_changed(true)
 
 func _on_signup_response(response: HTTPUtil.Response):
 	match response.response_code:
