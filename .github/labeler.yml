@@ -1,0 +1,16 @@
+# Configuration file for the Labeler workflow
+
+# UI
+# Added when a Scene file is changed (.tscn)
+UI:
+  - **/*.tscn
+
+# scripts
+# Added when a GDScript file is changed (.gd)
+scripts
+  - scripts/**/*.gd
+
+# default-pack
+# Added when the default pack is updated
+default-pack
+  - packs/default/*.json
